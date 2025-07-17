@@ -1,0 +1,29 @@
+<% layout('layouts/main-client') %>
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6 col-lg-4">
+    <h1 class="display-5 fw-bold mb-4 text-center">Study Group App📚</h1>
+    <div class="card shadow-lg border-0">
+      <div class="card-body p-4">
+      <% if (typeof error !== 'undefined' && error) { %>
+      <p style="color: red;"><%= error %></p>
+      <% } %>
+      <% if (typeof success !== 'undefined' && success) { %>
+      <p style="color: green;"><%= success %></p>
+      <% } %>
+
+        <form action="/auth/login" method="POST">
+          <div class="mb-3">
+            <!-- <label for="username" class="form-label fw-medium">Username</label> -->
+            <input type="text" class="form-control" id="username" name="username" placeholder="Email or NumberPhone" required>
+          </div>
+          <div class="mb-3">
+            <!-- <label for="password" class="form-label fw-medium">Password</label> -->
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+        <p class="text-center mt-3">Don't have an account? <a href="/auth/register">Register</a></p>
+      </div>
+    </div>
+  </div>
+</div>

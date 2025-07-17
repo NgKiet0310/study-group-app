@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%- title %> - Study Group Admin</title>
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="d-flex">
+    <%- include('../partials/sidebar-admin') %>
+    <div class="content-wrapper flex-grow-1">
+      <main class="container my-5">
+        <%- body %>
+      </main>
+      <%- include('../partials/footer') %>
+    </div>
+  </div>
+  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function deleteRoom(id) { alert('Delete room: ' + id); }
+    function deleteNote(id) { alert('Delete note: ' + id); }
+    function deleteSchedule(id) { alert('Delete schedule: ' + id); }
+    function deleteFile(id) { alert('Delete file: ' + id); }
+    function changeRole(id, role) { alert('Change role for ' + id + ' to ' + role); }
+    function removeMember(id) { alert('Remove member: ' + id); }
+    document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('d-none');
+      document.querySelector('.content-wrapper').classList.toggle('ms-0');
+    });
+  </script>
+</body>
+</html>

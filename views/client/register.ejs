@@ -1,0 +1,58 @@
+<% layout('layouts/main-client') %>
+
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6 col-lg-4">
+    <h1 class="display-5 fw-bold mb-4 text-center">Register</h1>
+
+    <% if (typeof error !== 'undefined') { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+    <div class="card shadow-lg border-0">
+      <div class="card-body p-4">
+        <form action="/auth/register" method="POST">
+          <div class="mb-3">
+            <label for="username" class="form-label fw-medium">Username (Email or NumberPhone)</label>
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              name="username"
+              placeholder="Enter email or phone"
+              required
+              value="<%= typeof username !== 'undefined' ? username : '' %>"
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label fw-medium">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              placeholder="Enter password"
+              required
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label fw-medium">Confirm Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Confirm password"
+              required
+            >
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">Register</button>
+        </form>
+
+        <p class="text-center mt-3">Already have an account? <a href="/auth/login">Login</a></p>
+      </div>
+    </div>
+  </div>
+</div>

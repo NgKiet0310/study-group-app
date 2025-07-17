@@ -1,0 +1,34 @@
+<div class="container">
+  <h1 class="display-5 fw-bold mb-4">Manage Schedules</h1>
+  <div class="card shadow-lg border-0 mb-4">
+    <div class="card-body">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Search schedules..." aria-label="Search schedules">
+        <button class="btn btn-primary" type="button">Search</button>
+      </div>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Title</th>
+          <th>Date</th>
+          <th>Room</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Sample Schedule</td>
+          <td>2025-07-15 10:00 AM</td>
+          <td>Sample Room</td>
+          <td>
+            <button class="btn btn-warning btn-sm me-2" onclick="alert('Edit schedule')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteSchedule('s1')">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
