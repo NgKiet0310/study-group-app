@@ -5,6 +5,7 @@ import chalk from "chalk";
 import { fileURLToPath } from "url";
 import path from "path";
 import engine from "ejs-mate";
+import session from "express-session";
 
 // Middlewares
 import isAuthenticated from "./middleware/isAuthenticated.js";
@@ -19,6 +20,22 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "your-secret-key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24,
+    },
+  })
+);
+app.use((req, res, next) => {
+  res.locals.user = req.session.user || null;
+  next();
+});
+
 // View setup
 app.engine("ejs", engine);
 app.set("view engine", "ejs");
@@ -31,7 +48,6 @@ app.use("/auth", ClientAuthRoutes);
 app.use("/client", isAuthenticated, HomeRoutes);
 
 
-// Error Handler
 app.use((err, req, res, next) => {
   console.log(chalk.red("❌ Global error:", err.message));
   res.status(500).send({ error: "Something went wrong" });

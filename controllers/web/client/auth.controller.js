@@ -1,4 +1,5 @@
 import User from "../../../models/User.js";
+import bcrypt from 'bcrypt';
 
 export const LoginForm = (req,res) => {
   const {success, error} = req.query;
@@ -28,7 +29,6 @@ export const register = async (req, res, next) => {
       });
     }
 
-    // Kiểm tra username phải là sđt hoặc email
     const phoneRegex = /^[0-9]{9,11}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -40,7 +40,6 @@ export const register = async (req, res, next) => {
       });
     }
 
-    // Kiểm tra mật khẩu tối thiểu
     if (password.length < 6) {
       return res.render("client/register", {
         title: "Đăng kí tài khoản",
@@ -49,7 +48,7 @@ export const register = async (req, res, next) => {
       });
     }
 
-    // Kiểm tra xác nhận mật khẩu
+
     if (password !== confirmPassword) {
       return res.render("client/register", {
         title: "Đăng kí tài khoản",
@@ -58,7 +57,6 @@ export const register = async (req, res, next) => {
       });
     }
 
-    // Kiểm tra username có tồn tại chưa
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.render("client/register", {
@@ -68,7 +66,6 @@ export const register = async (req, res, next) => {
       });
     }
 
-    // Tạo user mới
     const user = new User({ username, password });
     await user.save();
 
@@ -76,4 +73,60 @@ export const register = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const Login = async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.render("client/login", {
+        title: "Login",
+        error: "Vui lòng nhập đầy đủ thông tin",
+        success: null
+      });
+    }
+
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.render("client/login", {
+        title: "Login",
+        error: "Tài khoản không tồn tại",
+        success: null
+      });
+    }
+
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.render("client/login", {
+        title: "Login",
+        error: "Mật khẩu không chính xác",
+        success: null
+      });
+    }
+
+
+    req.session.user = {
+      _id: user._id,
+      username: user.username,
+      role: user.role
+    };
+
+
+    res.redirect("/client/home");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const Logout = (req, res) => {
+  req.session.destroy((err) =>{
+    if(err){
+      console.error("Error Destroying Session:", err);
+      return res.redirect("client/home?error=Đăng xuất thất bại");
+    }
+    res.redirect("auth/login?success=Đăng xuất thành công");
+  });
 };
