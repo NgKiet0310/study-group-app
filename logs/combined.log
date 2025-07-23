@@ -1,0 +1,17 @@
+{"level":"info","message":"User registered: user@gmail.com","timestamp":"2025-07-22T14:32:03.506Z"}
+{"level":"info","message":"User registered: user2@gmail.com","timestamp":"2025-07-22T14:34:19.573Z"}
+{"level":"info","message":"User registered: user@gmail.com","timestamp":"2025-07-22T14:59:30.847Z"}
+{"level":"info","message":"User registered: user1@gmail.com","timestamp":"2025-07-22T14:59:50.396Z"}
+{"level":"info","message":"User registered: client@gmail.com","timestamp":"2025-07-22T15:27:45.032Z"}
+{"level":"info","message":"User registered: clien1t@gmail.com","timestamp":"2025-07-22T15:30:27.056Z"}
+{"level":"info","message":"[REGISTER] User created: user@gmail.com","timestamp":"2025-07-22T15:35:35.546Z"}
+{"level":"error","message":"[LOGIN]","timestamp":"2025-07-22T15:35:53.247Z"}
+{"level":"error","message":"[LOGIN]","timestamp":"2025-07-22T15:37:21.864Z"}
+{"level":"error","message":"[LOGIN]","timestamp":"2025-07-22T15:38:18.169Z"}
+{"level":"error","message":"[LOGIN]","timestamp":"2025-07-22T15:39:21.869Z"}
+{"level":"error","message":"[LOGIN]","timestamp":"2025-07-22T15:40:07.800Z"}
+{"level":"error","message":"[LOGIN]","timestamp":"2025-07-22T15:40:46.989Z"}
+{"level":"error","message":"[LOGIN]","timestamp":"2025-07-22T15:40:53.932Z"}
+{"level":"info","message":"[LOGIN] user@gmail.com logged in successfully","timestamp":"2025-07-22T15:43:35.856Z"}
+{"level":"info","message":"[LOGIN] user@gmail.com logged in successfully","timestamp":"2025-07-22T15:49:02.630Z"}
+{"level":"info","message":"[LOGIN] user@gmail.com logged in successfully","timestamp":"2025-07-22T15:49:30.613Z"}

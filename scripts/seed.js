@@ -32,21 +32,21 @@ async function seedDatabase() {
       File.deleteMany({})
     ]);
 
-    // 1. Tạo User
+
     const user = await User.create({
       username: 'kietnguyen',
       email: 'kiet@example.com',
-      password: '123456', // đã được hash ở middleware
+      password: '123456', 
       role: "user"
     });
      const user2 = await User.create({
       username: 'admin',
       email: 'admin@gmail.com',
-      password: '123456', // đã được hash ở middleware
+      password: '123456', 
       role: 'admin'
     });
 
-    // 2. Tạo Room
+  
     const room = await Room.create({
       name: 'Phòng học Backend',
       description: 'Phòng học backend đầu tiên',
@@ -60,14 +60,14 @@ async function seedDatabase() {
       ]
     });
 
-    // 3. Tạo Message
+
     await Message.create({
       content: 'Xin chào cả lớp!',
       sender: user._id,
       room: room._id
     });
 
-    // 4. Tạo Task
+
     await Task.create({
       title: 'Hoàn thành tính năng đăng nhập',
       description: 'Sử dụng JWT để xác thực người dùng',
@@ -78,7 +78,7 @@ async function seedDatabase() {
       dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // 3 ngày sau
     });
 
-    // 5. Tạo Note
+
     await Note.create({
       title: 'Lưu ý khi học MongoDB',
       content: 'Phải hiểu rõ cách sử dụng Schema và Index',
@@ -87,7 +87,7 @@ async function seedDatabase() {
       isPublic: true
     });
 
-    // 6. Tạo Schedule
+
     await Schedule.create({
       title: 'Buổi học Socket.IO',
       description: 'Realtime communication',
@@ -98,7 +98,7 @@ async function seedDatabase() {
       participants: [user._id]
     });
 
-    // 7. Tạo File
+
     await File.create({
       fileName: 'baitap-nodejs.pdf',
       fileUrl: 'https://example.com/baitap-nodejs.pdf',

@@ -5,6 +5,7 @@ export const LoginForm = (req,res) => {
   const {success, error} = req.query;
     res.render("client/login", {
     title: "Login",
+    view: "client/home",
     success: success || null,
     error: error || null
   });
@@ -12,6 +13,7 @@ export const LoginForm = (req,res) => {
 
 export const RegisterForm = (req,res)=> {
     res.render("client/register", {
+    view: "client/home",
     title: "Register"
     });
 }
@@ -127,6 +129,6 @@ export const Logout = (req, res) => {
       console.error("Error Destroying Session:", err);
       return res.redirect("client/home?error=Đăng xuất thất bại");
     }
-    res.redirect("auth/login?success=Đăng xuất thành công");
+    res.redirect("login?success=Đăng xuất thành công");
   });
 };

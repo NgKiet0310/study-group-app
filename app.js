@@ -12,7 +12,7 @@ import isAuthenticated from "./middleware/isAuthenticated.js";
 // Route
 import ClientAuthRoutes from "./routes/web/client/auth.route.js";
 import HomeRoutes from "./routes/web/client/home.route.js";
-
+import ApiAuthRoutes from "./routes/api/auth.route.js";
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -46,6 +46,11 @@ app.use(express.urlencoded({ extended: true }));
 // Route client
 app.use("/auth", ClientAuthRoutes);
 app.use("/client", isAuthenticated, HomeRoutes);
+
+// Route Api
+app.use(express.json());
+app.use(express.urlencoded({ extended: true}));
+app.use("/api/auth", ApiAuthRoutes);
 
 
 app.use((err, req, res, next) => {

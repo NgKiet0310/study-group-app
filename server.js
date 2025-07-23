@@ -13,6 +13,6 @@ const server = http.createServer(app);
 // Kết nối DB trước khi chạy server
 connectDB().then(() => {
   server.listen(PORT, () => {
-    console.log(chalk.yellow(`🚀 Server đang chạy tại http://localhost:${PORT}`));
+    console.log(chalk.yellow(`🚀 Server đang chạy tại http://localhost:${PORT}/auth/login`));
   });
 });
