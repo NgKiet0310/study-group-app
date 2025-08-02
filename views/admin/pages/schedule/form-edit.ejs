@@ -1,0 +1,65 @@
+<% layout('layouts/main-admin') %>
+
+<div class="container mt-5">
+  <h2 class="mb-4 fw-bold text-warning">
+    <i class="bi bi-pencil-square me-2"></i> Chỉnh sửa lịch học
+  </h2>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-danger"><%= error %></div>
+  <% } %>
+
+  <form action="/admin/schedules/edit/<%= schedule._id %>" method="POST" class="shadow p-4 rounded bg-white">
+    <div class="mb-3">
+      <label for="title" class="form-label fw-semibold">Tiêu đề</label>
+      <input type="text" class="form-control" id="title" name="title" value="<%= schedule.title %>" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label fw-semibold">Mô tả</label>
+      <textarea class="form-control" id="description" name="description" rows="3"><%= schedule.description || '' %></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="room" class="form-label fw-semibold">Phòng</label>
+      <select class="form-select" id="room" name="room" required>
+        <% rooms.forEach(room => { %>
+          <option value="<%= room._id %>" <%= room._id.toString() === schedule.room?.toString() ? 'selected' : '' %>>
+            <%= room.name %>
+          </option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="participants" class="form-label fw-semibold">Người tham gia</label>
+      <select class="form-select" id="participants" name="participants" multiple required>
+        <% users.forEach(user => { %>
+          <option value="<%= user._id %>" <%= schedule.participants?.some(p => p._id?.toString() === user._id.toString()) ? 'selected' : '' %>>
+            <%= user.username || user.email %>
+          </option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="startTime" class="form-label fw-semibold">Thời gian bắt đầu</label>
+        <input type="datetime-local" class="form-control" id="startTime" name="startTime"
+               value="<%= new Date(schedule.startTime).toISOString().slice(0, 16) %>" required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="endTime" class="form-label fw-semibold">Thời gian kết thúc</label>
+        <input type="datetime-local" class="form-control" id="endTime" name="endTime"
+               value="<%= new Date(schedule.endTime).toISOString().slice(0, 16) %>" required>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center">
+      <button type="submit" class="btn btn-warning px-4">
+        <i class="bi bi-pencil me-1"></i> Cập nhật
+      </button>
+      <a href="/admin/schedules" class="btn btn-secondary">Quay lại</a>
+    </div>
+  </form>
+</div>

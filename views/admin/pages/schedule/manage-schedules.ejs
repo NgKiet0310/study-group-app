@@ -1,0 +1,80 @@
+<% layout('layouts/main-admin') %>
+
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-primary"><i class="bi bi-calendar-week me-2"></i>Quản lý lịch học</h2>
+    <a href="/admin/schedules/create" class="btn btn-success shadow-sm rounded">
+      <i class="bi bi-plus-circle me-1"></i> Thêm lịch học
+    </a>
+  </div>
+
+  <div class="table-responsive shadow rounded-3 border">
+    <table class="table table-hover align-middle text-center mb-0">
+      <thead class="table-primary text-dark">
+        <tr>
+          <th>#</th>
+          <th>Tiêu đề</th>
+          <th>Mô tả</th>
+          <th>Phòng</th>
+          <th>Bắt đầu</th>
+          <th>Kết thúc</th>
+          <th>Người tạo</th>
+          <th>Tham gia</th>
+          <th>Ngày tạo</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (schedules.length > 0) { %>
+          <% schedules.forEach((s, i) => { %>
+            <tr>
+              <td class="fw-bold text-secondary"><%= i + 1 %></td>
+              <td class="text-start ps-3"><%= s.title %></td>
+              <td class="text-start ps-3 text-muted" style="max-width: 250px;"><%= s.description || 'Không có mô tả' %></td>
+              <td>
+                <span class="badge bg-info text-dark"><%= s.room?.name || 'N/A' %></span>
+              </td>
+              <td class="text-success fw-semibold"><i class="bi bi-clock me-1"></i><%= new Date(s.startTime).toLocaleString() %></td>
+              <td class="text-danger fw-semibold"><%= s.endTime ? new Date(s.endTime).toLocaleString() : 'Không có' %></td>
+              <td>
+                <span class="badge bg-secondary"><%= s.createdBy?.username || 'N/A' %></span>
+              </td>
+              <td>
+                <% if (s.participants.length > 0) { %>
+                  <div class="d-flex flex-column align-items-start">
+                    <% s.participants.forEach(p => { %>
+                      <span><i class="bi bi-person-fill me-1 text-primary"></i><%= p.username %></span>
+                    <% }) %>
+                  </div>
+                <% } else { %>
+                  <span class="text-muted fst-italic">Không có</span>
+                <% } %>
+              </td>
+              <td>
+                <span class="badge bg-light text-dark border"><%= new Date(s.createdAt).toLocaleDateString() %></span>
+              </td>
+             <td>
+               <div class="d-flex justify-content-center gap-2">
+                  <a href="/admin/schedules/edit/<%= s._id %>" class="btn btn-sm btn-outline-warning rounded-pill d-flex align-items-center">
+                <i class="bi bi-pencil-square me-1"></i> Sửa
+                   </a>
+                  <form action="/admin/schedules/delete/<%= s._id %>" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xoá lịch này?')">
+                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill d-flex align-items-center">
+                     <i class="bi bi-trash me-1"></i> Xóa
+                     </button>
+                </form>
+             </div>
+          </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="10" class="text-muted text-center py-5">
+              <i class="bi bi-exclamation-circle-fill me-2"></i>Không có lịch học nào
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>

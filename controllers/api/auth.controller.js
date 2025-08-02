@@ -62,7 +62,7 @@ export const refresh = async (req, res) => {
     const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
     if (!user || user.refreshToken !== refreshToken)
-      return res.status(403).json({ error: "Invalid refresh token" });
+      return res.status(403).json({ error: "Invalid refresh token" });by9
 
     const accessToken = generateAccessToken(user._id);
     res.json({ accessToken });

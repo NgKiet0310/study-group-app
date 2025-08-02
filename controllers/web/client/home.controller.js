@@ -1,8 +1,8 @@
 export const showHomePage = (req, res) =>{
-    res.render("client/home", { 
+    res.render("client/pages/home", { 
         title: "Trang chủ Study Group",
         rooms: [],
         view: "client/home",
-        user: req.user 
+        user: req.session.user 
     });
 }

@@ -45,7 +45,6 @@ const RoomSchema = new Schema({
   }
 }, { timestamps: true });
 
-// Index để tìm kiếm nhanh theo code
-RoomSchema.index({ code: 1 });
+
 
 export default mongoose.model('Room', RoomSchema);

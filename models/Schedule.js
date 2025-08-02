@@ -32,7 +32,7 @@ const ScheduleSchema = new Schema({
     required: [true, 'Creator is required']
   },
   participants: [{
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
   createdAt: {

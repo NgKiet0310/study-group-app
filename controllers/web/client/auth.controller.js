@@ -3,17 +3,17 @@ import bcrypt from 'bcrypt';
 
 export const LoginForm = (req,res) => {
   const {success, error} = req.query;
-    res.render("client/login", {
+    res.render("client/pages/login", {
     title: "Login",
-    view: "client/home",
+    view: "/home",
     success: success || null,
     error: error || null
   });
 }
 
 export const RegisterForm = (req,res)=> {
-    res.render("client/register", {
-    view: "client/home",
+    res.render("client/pages/register", {
+    view: "/home",
     title: "Register"
     });
 }
@@ -24,7 +24,7 @@ export const register = async (req, res, next) => {
 
     // Kiểm tra thông tin bắt buộc
     if (!username || !password || !confirmPassword) {
-      return res.render("client/register", {
+      return res.render("client/pages/register", {
         title: "Đăng kí tài khoản",
         error: "Vui lòng nhập đầy đủ thông tin",
         username,
@@ -35,7 +35,7 @@ export const register = async (req, res, next) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!phoneRegex.test(username) && !emailRegex.test(username)) {
-      return res.render("client/register", {
+      return res.render("client/pages/register", {
         title: "Đăng kí tài khoản",
         error: "Username phải là số điện thoại hoặc email hợp lệ",
         username,
@@ -43,7 +43,7 @@ export const register = async (req, res, next) => {
     }
 
     if (password.length < 6) {
-      return res.render("client/register", {
+      return res.render("client/pages/register", {
         title: "Đăng kí tài khoản",
         error: "Mật khẩu phải có ít nhất 6 ký tự",
         username,
@@ -52,7 +52,7 @@ export const register = async (req, res, next) => {
 
 
     if (password !== confirmPassword) {
-      return res.render("client/register", {
+      return res.render("client/pages/register", {
         title: "Đăng kí tài khoản",
         error: "Mật khẩu nhập lại không khớp",
         username,
@@ -61,7 +61,7 @@ export const register = async (req, res, next) => {
 
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return res.render("client/register", {
+      return res.render("client/pages/register", {
         title: "Đăng kí tài khoản",
         error: "Tên đăng nhập đã tồn tại",
         username,
@@ -82,7 +82,7 @@ export const Login = async (req, res, next) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res.render("client/login", {
+      return res.render("client/pages/login", {
         title: "Login",
         error: "Vui lòng nhập đầy đủ thông tin",
         success: null
@@ -92,7 +92,7 @@ export const Login = async (req, res, next) => {
 
     const user = await User.findOne({ username });
     if (!user) {
-      return res.render("client/login", {
+      return res.render("client/pages/login", {
         title: "Login",
         error: "Tài khoản không tồn tại",
         success: null
@@ -102,7 +102,7 @@ export const Login = async (req, res, next) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.render("client/login", {
+      return res.render("client/pages/login", {
         title: "Login",
         error: "Mật khẩu không chính xác",
         success: null
@@ -110,14 +110,16 @@ export const Login = async (req, res, next) => {
     }
 
 
-    req.session.user = {
-      _id: user._id,
-      username: user.username,
-      role: user.role
-    };
+   req.session.user = {
+   _id: user._id,
+   email: user.email,
+   role: user.role,
+   username: user.name,
+   };
 
 
-    res.redirect("/client/home");
+
+    res.redirect("/home");
   } catch (error) {
     next(error);
   }
@@ -127,7 +129,7 @@ export const Logout = (req, res) => {
   req.session.destroy((err) =>{
     if(err){
       console.error("Error Destroying Session:", err);
-      return res.redirect("client/home?error=Đăng xuất thất bại");
+      return res.redirect("client/pages/home?error=Đăng xuất thất bại");
     }
     res.redirect("login?success=Đăng xuất thành công");
   });
