@@ -2,7 +2,6 @@ import Schedule from '../../../models/Schedule.js';
 import Room from '../../../models/Room.js';
 import User from '../../../models/User.js';
 
-// Helper để lấy danh sách phòng và user
 const getRoomsAndUsers = async () => {
   const rooms = await Room.find();
   const users = await User.find({ role: 'user' }).select('_id username');
@@ -172,7 +171,6 @@ export const updateSchedule = async (req, res) => {
     const schedule = await Schedule.findById(scheduleId);
     if (!schedule) return res.status(404).send('Không tìm thấy lịch học.');
 
-    // Kiểm tra dữ liệu đầu vào
     if (!title || !startTime || !endTime || !room || !participants || participants.length === 0) {
       return res.status(400).render('admin/pages/schedule/form-edit', {
         error: 'Vui lòng điền đầy đủ thông tin bắt buộc.',

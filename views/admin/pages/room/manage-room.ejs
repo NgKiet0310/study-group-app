@@ -1,0 +1,268 @@
+<% layout('layouts/main-admin') %>
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="card shadow-lg rounded-4 border-0">
+    <!-- Header với gradient và nút thêm phòng -->
+    <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4 d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-door-open-fill me-2 animate__animated animate__pulse animate__infinite"></i>Danh sách phòng</span>
+      <a href="/admin/room/create" class="btn btn-light btn-sm fw-semibold rounded-pill">
+        <i class="bi bi-plus-circle me-1"></i>Thêm phòng
+      </a>
+    </div>
+    <div class="card-body p-4">
+      <!-- Hiển thị thông báo lỗi hoặc thành công -->
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+          <%= success %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <!-- Form tìm kiếm và lọc -->
+      <form method="GET" action="/admin/room" class="mb-4">
+        <div class="row g-3">
+          <!-- Tìm kiếm theo tên hoặc mã phòng -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Tìm kiếm</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control rounded-3" name="search" placeholder="Tên hoặc mã phòng" value="<%= search || '' %>">
+            </div>
+          </div>
+          <!-- Lọc theo số lượng thành viên -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Số lượng thành viên</label>
+            <select class="form-select rounded-3" name="memberCount">
+              <option value="">Tất cả</option>
+              <option value="0-5" <%= memberCount === '0-5' ? 'selected' : '' %>>0-5</option>
+              <option value="6-10" <%= memberCount === '6-10' ? 'selected' : '' %>>6-10</option>
+              <option value=">10" <%= memberCount === '>10' ? 'selected' : '' %>>>10</option>
+            </select>
+          </div>
+          <!-- Lọc theo ngày tạo -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Ngày tạo</label>
+            <div class="row g-2">
+              <div class="col">
+                <input type="date" class="form-control rounded-3" name="startDate" value="<%= startDate || '' %>">
+              </div>
+              <div class="col">
+                <input type="date" class="form-control rounded-3" name="endDate" value="<%= endDate || '' %>">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" class="btn btn-primary rounded-pill">
+            <i class="bi bi-funnel me-1"></i>Lọc
+          </button>
+          <a href="/admin/room" class="btn btn-outline-secondary rounded-pill">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>Đặt lại
+          </a>
+        </div>
+      </form>
+
+      <!-- Bảng danh sách phòng -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle text-nowrap">
+          <thead class="table-light">
+            <tr class="text-center">
+              <th style="width: 5%;">#</th>
+              <th style="width: 20%;">Tên Phòng</th>
+              <th style="width: 15%;">Mã Phòng</th>
+              <th style="width: 30%;">Thành Viên</th>
+              <th style="width: 15%;">Ngày Tạo</th>
+              <th style="width: 15%;">Hành Động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (rooms.length === 0) { %>
+              <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                  <i class="bi bi-info-circle me-1"></i>Không có phòng nào.
+                </td>
+              </tr>
+            <% } else { %>
+              <% rooms.forEach((room, index) => { %>
+                <tr class="table-row-hover">
+                  <td class="text-center fw-bold"><%= (page - 1) * limit + index + 1 %></td>
+                  <td><%= room.name %></td>
+                  <td class="text-center"><code class="bg-light p-1 rounded"><%= room.code %></code></td>
+                  <td>
+                    <div class="d-flex flex-column gap-2">
+                      <div class="d-flex align-items-center">
+                        <span class="fw-semibold text-dark">Admin: <%= room.admin?.username || 'Không xác định' %></span>
+                        <span class="badge bg-primary ms-2 rounded-pill">Quản lý</span>
+                      </div>
+                    <% if (room.members.length > 0) { %>
+                    <% room.members.slice(0, 2).forEach(mem => { %>
+                      <div class="d-flex align-items-center">
+                        <span class="fw-semibold text-dark"><%= mem.user?.username || 'Không xác định' %></span>
+                        <% if (mem.role === 'host') { %>
+                          <span class="badge bg-success ms-2 rounded-pill">Chủ phòng</span>
+                        <% } else { %>
+                          <span class="badge bg-secondary ms-2 rounded-pill">Thành viên</span>
+                        <% } %>
+                      </div>
+                    <% }) %>
+                    <% if (room.members.length > 2) { %>
+                      <div class="text-muted fst-italic">
+                        ... và <%= room.members.length - 2 %> thành viên khác
+                      </div>
+                    <% } %>
+                  <% } else { %>
+                    <span class="text-muted fst-italic">Không có thành viên</span>
+                  <% } %>
+
+                    </div>
+                  </td>
+                  <td class="text-center text-muted">
+                    <%= new Date(room.createdAt).toLocaleString('vi-VN', { 
+                      day: '2-digit', 
+                      month: '2-digit', 
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    }) %>
+                  </td>
+                  <td class="text-center">
+                    <a href="/admin/room/detail/<%= room._id %>" class="btn btn-sm btn-outline-info rounded-pill me-1">
+                      <i class="bi bi-eye me-1"></i>Xem
+                    </a>
+                    <a href="/admin/room/edit/<%= room._id %>" class="btn btn-sm btn-outline-warning rounded-pill me-1">
+                      <i class="bi bi-pencil-square me-1"></i>Sửa
+                    </a>
+                    <form action="/admin/room/delete/<%= room._id %>" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa phòng <%= room.name %>?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
+                        <i class="bi bi-trash me-1"></i>Xóa
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Phân trang -->
+      <% if (totalPages > 1) { %>
+        <nav aria-label="Room pagination" class="mt-4">
+          <ul class="pagination justify-content-center">
+            <!-- Previous -->
+            <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
+              <a class="page-link rounded-pill" href="/admin/room?page=<%= page - 1 %>&search=<%= search || '' %>&memberCount=<%= memberCount || '' %>&startDate=<%= startDate || '' %>&endDate=<%= endDate || '' %>">
+                <i class="bi bi-chevron-left"></i>
+              </a>
+            </li>
+            <!-- Số trang -->
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= page === i ? 'active' : '' %>">
+                <a class="page-link rounded-pill" href="/admin/room?page=<%= i %>&search=<%= search || '' %>&memberCount=<%= memberCount || '' %>&startDate=<%= startDate || '' %>&endDate=<%= endDate || '' %>"><%= i %></a>
+              </li>
+            <% } %>
+            <!-- Next -->
+            <li class="page-item <%= page === totalPages ? 'disabled' : '' %>">
+              <a class="page-link rounded-pill" href="/admin/room?page=<%= page + 1 %>&search=<%= search || '' %>&memberCount=<%= memberCount || '' %>&startDate=<%= startDate || '' %>&endDate=<%= endDate || '' %>">
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Gradient cho header */
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #0052cc, #00c4ff);
+  }
+
+  /* Hover effect cho card và table row */
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+  .table-row-hover:hover {
+    background-color: #f8f9fa;
+  }
+
+  /* Style cho badge */
+  .badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.8em;
+    font-weight: 500;
+  }
+
+  /* Style cho button và input */
+  .btn, .form-control, .form-select {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #0052cc;
+    box-shadow: 0 0 0 0.2rem rgba(0, 82, 204, 0.25);
+  }
+
+  /* Style cho code */
+  code {
+    font-size: 0.95rem;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  /* Style cho alert */
+  .alert {
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Style cho pagination */
+  .page-link {
+    border-radius: 50px !important;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+  }
+  .page-link:hover {
+    transform: translateY(-2px);
+  }
+  .page-item.active .page-link {
+    background-color: #0052cc;
+    border-color: #0052cc;
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .card-header a {
+      width: 100%;
+      text-align: center;
+    }
+    .row.g-3 {
+      flex-direction: column;
+    }
+    .table-responsive {
+      font-size: 0.9rem;
+    }
+  }
+
+  /* Import animate.css từ CDN */
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+</style>

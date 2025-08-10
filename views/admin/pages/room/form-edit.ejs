@@ -1,0 +1,112 @@
+<% layout('layouts/main-admin') %>
+
+<div class="container mt-5">
+  <div class="card shadow-lg rounded-4 border-0">
+    <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4">
+      <i class="bi bi-pencil-square me-2"></i>Chỉnh sửa phòng
+    </div>
+    <div class="card-body p-4">
+      <!-- Hiển thị thông báo lỗi hoặc thành công -->
+      <% if (error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+      <% if (success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <%= success %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <!-- Form chỉnh sửa phòng -->
+      <form action="/admin/room/edit/<%= room._id %>" method="POST">
+        <div class="mb-3">
+          <label for="name" class="form-label fw-semibold">Tên phòng <span class="text-danger">*</span></label>
+          <input type="text" class="form-control rounded-3" id="name" name="name" value="<%= room.name %>" required>
+        </div>
+        <div class="mb-3">
+          <label for="code" class="form-label fw-semibold">Mã phòng</label>
+          <input type="text" class="form-control rounded-3" id="code" name="code" value="<%= room.code %>" placeholder="Để trống để sử dụng mã hiện tại">
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label fw-semibold">Mô tả</label>
+          <textarea class="form-control rounded-3" id="description" name="description" rows="4"><%= room.description %></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Thành viên</label>
+          <div class="row">
+         <% users.forEach((user, index) => { %>
+  <div class="col-md-6 mb-2">
+    <div class="form-check">
+      <input class="form-check-input"
+             type="checkbox"
+             name="members[<%= index %>][user]"
+             value="<%= user._id %>"
+             <% if (room.members.some(m => m.user._id.toString() === user._id.toString())) { %> checked <% } %>
+             id="user-<%= user._id %>">
+
+      <label class="form-check-label" for="user-<%= user._id %>">
+        <%= user.username %>
+      </label>
+
+      <% if (user._id.toString() !== room.admin._id.toString()) { %>
+        <select class="form-select form-select-sm d-inline-block w-auto ms-2"
+                name="members[<%= index %>][role]">
+          <option value="member"
+            <% if (room.members.some(m => m.user._id.toString() === user._id.toString() && m.role === 'member')) { %> selected <% } %>>
+            Thành viên
+          </option>
+          <option value="host"
+            <% if (room.members.some(m => m.user._id.toString() === user._id.toString() && m.role === 'host')) { %> selected <% } %>>
+            Host
+          </option>
+        </select>
+      <% } else { %>
+        <span class="badge bg-success ms-2 rounded-pill">Chủ phòng</span>
+        <input type="hidden" name="members[<%= index %>][role]" value="host">
+      <% } %>
+    </div>
+  </div>
+<% }) %>
+
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2">
+          <a href="/admin/room" class="btn btn-outline-secondary rounded-pill">Hủy</a>
+          <button type="submit" class="btn btn-primary rounded-pill">Lưu thay đổi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #007bff, #00c4ff);
+  }
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+  }
+  .form-control, .form-select {
+    transition: border-color 0.3s ease;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  .btn {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+  .alert {
+    border-radius: 0.5rem;
+  }
+</style>

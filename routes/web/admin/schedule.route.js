@@ -7,12 +7,12 @@ import {
   updateSchedule,
   deleteSchedule
 } from '../../../controllers/web/admin/schedule.controller.js';
-import { attachAdminToLocals } from '../../../middleware/session.js';
+
 
 const router = express.Router();
 
 router.get('/', showSchedules);
-router.get('/create', attachAdminToLocals ,showCreateForm);
+router.get('/create' ,showCreateForm);
 router.post('/create', createSchedule);
 router.get('/edit/:id', showEditForm);
 router.post('/edit/:id', updateSchedule);

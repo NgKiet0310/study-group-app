@@ -1,0 +1,292 @@
+<% layout('layouts/main-admin') %>
+
+<!-- Container chính với margin top và animation fade-in -->
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="card shadow-lg rounded-4 border-0 overflow-hidden">
+    <!-- Header với gradient mạnh và icon động -->
+    <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4 d-flex justify-content-between align-items-center">
+      <span>
+        <i class="bi bi-door-open-fill me-2 animate__animated animate__pulse animate__infinite"></i>
+        Chi tiết phòng: <%= room.name %>
+      </span>
+      <a href="/admin/room" class="btn btn-light btn-sm fw-semibold rounded-pill">
+        <i class="bi bi-arrow-left me-1"></i>Quay lại
+      </a>
+    </div>
+    <div class="card-body p-4">
+      <!-- Hiển thị thông báo lỗi hoặc thành công -->
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+          <%= success %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <!-- Thông tin phòng trong card con -->
+      <div class="row g-4">
+        <!-- Tên phòng -->
+        <div class="col-md-6">
+          <div class="card h-100 border-0 shadow-sm rounded-3 hover-card">
+            <div class="card-body">
+              <label class="fw-semibold text-muted mb-2">
+                <i class="bi bi-tag-fill me-1 text-primary"></i>Tên phòng
+              </label>
+              <p class="fs-5 fw-bold text-dark"><%= room.name %></p>
+            </div>
+          </div>
+        </div>
+        <!-- Mã phòng -->
+        <div class="col-md-6">
+          <div class="card h-100 border-0 shadow-sm rounded-3 hover-card">
+            <div class="card-body">
+              <label class="fw-semibold text-muted mb-2">
+                <i class="bi bi-key-fill me-1 text-primary"></i>Mã phòng
+              </label>
+              <p class="fs-5"><code class="bg-light p-2 rounded"><%= room.code %></code></p>
+            </div>
+          </div>
+        </div>
+        <!-- Mô tả -->
+        <div class="col-12">
+          <div class="card border-0 shadow-sm rounded-3 hover-card">
+            <div class="card-body">
+              <label class="fw-semibold text-muted mb-2">
+                <i class="bi bi-text-paragraph me-1 text-primary"></i>Mô tả
+              </label>
+              <p class="fs-5"><%= room.description || 'Không có mô tả' %></p>
+            </div>
+          </div>
+        </div>
+        <!-- Quản lý -->
+        <div class="col-12">
+          <div class="card border-0 shadow-sm rounded-3 hover-card">
+            <div class="card-body">
+              <label class="fw-semibold text-muted mb-2">
+                <i class="bi bi-person-fill-gear me-1 text-primary"></i>Quản lý
+              </label>
+              <div class="d-flex align-items-center">
+                <div class="avatar avatar-sm me-2">
+                  <span class="avatar-text bg-primary text-white rounded-circle">
+                    <%= room.admin?.username ? room.admin.username[0].toUpperCase() : '?' %>
+                  </span>
+                </div>
+                <span class="fs-5 fw-semibold text-dark"><%= room.admin?.username || 'Không xác định' %></span>
+                <span class="badge bg-primary ms-2 rounded-pill">Quản lý</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Thành viên -->
+        <div class="col-12">
+          <div class="card border-0 shadow-sm rounded-3 hover-card">
+            <div class="card-body">
+              <label class="fw-semibold text-muted mb-2">
+                <i class="bi bi-people-fill me-1 text-primary"></i>Thành viên
+              </label>
+              <% if (room.members.length > 0) { %>
+                <div class="d-flex flex-column gap-3">
+                  <% room.members.forEach(mem => { %>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar avatar-sm me-2">
+                        <span class="avatar-text bg-<%= mem.role === 'host' ? 'success' : 'secondary' %> text-white rounded-circle">
+                          <%= mem.user?.username ? mem.user.username[0].toUpperCase() : '?' %>
+                        </span>
+                      </div>
+                      <span class="fs-5 fw-semibold text-dark"><%= mem.user?.username || 'Không xác định' %></span>
+                      <% if (mem.role === 'host') { %>
+                        <span class="badge bg-success ms-2 rounded-pill">Chủ phòng</span>
+                      <% } else { %>
+                        <span class="badge bg-secondary ms-2 rounded-pill">Thành viên</span>
+                      <% } %>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } else { %>
+                <p class="text-muted fst-italic">Không có thành viên</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <!-- Timeline ngày tạo/cập nhật -->
+        <div class="col-12">
+          <div class="card border-0 shadow-sm rounded-3 hover-card">
+            <div class="card-body">
+              <label class="fw-semibold text-muted mb-3">
+                <i class="bi bi-clock-history me-1 text-primary"></i>Lịch sử
+              </label>
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="timeline-icon bg-primary text-white rounded-circle">
+                    <i class="bi bi-calendar-check"></i>
+                  </div>
+                  <div class="timeline-content">
+                    <h6 class="fw-semibold mb-1">Ngày tạo</h6>
+                    <p class="text-muted">
+                      <%= new Date(room.createdAt).toLocaleString('vi-VN', { 
+                        day: '2-digit', 
+                        month: '2-digit', 
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }) %>
+                    </p>
+                  </div>
+                </div>
+                <% if (room.updatedAt) { %>
+                  <div class="timeline-item">
+                    <div class="timeline-icon bg-warning text-white rounded-circle">
+                      <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <div class="timeline-content">
+                      <h6 class="fw-semibold mb-1">Ngày cập nhật</h6>
+                      <p class="text-muted">
+                        <%= new Date(room.updatedAt).toLocaleString('vi-VN', { 
+                          day: '2-digit', 
+                          month: '2-digit', 
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) %>
+                      </p>
+                    </div>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nút chỉnh sửa và quay lại -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <a href="/admin/room/edit/<%= room._id %>" class="btn btn-outline-warning rounded-pill">
+          <i class="bi bi-pencil-square me-1"></i>Chỉnh sửa
+        </a>
+        <a href="/admin/room" class="btn btn-outline-secondary rounded-pill">
+          <i class="bi bi-arrow-left me-1"></i>Quay lại
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Gradient cho header */
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #0052cc, #00c4ff);
+  }
+
+  /* Hover effect cho card */
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+  .hover-card:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.02);
+  }
+
+  /* Style cho avatar placeholder */
+  .avatar {
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  .avatar-text {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    line-height: 32px;
+  }
+
+  /* Style cho badge */
+  .badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.8em;
+    font-weight: 500;
+  }
+
+  /* Style cho button */
+  .btn {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Style cho code */
+  code {
+    font-size: 0.95rem;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  /* Style cho alert */
+  .alert {
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Style cho timeline */
+  .timeline {
+    position: relative;
+    padding-left: 30px;
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .timeline-icon {
+    position: absolute;
+    left: -30px;
+    top: 0;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  .timeline-content {
+    padding-left: 10px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .card-header a {
+      width: 100%;
+      text-align: center;
+    }
+    .row {
+      flex-direction: column;
+    }
+  }
+
+  /* Import animate.css từ CDN */
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+</style>

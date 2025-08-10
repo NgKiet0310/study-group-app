@@ -1,5 +1,6 @@
 export default function isAdmin(req, res, next) {
   if (req.session && req.session.admin && req.session.admin.role === 'admin') {
+      req.user = req.session.admin; 
     return next();
   }
 

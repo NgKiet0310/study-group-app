@@ -4,6 +4,9 @@
             <a class="nav-link <%= path === '/admin' ? 'active' : '' %>" href="/admin">🛠️ Bảng Điều Khiển</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link <%= path === '/admin/manage-room' ? 'active' : '' %>" href="/admin/room">🏢 Phòng</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link <%= path === '/admin/manage-schedules' ? 'active' : '' %>" href="/admin/schedules">📅 Quản Lý Lịch</a>
         </li>
         <li class="nav-item">
@@ -12,8 +15,6 @@
         <li class="nav-item">
             <a class="nav-link <%= path === '/admin/resources' ? 'active' : '' %>" href="/admin/resources">🧩 Tài Nguyên</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link <%= path === '/admin/room' ? 'active' : '' %>" href="/admin/room">🏢 Phòng</a>
-        </li>
+        
     </ul>
 </nav>
