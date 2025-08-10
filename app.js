@@ -19,7 +19,8 @@ import AdminRoutes from './routes/web/admin/admin.route.js';
 import adminAuthRoutes from './routes/web/admin/auth.route.js';
 import scheduleRoutes from './routes/web/admin/schedule.route.js';
 import roomRoutes from './routes/web/admin/room.route.js';
-
+import userRoutes from './routes/web/admin/user.route.js';
+import noteRoutes from './routes/web/admin/note.route.js';
 // Config .env
 dotenv.config();
 
@@ -52,6 +53,8 @@ app.use('/', HomeRoutes);
 app.use('/admin/auth', adminAuthRoutes);
 app.use('/admin/schedules', isAdmin, scheduleRoutes);
 app.use('/admin/room', isAdmin, roomRoutes);
+app.use('/admin/user', isAdmin, userRoutes);
+app.use('/admin/note', isAdmin, noteRoutes);
 app.use('/admin', isAdmin, AdminRoutes);
 
 // Global error handler
