@@ -1,0 +1,236 @@
+<% layout('layouts/main-admin') %>
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="card shadow-lg rounded-4 border-0 overflow-hidden">
+    <!-- Header với gradient -->
+    <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4 d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-journal-text me-2 animate__animated animate__pulse animate__infinite"></i>Chi tiết ghi chú: <%= note.title %></span>
+      <a href="/admin/note" class="btn btn-light btn-sm fw-semibold rounded-pill">
+        <i class="bi bi-arrow-left me-1"></i>Quay lại
+      </a>
+    </div>
+    <div class="card-body p-4">
+      <!-- Hiển thị thông báo lỗi hoặc thành công -->
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+          <%= success %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <!-- Thông tin ghi chú -->
+      <div class="row g-4">
+        <!-- Tiêu đề -->
+        <div class="col-md-6">
+          <div class="card h-100 border-0 shadow-sm rounded-3 hover-card">
+            <div class="card-body">
+              <label class="fw-semibold text-muted mb-2">
+                <i class="bi bi-fonts me-1 text-primary"></i>Tiêu đề
+              </label>
+              <p class="fs-5 fw-bold text-dark"><%= note.title %></p>
+            </div>
+          </div>
+        </div>
+        <!-- Phòng -->
+        <div class="col-md-6">
+          <div class="card h-100 border-0 shadow-sm rounded-3 hover-card">
+            <div class="card-body">
+              <label class="fw-semibold text-muted mb-2">
+                <i class="bi bi-house-door-fill me-1 text-primary"></i>Phòng
+              </label>
+              <p class="fs-5 fw-bold text-dark"><%= note.room ? note.room.name : 'N/A' %></p>
+            </div>
+          </div>
+        </div>
+        <!-- Người tạo -->
+        <div class="col-md-6">
+          <div class="card h-100 border-0 shadow-sm rounded-3 hover-card">
+            <div class="card-body">
+              <label class="fw-semibold text-muted mb-2">
+                <i class="bi bi-person-fill me-1 text-primary"></i>Người tạo
+              </label>
+              <p class="fs-5 fw-bold text-dark"><%= note.createdBy ? note.createdBy.username : 'N/A' %></p>
+            </div>
+          </div>
+        </div>
+        <!-- Trạng thái công khai -->
+        <div class="col-md-6">
+          <div class="card h-100 border-0 shadow-sm rounded-3 hover-card">
+            <div class="card-body">
+              <label class="fw-semibold text-muted mb-2">
+                <i class="bi bi-lock-fill me-1 text-primary"></i>Trạng thái
+              </label>
+              <p class="fs-5">
+                <span class="badge bg-<%= note.isPublic ? 'success' : 'warning' %> rounded-pill">
+                  <%= note.isPublic ? 'Công khai' : 'Riêng tư' %>
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Nội dung -->
+        <div class="col-12">
+          <div class="card h-100 border-0 shadow-sm rounded-3 hover-card">
+            <div class="card-body">
+              <label class="fw-semibold text-muted mb-2">
+                <i class="bi bi-text-paragraph me-1 text-primary"></i>Nội dung
+              </label>
+              <p class="fs-5 text-dark" style="white-space: pre-wrap;"><%= note.content %></p>
+            </div>
+          </div>
+        </div>
+        <!-- Timeline ngày tạo/cập nhật -->
+        <div class="col-12">
+          <div class="card border-0 shadow-sm rounded-3 hover-card">
+            <div class="card-body">
+              <label class="fw-semibold text-muted mb-3">
+                <i class="bi bi-clock-history me-1 text-primary"></i>Lịch sử
+              </label>
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="timeline-icon bg-primary text-white rounded-circle">
+                    <i class="bi bi-calendar-check"></i>
+                  </div>
+                  <div class="timeline-content">
+                    <h6 class="fw-semibold mb-1">Ngày tạo</h6>
+                    <p class="text-muted">
+                      <%= new Date(note.createdAt).toLocaleString('vi-VN', { 
+                        day: '2-digit', 
+                        month: '2-digit', 
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }) %>
+                    </p>
+                  </div>
+                </div>
+                <% if (note.updatedAt) { %>
+                  <div class="timeline-item">
+                    <div class="timeline-icon bg-warning text-white rounded-circle">
+                      <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <div class="timeline-content">
+                      <h6 class="fw-semibold mb-1">Ngày cập nhật</h6>
+                      <p class="text-muted">
+                        <%= new Date(note.updatedAt).toLocaleString('vi-VN', { 
+                          day: '2-digit', 
+                          month: '2-digit', 
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) %>
+                      </p>
+                    </div>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nút chỉnh sửa và quay lại -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <a href="/admin/note/edit/<%= note._id %>" class="btn btn-outline-warning rounded-pill">
+          <i class="bi bi-pencil-square me-1"></i>Chỉnh sửa
+        </a>
+        <a href="/admin/note" class="btn btn-outline-secondary rounded-pill">
+          <i class="bi bi-arrow-left me-1"></i>Quay lại
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Gradient cho header */
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #0052cc, #00c4ff);
+  }
+
+  /* Hover effect cho card */
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+  .hover-card:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.02);
+  }
+
+  /* Style cho badge */
+  .badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.8em;
+    font-weight: 500;
+  }
+
+  /* Style cho button */
+  .btn {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Style cho timeline */
+  .timeline {
+    position: relative;
+    padding-left: 30px;
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .timeline-icon {
+    position: absolute;
+    left: -30px;
+    top: 0;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  .timeline-content {
+    padding-left: 10px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .card-header a {
+      width: 100%;
+      text-align: center;
+    }
+    .row {
+      flex-direction: column;
+    }
+  }
+
+
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+</style>

@@ -1,0 +1,140 @@
+<% layout('layouts/main-admin') %>
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="card shadow-lg rounded-4 border-0">
+    <!-- Header với gradient -->
+    <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4 d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-journal-text me-2 animate__animated animate__pulse animate__infinite"></i>Chỉnh sửa ghi chú: <%= note.title %></span>
+      <a href="/admin/note" class="btn btn-light btn-sm fw-semibold rounded-pill">
+        <i class="bi bi-arrow-left me-1"></i>Quay lại
+      </a>
+    </div>
+    <div class="card-body p-4">
+      <!-- Hiển thị thông báo lỗi hoặc thành công -->
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+          <%= success %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <!-- Form chỉnh sửa ghi chú -->
+      <form method="POST" action="/admin/note/edit/<%= note._id %>">
+        <div class="row g-3">
+          <!-- Tiêu đề -->
+          <div class="col-md-6">
+            <label for="title" class="form-label fw-semibold">Tiêu đề</label>
+            <input type="text" class="form-control rounded-3" id="title" name="title" value="<%= note.title %>" placeholder="Nhập tiêu đề ghi chú" required>
+          </div>
+          <!-- Phòng -->
+          <div class="col-md-6">
+            <label for="room" class="form-label fw-semibold">Phòng</label>
+            <select class="form-select rounded-3" id="room" name="room" required>
+              <option value="">Chọn phòng</option>
+              <% rooms.forEach(room => { %>
+                <option value="<%= room._id %>" <%= note.room && note.room._id.toString() === room._id.toString() ? 'selected' : '' %>><%= room.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <!-- Người tạo -->
+          <div class="col-md-6">
+            <label for="createdBy" class="form-label fw-semibold">Người tạo</label>
+            <select class="form-select rounded-3" id="createdBy" name="createdBy" required>
+              <option value="">Chọn người tạo</option>
+              <% users.forEach(user => { %>
+                <option value="<%= user._id %>" <%= note.createdBy && note.createdBy._id.toString() === user._id.toString() ? 'selected' : '' %>><%= user.username %></option>
+              <% }) %>
+            </select>
+          </div>
+          <!-- Trạng thái công khai -->
+          <div class="col-md-6">
+            <label for="isPublic" class="form-label fw-semibold">Trạng thái</label>
+            <select class="form-select rounded-3" id="isPublic" name="isPublic" required>
+              <option value="true" <%= note.isPublic ? 'selected' : '' %>>Công khai</option>
+              <option value="false" <%= !note.isPublic ? 'selected' : '' %>>Riêng tư</option>
+            </select>
+          </div>
+          <!-- Nội dung -->
+          <div class="col-12">
+            <label for="content" class="form-label fw-semibold">Nội dung</label>
+            <textarea class="form-control rounded-3" id="content" name="content" rows="5" placeholder="Nhập nội dung ghi chú" required><%= note.content %></textarea>
+          </div>
+        </div>
+        <!-- Nút submit và quay lại -->
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-primary rounded-pill">
+            <i class="bi bi-save me-1"></i>Lưu
+          </button>
+          <a href="/admin/note" class="btn btn-outline-secondary rounded-pill">
+            <i class="bi bi-arrow-left me-1"></i>Quay lại
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Gradient cho header */
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #0052cc, #00c4ff);
+  }
+
+  /* Hover effect cho card */
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  /* Style cho button và input */
+  .btn, .form-control, .form-select {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #0052cc;
+    box-shadow: 0 0 0 0.2rem rgba(0, 82, 204, 0.25);
+  }
+
+  /* Style cho textarea */
+  .form-control[rows] {
+    resize: vertical;
+    max-height: 300px;
+  }
+
+  /* Style cho alert */
+  .alert {
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .card-header a {
+      width: 100%;
+      text-align: center;
+    }
+    .row.g-3 {
+      flex-direction: column;
+    }
+  }
+
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+</style>

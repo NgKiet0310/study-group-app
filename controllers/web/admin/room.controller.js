@@ -222,8 +222,10 @@ export const showEditRoom = async (req, res) => {
     try {
         const roomId = req.params.id;
         const room = await Room.findById(roomId)
-        .populate('admin','user')
+        .populate('admin','username')
         .populate('members.user','username');
+
+        room.members = room.members.filter(m => m.user);
 
         if(!room){
             return res.redirect('/admin/room?error=Phòng không tồn tại');
