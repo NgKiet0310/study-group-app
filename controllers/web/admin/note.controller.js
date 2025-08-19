@@ -30,14 +30,16 @@ export const showNotes = async(req, res) => {
         .skip(skip)
         .limit(limit);
 
+        const users = await User.find().select('username');
         const rooms = await Room.find().select('name');
         const error = req.query.error;
         const success = req.query.success;
 
-        res.render('admin/pages/note/manage-note', {
+        res.render('admin/pages/note/manage-notes', {
             notes,
             path: req.path,
             rooms,
+            users,
             success,
             error,
             search,
@@ -49,9 +51,10 @@ export const showNotes = async(req, res) => {
         })
     } catch (err) {
         console.error('Lỗi khi tải danh sách ghi chú', err);
-        res.status(500).render('admin/pages/note/manage-note',{
+        res.status(500).render('admin/pages/note/manage-notes',{
             notes: [],
             rooms: [],
+            users: [],
             path: req.path,
             error: 'Lỗi khi tải danh sách ghi chú',
             success: null,
@@ -113,7 +116,7 @@ export const createNote = async(req, res) => {
         });
 
         await newNote.save();
-        res.redirect('/admin/note?success=Tạo ghi chú thành công');
+        res.redirect('/admin/notes?success=Tạo ghi chú thành công');
     } catch (error) {
         console.error('Lỗi khi tạo ghi chú', error);
         const rooms = await Room.find().select('name');
@@ -135,7 +138,7 @@ export const showEditForm = async(req, res) => {
         .populate('room','name')
         .populate('createdBy','username');
         if(!note){
-            return res.redirect('/admin/note?error=Ghi chú không tồn tại');
+            return res.redirect('/admin/notes?error=Ghi chú không tồn tại');
         }
          const rooms = await Room.find().select('name');
         const users = await User.find().select('username');
@@ -149,7 +152,7 @@ export const showEditForm = async(req, res) => {
         });
     } catch (error) {
         console.error('Lỗi khi hiển thị form sửa', error);
-        res.redirect('/admin/note?error=Lỗi khi hiển thị form sửa');
+        res.redirect('/admin/notes?error=Lỗi khi hiển thị form sửa');
     }
 }
 
@@ -158,7 +161,7 @@ export const editNote = async(req,res) => {
         const noteId = req.params.id;
         const note = await Note.findById(noteId);
         if(!note){
-            return res.redirect('/admin/note?error=Ghi chú không tồn tại');
+            return res.redirect('/admin/notes?error=Ghi chú không tồn tại');
         }
         const errors = validationResult(req);
         if(!errors.isEmpty()){
@@ -182,7 +185,7 @@ export const editNote = async(req,res) => {
         note.createdAt = Date.now();
 
         await note.save()
-        res.redirect('/admin/note?success=Chỉnh sửa ghi chú thành công');
+        res.redirect('/admin/notes?success=Chỉnh sửa ghi chú thành công');
     } catch (error) {
         console.error('Lỗi khi chỉnh sửa', error);
         const rooms = await Room.find().select('name');
@@ -215,7 +218,7 @@ export const showNoteDetail = async (req, res) => {
         });
     } catch (error) {
         console.error('Lỗi khi hiển thị chi tiết', error);
-        res.redirect('/admin/note?error=Lỗi khi hiển thị');
+        res.redirect('/admin/notes?error=Lỗi khi hiển thị');
     }
 }
 
@@ -224,12 +227,12 @@ export const deleteNote = async(req, res) => {
         const noteId = req.params.id;
         const note = await Note.findById(noteId);
         if(!note){
-            return res.redirect('/admin/note?error=Ghi chú không tồn tại');
+            return res.redirect('/admin/notes?error=Ghi chú không tồn tại');
         }
         await Note.deleteOne({ _id: noteId});
-        res.redirect('/admin/note?success=Xóa ghi chú thành công');
+        res.redirect('/admin/notes?success=Xóa ghi chú thành công');
     } catch (error) {
         console.error('Lỗi khi xóa ghi chú', error);
-        res.redirect('/admin/note?error=Xóa ghi chú không thành công');
+        res.redirect('/admin/notes?error=Xóa ghi chú không thành công');
     }
 }

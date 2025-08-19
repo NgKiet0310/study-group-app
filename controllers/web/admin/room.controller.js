@@ -63,7 +63,7 @@ export const showRooms = async (req, res) => {
         const success = req.query.success;
         const error = req.query.error;
 
-        res.render('admin/pages/room/manage-room', {
+        res.render('admin/pages/room/manage-rooms', {
             rooms,
             path: req.path,
             success,
@@ -78,7 +78,7 @@ export const showRooms = async (req, res) => {
         });
     } catch (err) {
         console.error('Lỗi khi tải danh sách phòng:', err);
-        res.status(500).render('admin/pages/room/manage-room', {
+        res.status(500).render('admin/pages/room/manage-rooms', {
             rooms: [],
             path: req.path,
             error: 'Lỗi khi tải danh sách phòng',
@@ -203,7 +203,7 @@ export const createRoom = async (req, res) => {
 
         await newRoom.save();
 
-        res.redirect('/admin/room?success=Tạo phòng thành công!');
+        res.redirect('/admin/rooms?success=Tạo phòng thành công!');
     } catch (error) {
         console.error('Lỗi khi tạo phòng:', error);
         const users = await getAllUsers();
@@ -228,7 +228,7 @@ export const showEditRoom = async (req, res) => {
         room.members = room.members.filter(m => m.user);
 
         if(!room){
-            return res.redirect('/admin/room?error=Phòng không tồn tại');
+            return res.redirect('/admin/rooms?error=Phòng không tồn tại');
         }
 
         const users = await getAllUsers();
@@ -241,7 +241,7 @@ export const showEditRoom = async (req, res) => {
         })
     } catch (error) {
         console.error('Lỗi khi hiển thị form chỉnh sửa', error);
-        res.redirect('/admin/room?error= Lỗi khi hiển thị form chỉnh sửa');
+        res.redirect('/admin/rooms?error= Lỗi khi hiển thị form chỉnh sửa');
     }
 }
 
@@ -326,7 +326,7 @@ export const editRoom = async( req, res ) => {
             updatedAt: Date.now()
         });
 
-        res.redirect('/admin/room?success=Cập nhật phòng thành công!');
+        res.redirect('/admin/rooms?success=Cập nhật phòng thành công!');
     } catch (error) {
         console.error('Lỗi khi chỉnh sửa phòng:', error);
         const users = await getAllUsers();
@@ -348,7 +348,7 @@ export const showRoomDetail = async(req, res ) => {
         .populate('members.user','username');
 
         if (!room) {
-            return res.redirect('/admin/room?error=Phòng không tồn tại');
+            return res.redirect('/admin/rooms?error=Phòng không tồn tại');
         }
 
         res.render('admin/pages/room/room-detail', {
@@ -359,7 +359,7 @@ export const showRoomDetail = async(req, res ) => {
         });
     } catch (error) {
         console.error('Lỗi khi hiển thị chi tiết phòng:', error);
-        res.redirect('/admin/room?error=Lỗi khi hiển thị chi tiết phòng');
+        res.redirect('/admin/rooms?error=Lỗi khi hiển thị chi tiết phòng');
     }
 }
 
@@ -369,7 +369,7 @@ export const deleteRoom = async (req, res) => {
         const room = await Room.findById(roomId);
 
         if (!room) {
-            return res.redirect('/admin/room?error=Phòng không tồn tại');
+            return res.redirect('/admin/rooms?error=Phòng không tồn tại');
         }
  
         await Room.deleteOne({ _id: roomId });
@@ -377,7 +377,7 @@ export const deleteRoom = async (req, res) => {
         res.redirect('/admin/room?success=Xóa phòng thành công!');
     } catch (error) {
         console.error('Lỗi khi xóa phòng:', error);
-        res.redirect('/admin/room?error=Đã có lỗi xảy ra khi xóa phòng');
+        res.redirect('/admin/rooms?error=Đã có lỗi xảy ra khi xóa phòng');
     }
 };
 

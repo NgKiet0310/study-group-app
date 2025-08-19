@@ -21,10 +21,11 @@ import scheduleRoutes from './routes/web/admin/schedule.route.js';
 import roomRoutes from './routes/web/admin/room.route.js';
 import userRoutes from './routes/web/admin/user.route.js';
 import noteRoutes from './routes/web/admin/note.route.js';
-// Config .env
+import taskRoutes from './routes/web/admin/task.route.js';
+
 dotenv.config();
 
-// App init
+
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,9 +53,10 @@ app.use('/', HomeRoutes);
 
 app.use('/admin/auth', adminAuthRoutes);
 app.use('/admin/schedules', isAdmin, scheduleRoutes);
-app.use('/admin/room', isAdmin, roomRoutes);
-app.use('/admin/user', isAdmin, userRoutes);
-app.use('/admin/note', isAdmin, noteRoutes);
+app.use('/admin/rooms', isAdmin, roomRoutes);
+app.use('/admin/users', isAdmin, userRoutes);
+app.use('/admin/notes', isAdmin, noteRoutes);
+app.use('/admin/tasks',isAdmin, taskRoutes);
 app.use('/admin', isAdmin, AdminRoutes);
 
 // Global error handler

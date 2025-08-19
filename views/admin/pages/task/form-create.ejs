@@ -1,0 +1,418 @@
+<% layout('layouts/main-admin') %>
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="card shadow-lg rounded-4 border-0">
+    <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4 d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-list-task me-2 animate__animated animate__pulse animate__infinite"></i>Tạo nhiệm vụ mới</span>
+      <a href="/admin/tasks" class="btn btn-light btn-sm fw-semibold rounded-pill">
+        <i class="bi bi-arrow-left me-1"></i>Quay lại
+      </a>
+    </div>
+    <div class="card-body p-4">
+      <!-- Hiển thị thông báo success -->
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+          <%= success %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <!-- Hiển thị thông báo lỗi -->
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <!-- Form tạo task -->
+      <form method="POST" action="/admin/tasks/create" id="taskForm">
+        <div class="row g-3">
+          <!-- Tiêu đề nhiệm vụ -->
+          <div class="col-md-6">
+            <label for="title" class="form-label fw-semibold">
+              Tiêu đề <span class="text-danger">*</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-control rounded-3" 
+              id="title" 
+              name="title" 
+              placeholder="Nhập tiêu đề nhiệm vụ" 
+              value="<%= formData?.title || '' %>" 
+              maxlength="200"
+              required>
+            <div class="form-text">Tối đa 200 ký tự</div>
+          </div>
+
+          <!-- Chọn phòng -->
+          <div class="col-md-6">
+            <label for="room" class="form-label fw-semibold">
+              Phòng <span class="text-danger">*</span>
+            </label>
+            <select class="form-select rounded-3" id="room" name="room" required>
+              <option value="">-- Chọn phòng --</option>
+              <% rooms.forEach(room => { %>
+                <option 
+                  value="<%= room._id %>" 
+                  <%= formData?.room === room._id.toString() ? 'selected' : '' %>
+                  data-room-id="<%= room._id %>">
+                  <%= room.name %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <!-- Người tạo - Admin phòng và Host phòng -->
+          <div class="col-md-6">
+            <label for="createdBy" class="form-label fw-semibold">
+              Người tạo <span class="text-danger">*</span>
+            </label>
+            <select class="form-select rounded-3" id="createdBy" name="createdBy" required>
+              <option value="">-- Chọn người tạo --</option>
+            </select>
+            <div class="form-text">Chỉ admin phòng và host phòng mới có quyền tạo task</div>
+          </div>
+
+          <!-- Người được giao nhiệm vụ - Members của phòng -->
+          <div class="col-md-6">
+            <label for="assignedTo" class="form-label fw-semibold">
+              Người được giao nhiệm vụ
+            </label>
+            <select class="form-select rounded-3" id="assignedTo" name="assignedTo" multiple size="4">
+              <option value="" disabled>Vui lòng chọn phòng trước để tải danh sách thành viên</option>
+            </select>
+            <div class="form-text">
+              Giữ Ctrl (Windows) hoặc Cmd (Mac) để chọn nhiều người. 
+              Chỉ thành viên thường của phòng mới hiển thị.
+            </div>
+          </div>
+
+          <!-- Trạng thái -->
+          <div class="col-md-6">
+            <label for="status" class="form-label fw-semibold">Trạng thái</label>
+            <select class="form-select rounded-3" id="status" name="status">
+              <option value="pending" <%= formData?.status === 'pending' || !formData?.status ? 'selected' : '' %>>
+                📋 Chờ xử lý
+              </option>
+              <option value="in-progress" <%= formData?.status === 'in-progress' ? 'selected' : '' %>>
+                ⚡ Đang thực hiện
+              </option>
+              <option value="completed" <%= formData?.status === 'completed' ? 'selected' : '' %>>
+                ✅ Hoàn thành
+              </option>
+            </select>
+          </div>
+
+          <!-- Ngày hết hạn -->
+          <div class="col-md-6">
+            <label for="dueDate" class="form-label fw-semibold">Ngày hết hạn</label>
+            <input 
+              type="datetime-local" 
+              class="form-control rounded-3" 
+              id="dueDate" 
+              name="dueDate" 
+              value="<%= formData?.dueDate ? new Date(formData.dueDate).toISOString().slice(0,16) : '' %>"
+              min="<%= new Date().toISOString().slice(0,16) %>">
+            <div class="form-text">Để trống nếu không có hạn chế thời gian</div>
+          </div>
+
+          <!-- Mô tả -->
+          <div class="col-12">
+            <label for="description" class="form-label fw-semibold">Mô tả chi tiết</label>
+            <textarea 
+              class="form-control rounded-3" 
+              id="description" 
+              name="description" 
+              rows="5" 
+              placeholder="Nhập mô tả chi tiết về nhiệm vụ..."
+              maxlength="1000"><%= formData?.description || '' %></textarea>
+            <div class="form-text">Tối đa 1000 ký tự. Còn lại: <span id="descCount">1000</span></div>
+          </div>
+        </div>
+
+        <!-- Nút hành động -->
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-primary rounded-pill px-4" id="submitBtn">
+            <i class="bi bi-save me-1"></i>Tạo nhiệm vụ
+          </button>
+          <button type="reset" class="btn btn-outline-warning rounded-pill px-4">
+            <i class="bi bi-arrow-clockwise me-1"></i>Làm mới
+          </button>
+          <a href="/admin/tasks" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left me-1"></i>Hủy bỏ
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- CSS Styles -->
+<style>
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #0052cc, #00c4ff);
+  }
+  
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+  
+  .btn, .form-control, .form-select {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #0052cc;
+    box-shadow: 0 0 0 0.2rem rgba(0, 82, 204, 0.25);
+  }
+  
+  .form-select[multiple] {
+    min-height: 120px;
+  }
+  .form-select[multiple] option {
+    padding: 8px 12px;
+    margin: 2px 0;
+  }
+  .form-select[multiple] option:checked {
+    background: linear-gradient(45deg, #0052cc, #00c4ff);
+    color: white;
+  }
+  
+  #descCount {
+    font-weight: bold;
+    color: #0052cc;
+  }
+  
+  @media (max-width: 768px) {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .d-flex.gap-2 {
+      flex-direction: column;
+    }
+    .d-flex.gap-2 .btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<!-- JavaScript Logic -->
+<script>
+// Dữ liệu từ server
+const roomManagers = JSON.parse(decodeURIComponent('<%= encodeURIComponent(JSON.stringify(roomManagers || {})) %>'));
+const roomMembers = JSON.parse(decodeURIComponent('<%= encodeURIComponent(JSON.stringify(roomMembers || {})) %>'));
+const formData = JSON.parse(decodeURIComponent('<%= encodeURIComponent(JSON.stringify(formData || {})) %>'));
+
+console.log('Room Managers:', roomManagers);
+console.log('Room Members:', roomMembers);
+
+/**
+ * Cập nhật danh sách người tạo khi chọn phòng
+ */
+function updateCreatedBy(roomId) {
+  const createdBySelect = document.getElementById('createdBy');
+  
+  // Reset danh sách
+  createdBySelect.innerHTML = '<option value="">-- Chọn người tạo --</option>';
+  
+  if (!roomId || !roomManagers[roomId]) {
+    return;
+  }
+
+  // Thêm admin phòng và host phòng
+  roomManagers[roomId].forEach(manager => {
+    const option = document.createElement('option');
+    option.value = manager._id;
+    option.textContent = `${manager.username} (${manager.role === 'admin' ? 'Admin phòng' : 'Host phòng'})`;
+    
+    // Giữ lại selection nếu có formData
+    if (formData?.createdBy === manager._id) {
+      option.selected = true;
+    }
+    
+    createdBySelect.appendChild(option);
+  });
+}
+
+/**
+ * Cập nhật danh sách assignedTo khi chọn phòng
+ */
+function updateAssignedTo(roomId) {
+  const assignedToSelect = document.getElementById('assignedTo');
+  
+  // Reset danh sách
+  assignedToSelect.innerHTML = '';
+  
+  if (!roomId) {
+    assignedToSelect.innerHTML = '<option value="" disabled>Vui lòng chọn phòng trước để tải danh sách thành viên</option>';
+    return;
+  }
+
+  // Kiểm tra phòng có members không
+  if (!roomMembers[roomId] || roomMembers[roomId].length === 0) {
+    assignedToSelect.innerHTML = '<option value="" disabled>Phòng này chưa có thành viên nào</option>';
+    return;
+  }
+
+  // Thêm option mặc định
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = '-- Chọn thành viên (có thể chọn nhiều) --';
+  assignedToSelect.appendChild(defaultOption);
+
+  // Thêm từng member vào select
+  roomMembers[roomId].forEach(member => {
+    const option = document.createElement('option');
+    option.value = member._id;
+    option.textContent = member.username;
+    
+    // Giữ lại selection nếu có formData
+    if (formData?.assignedTo && formData.assignedTo.includes(member._id)) {
+      option.selected = true;
+    }
+    
+    assignedToSelect.appendChild(option);
+  });
+
+  console.log(`Đã load ${roomMembers[roomId].length} thành viên cho phòng ${roomId}`);
+}
+
+/**
+ * Cập nhật character counter cho textarea description
+ */
+function updateCharacterCount() {
+  const textarea = document.getElementById('description');
+  const counter = document.getElementById('descCount');
+  const maxLength = 1000;
+  
+  if (textarea && counter) {
+    const remaining = maxLength - textarea.value.length;
+    counter.textContent = remaining;
+    
+    // Đổi màu khi gần hết
+    if (remaining < 100) {
+      counter.style.color = '#dc3545'; // Màu đỏ
+    } else if (remaining < 200) {
+      counter.style.color = '#ffc107'; // Màu vàng
+    } else {
+      counter.style.color = '#0052cc'; // Màu xanh mặc định
+    }
+  }
+}
+
+/**
+ * Validate form trước khi submit
+ */
+function validateForm() {
+  const title = document.getElementById('title').value.trim();
+  const room = document.getElementById('room').value;
+  const createdBy = document.getElementById('createdBy').value;
+  
+  if (!title) {
+    alert('Vui lòng nhập tiêu đề nhiệm vụ');
+    return false;
+  }
+  
+  if (title.length < 3) {
+    alert('Tiêu đề phải có ít nhất 3 ký tự');
+    return false;
+  }
+  
+  if (!room) {
+    alert('Vui lòng chọn phòng');
+    return false;
+  }
+  
+  if (!createdBy) {
+    alert('Vui lòng chọn người tạo nhiệm vụ');
+    return false;
+  }
+  
+  // Kiểm tra ngày hết hạn
+  const dueDate = document.getElementById('dueDate').value;
+  if (dueDate) {
+    const dueDateObj = new Date(dueDate);
+    const now = new Date();
+    
+    if (dueDateObj <= now) {
+      alert('Ngày hết hạn phải là thời điểm trong tương lai');
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+/**
+ * Khởi tạo khi DOM ready
+ */
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM loaded, initializing form...');
+  
+  const roomSelect = document.getElementById('room');
+  const descriptionTextarea = document.getElementById('description');
+  const taskForm = document.getElementById('taskForm');
+  
+  // Event listener cho việc thay đổi phòng
+  if (roomSelect) {
+    roomSelect.addEventListener('change', function() {
+      const selectedRoomId = this.value;
+      console.log('Room changed to:', selectedRoomId);
+      updateCreatedBy(selectedRoomId); // Cập nhật người tạo
+      updateAssignedTo(selectedRoomId); // Cập nhật người được giao
+    });
+    
+    // Load data cho phòng đã được chọn sẵn (nếu có formData)
+    if (roomSelect.value) {
+      updateCreatedBy(roomSelect.value);
+      updateAssignedTo(roomSelect.value);
+    }
+  }
+  
+  // Character counter cho description
+  if (descriptionTextarea) {
+    descriptionTextarea.addEventListener('input', updateCharacterCount);
+    updateCharacterCount();
+  }
+  
+  // Form validation khi submit
+  if (taskForm) {
+    taskForm.addEventListener('submit', function(e) {
+      if (!validateForm()) {
+        e.preventDefault();
+      } else {
+        // Hiển thị loading state
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<i class="bi bi-spinner spinner-border spinner-border-sm me-1"></i>Đang tạo...';
+        }
+      }
+    });
+  }
+  
+  // Reset button functionality
+  const resetBtn = document.querySelector('button[type="reset"]');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function() {
+      setTimeout(() => {
+        updateCreatedBy('');
+        updateAssignedTo('');
+        updateCharacterCount();
+      }, 100);
+    });
+  }
+  
+  console.log('Form initialization completed');
+});
+</script>

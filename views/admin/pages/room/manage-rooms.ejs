@@ -25,7 +25,7 @@
       <% } %>
 
       <!-- Form tìm kiếm và lọc -->
-      <form method="GET" action="/admin/room" class="mb-4">
+      <form method="GET" action="/admin/rooms" class="mb-4">
         <div class="row g-3">
           <!-- Tìm kiếm theo tên hoặc mã phòng -->
           <div class="col-md-4">
@@ -62,7 +62,7 @@
           <button type="submit" class="btn btn-primary rounded-pill">
             <i class="bi bi-funnel me-1"></i>Lọc
           </button>
-          <a href="/admin/room" class="btn btn-outline-secondary rounded-pill">
+          <a href="/admin/rooms" class="btn btn-outline-secondary rounded-pill">
             <i class="bi bi-arrow-counterclockwise me-1"></i>Đặt lại
           </a>
         </div>
@@ -132,13 +132,13 @@
                     }) %>
                   </td>
                   <td class="text-center">
-                    <a href="/admin/room/detail/<%= room._id %>" class="btn btn-sm btn-outline-info rounded-pill me-1">
+                    <a href="/admin/rooms/detail/<%= room._id %>" class="btn btn-sm btn-outline-info rounded-pill me-1">
                       <i class="bi bi-eye me-1"></i>Xem
                     </a>
-                    <a href="/admin/room/edit/<%= room._id %>" class="btn btn-sm btn-outline-warning rounded-pill me-1">
+                    <a href="/admin/rooms/edit/<%= room._id %>" class="btn btn-sm btn-outline-warning rounded-pill me-1">
                       <i class="bi bi-pencil-square me-1"></i>Sửa
                     </a>
-                    <form action="/admin/room/delete/<%= room._id %>" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa phòng <%= room.name %>?');">
+                    <form action="/admin/rooms/delete/<%= room._id %> " method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa phòng <%= room.name %>?');">
                       <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
                         <i class="bi bi-trash me-1"></i>Xóa
                       </button>
@@ -157,19 +157,19 @@
           <ul class="pagination justify-content-center">
             <!-- Previous -->
             <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
-              <a class="page-link rounded-pill" href="/admin/room?page=<%= page - 1 %>&search=<%= search || '' %>&memberCount=<%= memberCount || '' %>&startDate=<%= startDate || '' %>&endDate=<%= endDate || '' %>">
+              <a class="page-link rounded-pill" href="/admin/rooms?page=<%= page - 1 %>&search=<%= search || '' %>&memberCount=<%= memberCount || '' %>&startDate=<%= startDate || '' %>&endDate=<%= endDate || '' %>">
                 <i class="bi bi-chevron-left"></i>
               </a>
             </li>
             <!-- Số trang -->
             <% for (let i = 1; i <= totalPages; i++) { %>
               <li class="page-item <%= page === i ? 'active' : '' %>">
-                <a class="page-link rounded-pill" href="/admin/room?page=<%= i %>&search=<%= search || '' %>&memberCount=<%= memberCount || '' %>&startDate=<%= startDate || '' %>&endDate=<%= endDate || '' %>"><%= i %></a>
+                <a class="page-link rounded-pill" href="/admin/rooms?page=<%= i %>&search=<%= search || '' %>&memberCount=<%= memberCount || '' %>&startDate=<%= startDate || '' %>&endDate=<%= endDate || '' %>"><%= i %></a>
               </li>
             <% } %>
             <!-- Next -->
             <li class="page-item <%= page === totalPages ? 'disabled' : '' %>">
-              <a class="page-link rounded-pill" href="/admin/room?page=<%= page + 1 %>&search=<%= search || '' %>&memberCount=<%= memberCount || '' %>&startDate=<%= startDate || '' %>&endDate=<%= endDate || '' %>">
+              <a class="page-link rounded-pill" href="/admin/rooms?page=<%= page + 1 %>&search=<%= search || '' %>&memberCount=<%= memberCount || '' %>&startDate=<%= startDate || '' %>&endDate=<%= endDate || '' %>">
                 <i class="bi bi-chevron-right"></i>
               </a>
             </li>

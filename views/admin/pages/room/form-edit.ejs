@@ -21,7 +21,7 @@
       <% } %>
 
       <!-- Form chỉnh sửa phòng -->
-      <form action="/admin/room/edit/<%= room._id %>" method="POST">
+      <form action="/admin/rooms/edit/<%= room._id %>" method="POST">
         <div class="mb-3">
           <label for="name" class="form-label fw-semibold">Tên phòng <span class="text-danger">*</span></label>
           <input type="text" class="form-control rounded-3" id="name" name="name" value="<%= room.name %>" required>
@@ -74,7 +74,7 @@
           </div>
         </div>
         <div class="d-flex justify-content-end gap-2">
-          <a href="/admin/room" class="btn btn-outline-secondary rounded-pill">Hủy</a>
+          <a href="/admin/rooms" class="btn btn-outline-secondary rounded-pill">Hủy</a>
           <button type="submit" class="btn btn-primary rounded-pill">Lưu thay đổi</button>
         </div>
       </form>

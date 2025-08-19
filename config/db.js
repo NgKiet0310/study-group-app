@@ -9,7 +9,7 @@ const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/study-grou
 export const connectDB = async () => {
   try {
     await mongoose.connect(MONGO_URL);
-    console.log(chalk.green('✅ Kết nối MongoDB thành công!'));
+    console.log(chalk.blue('✅ Kết nối MongoDB thành công!'));
   } catch (error) {
     console.error(chalk.red('❌ Kết nối MongoDB thất bại:'), error.message);
     process.exit(1);

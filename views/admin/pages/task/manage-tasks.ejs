@@ -1,0 +1,250 @@
+<% layout('layouts/main-admin') %>
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="card shadow-lg rounded-4 border-0">
+    <!-- Header với gradient và nút thêm nhiệm vụ -->
+    <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4 d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-list-task me-2 animate__animated animate__pulse animate__infinite"></i>Danh sách nhiệm vụ</span>
+      <a href="/admin/tasks/create" class="btn btn-light btn-sm fw-semibold rounded-pill">
+        <i class="bi bi-plus-circle me-1"></i>Thêm nhiệm vụ
+      </a>
+    </div>
+    <div class="card-body p-4">
+      <!-- Hiển thị thông báo lỗi hoặc thành công -->
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+          <%= success %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <!-- Form tìm kiếm và lọc -->
+      <form method="GET" action="/admin/tasks" class="mb-4">
+        <div class="row g-3">
+          <!-- Tìm kiếm theo tiêu đề -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Tìm kiếm</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control rounded-3" name="search" placeholder="Tìm theo tiêu đề" value="<%= search || '' %>">
+            </div>
+          </div>
+          <!-- Lọc theo phòng -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Phòng</label>
+            <select class="form-select rounded-3" name="room">
+              <option value="">Tất cả</option>
+              <% rooms.forEach(room => { %>
+                <option value="<%= room._id %>" <%= room === room._id.toString() ? 'selected' : '' %>><%= room.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <!-- Lọc theo trạng thái -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Trạng thái</label>
+            <select class="form-select rounded-3" name="status">
+              <option value="">Tất cả</option>
+              <option value="pending" <%= status === 'pending' ? 'selected' : '' %>>Chờ xử lý</option>
+              <option value="in-progress" <%= status === 'in-progress' ? 'selected' : '' %>>Đang thực hiện</option>
+              <option value="completed" <%= status === 'completed' ? 'selected' : '' %>>Hoàn thành</option>
+            </select>
+          </div>
+          <!-- Lọc theo người được giao -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Người được giao</label>
+            <select class="form-select rounded-3" name="assignedTo">
+              <option value="">Tất cả</option>
+              <% users.forEach(user => { %>
+                <option value="<%= user._id %>" <%= assignedTo === user._id.toString() ? 'selected' : '' %>><%= user.username %></option>
+              <% }) %>
+            </select>
+          </div>
+          <!-- Lọc theo ngày hết hạn -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Ngày hết hạn</label>
+            <input type="date" class="form-control rounded-3" name="dueDate" value="<%= dueDate || '' %>">
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" class="btn btn-primary rounded-pill">
+            <i class="bi bi-funnel me-1"></i>Lọc
+          </button>
+          <a href="/admin/tasks" class="btn btn-outline-secondary rounded-pill">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>Đặt lại
+          </a>
+        </div>
+      </form>
+
+      <!-- Bảng danh sách nhiệm vụ -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle text-nowrap">
+          <thead class="table-light">
+            <tr class="text-center">
+              <th style="width: 5%;">#</th>
+              <th style="width: 20%;">Tiêu đề</th>
+              <th style="width: 15%;">Phòng</th>
+              <th style="width: 15%;">Người tạo</th>
+              <th style="width: 15%;">Người được giao</th>
+              <th style="width: 15%;">Trạng thái</th>
+              <th style="width: 15%;">Ngày hết hạn</th>
+              <th style="width: 20%;">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (tasks.length === 0) { %>
+              <tr>
+                <td colspan="8" class="text-center text-muted py-4">
+                  <i class="bi bi-info-circle me-1"></i>Không có nhiệm vụ nào.
+                </td>
+              </tr>
+            <% } else { %>
+              <% tasks.forEach((task, index) => { %>
+                <tr class="table-row-hover">
+                  <td class="text-center fw-bold"><%= (page - 1) * limit + index + 1 %></td>
+                  <td><%= task.title %></td>
+                  <td class="text-center"><%= task.room ? task.room.name : 'N/A' %></td>
+                  <td class="text-center"><%= task.createdBy ? task.createdBy.username : 'N/A' %></td>
+                  <td class="text-center">
+                    <%= task.assignedTo.length > 0 ? task.assignedTo.map(user => user.username).join(', ') : 'Chưa giao' %>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-<%= task.status === 'completed' ? 'success' : task.status === 'in-progress' ? 'warning' : 'secondary' %> rounded-pill">
+                      <%= task.status === 'pending' ? 'Chờ xử lý' : task.status === 'in-progress' ? 'Đang thực hiện' : 'Hoàn thành' %>
+                    </span>
+                  </td>
+                  <td class="text-center text-muted">
+                    <%= task.dueDate ? new Date(task.dueDate).toLocaleDateString('vi-VN', { 
+                      day: '2-digit', 
+                      month: '2-digit', 
+                      year: 'numeric'
+                    }) : 'N/A' %>
+                  </td>
+                  <td class="text-center">
+                    <a href="/admin/tasks/detail/<%= task._id %>" class="btn btn-sm btn-outline-info rounded-pill me-1">
+                      <i class="bi bi-eye me-1"></i>Xem
+                    </a>
+                    <a href="/admin/tasks/edit/<%= task._id %>" class="btn btn-sm btn-outline-warning rounded-pill me-1">
+                      <i class="bi bi-pencil-square me-1"></i>Sửa
+                    </a>
+                    <form action="/admin/tasks/delete/<%= task._id %>" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhiệm vụ <%= task.title %>?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
+                        <i class="bi bi-trash me-1"></i>Xóa
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Phân trang -->
+      <% if (totalPages > 1) { %>
+        <nav aria-label="Task pagination" class="mt-4">
+          <ul class="pagination justify-content-center">
+            <!-- Previous -->
+            <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
+              <a class="page-link rounded-pill" href="/admin/tasks?page=<%= page - 1 %>&search=<%= search || '' %>&room=<%= room || '' %>&status=<%= status || '' %>&assignedTo=<%= assignedTo || '' %>&dueDate=<%= dueDate || '' %>">
+                <i class="bi bi-chevron-left"></i>
+              </a>
+            </li>
+            <!-- Số trang -->
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= page === i ? 'active' : '' %>">
+                <a class="page-link rounded-pill" href="/admin/tasks?page=<%= i %>&search=<%= search || '' %>&room=<%= room || '' %>&status=<%= status || '' %>&assignedTo=<%= assignedTo || '' %>&dueDate=<%= dueDate || '' %>"><%= i %></a>
+              </li>
+            <% } %>
+            <!-- Next -->
+            <li class="page-item <%= page === totalPages ? 'disabled' : '' %>">
+              <a class="page-link rounded-pill" href="/admin/tasks?page=<%= page + 1 %>&search=<%= search || '' %>&room=<%= room || '' %>&status=<%= status || '' %>&assignedTo=<%= assignedTo || '' %>&dueDate=<%= dueDate || '' %>">
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Gradient cho header */
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #0052cc, #00c4ff);
+  }
+
+  /* Hover effect cho card và table row */
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+  .table-row-hover:hover {
+    background-color: #f8f9fa;
+  }
+
+  /* Style cho badge */
+  .badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.8em;
+    font-weight: 500;
+  }
+
+  /* Style cho button và input */
+  .btn, .form-control, .form-select {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #0052cc;
+    box-shadow: 0 0 0 0.2rem rgba(0, 82, 204, 0.25);
+  }
+
+  /* Style cho pagination */
+  .page-link {
+    border-radius: 50px !important;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+  }
+  .page-link:hover {
+    transform: translateY(-2px);
+  }
+  .page-item.active .page-link {
+    background-color: #0052cc;
+    border-color: #0052cc;
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .card-header a {
+      width: 100%;
+      text-align: center;
+    }
+    .row.g-3 {
+      flex-direction: column;
+    }
+    .table-responsive {
+      font-size: 0.9rem;
+    }
+  }
+
+ 
+@import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+</style>

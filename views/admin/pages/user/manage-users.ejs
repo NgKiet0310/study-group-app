@@ -2,11 +2,11 @@
 
 <div class="container mt-5 animate__animated animate__fadeIn">
   <div class="card shadow-lg rounded-4 border-0">
-    <!-- Header với gradient và nút thêm ghi chú -->
+    <!-- Header với gradient và nút thêm người dùng -->
     <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4 d-flex justify-content-between align-items-center">
-      <span><i class="bi bi-journal-text me-2 animate__animated animate__pulse animate__infinite"></i>Danh sách ghi chú</span>
-      <a href="/admin/note/create" class="btn btn-light btn-sm fw-semibold rounded-pill">
-        <i class="bi bi-plus-circle me-1"></i>Thêm ghi chú
+      <span><i class="bi bi-people-fill me-2 animate__animated animate__pulse animate__infinite"></i>Danh sách người dùng</span>
+      <a href="/admin/users/create" class="btn btn-light btn-sm fw-semibold rounded-pill">
+        <i class="bi bi-plus-circle me-1"></i>Thêm người dùng
       </a>
     </div>
     <div class="card-body p-4">
@@ -25,33 +25,23 @@
       <% } %>
 
       <!-- Form tìm kiếm và lọc -->
-      <form method="GET" action="/admin/note" class="mb-4">
+      <form method="GET" action="/admin/users" class="mb-4">
         <div class="row g-3">
-          <!-- Tìm kiếm theo tiêu đề -->
-          <div class="col-md-4">
+          <!-- Tìm kiếm theo username -->
+          <div class="col-md-6">
             <label class="form-label fw-semibold">Tìm kiếm</label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-search"></i></span>
-              <input type="text" class="form-control rounded-3" name="search" placeholder="Tìm theo tiêu đề" value="<%= search || '' %>">
+              <input type="text" class="form-control rounded-3" name="search" placeholder="Tên người dùng" value="<%= search || '' %>">
             </div>
           </div>
-          <!-- Lọc theo phòng -->
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Phòng</label>
-            <select class="form-select rounded-3" name="room">
+          <!-- Lọc theo role -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Vai trò</label>
+            <select class="form-select rounded-3" name="role">
               <option value="">Tất cả</option>
-              <% rooms.forEach(room => { %>
-                <option value="<%= room._id %>" <%= room === room._id.toString() ? 'selected' : '' %>><%= room.name %></option>
-              <% }) %>
-            </select>
-          </div>
-          <!-- Lọc theo trạng thái công khai -->
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Trạng thái</label>
-            <select class="form-select rounded-3" name="isPublic">
-              <option value="">Tất cả</option>
-              <option value="true" <%= isPublic === 'true' ? 'selected' : '' %>>Công khai</option>
-              <option value="false" <%= isPublic === 'false' ? 'selected' : '' %>>Riêng tư</option>
+              <option value="user" <%= role === 'user' ? 'selected' : '' %>>User</option>
+              <option value="admin" <%= role === 'admin' ? 'selected' : '' %>>Admin</option>
             </select>
           </div>
         </div>
@@ -59,47 +49,52 @@
           <button type="submit" class="btn btn-primary rounded-pill">
             <i class="bi bi-funnel me-1"></i>Lọc
           </button>
-          <a href="/admin/note" class="btn btn-outline-secondary rounded-pill">
+          <a href="/admin/users" class="btn btn-outline-secondary rounded-pill">
             <i class="bi bi-arrow-counterclockwise me-1"></i>Đặt lại
           </a>
         </div>
       </form>
 
-      <!-- Bảng danh sách ghi chú -->
+      <!-- Bảng danh sách người dùng -->
       <div class="table-responsive">
         <table class="table table-hover align-middle text-nowrap">
           <thead class="table-light">
             <tr class="text-center">
               <th style="width: 5%;">#</th>
-              <th style="width: 25%;">Tiêu đề</th>
-              <th style="width: 20%;">Phòng</th>
-              <th style="width: 15%;">Người tạo</th>
-              <th style="width: 15%;">Trạng thái</th>
-              <th style="width: 20%;">Ngày tạo</th>
+              <th style="width: 25%;">Tên người dùng</th>
+              <th style="width: 20%;">Vai trò</th>
+              <th style="width: 25%;">Ngày tạo</th>
               <th style="width: 25%;">Hành động</th>
             </tr>
           </thead>
           <tbody>
-            <% if (notes.length === 0) { %>
+            <% if (users.length === 0) { %>
               <tr>
-                <td colspan="7" class="text-center text-muted py-4">
-                  <i class="bi bi-info-circle me-1"></i>Không có ghi chú nào.
+                <td colspan="5" class="text-center text-muted py-4">
+                  <i class="bi bi-info-circle me-1"></i>Không có người dùng nào.
                 </td>
               </tr>
             <% } else { %>
-              <% notes.forEach((note, index) => { %>
+              <% users.forEach((user, index) => { %>
                 <tr class="table-row-hover">
                   <td class="text-center fw-bold"><%= (page - 1) * limit + index + 1 %></td>
-                  <td><%= note.title %></td>
-                  <td class="text-center"><%= note.room ? note.room.name : 'N/A' %></td>
-                  <td class="text-center"><%= note.createdBy ? note.createdBy.username : 'N/A' %></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar avatar-sm me-2">
+                        <span class="avatar-text bg-<%= user.role === 'admin' ? 'primary' : 'secondary' %> text-white rounded-circle">
+                          <%= user.username[0].toUpperCase() %>
+                        </span>
+                      </div>
+                      <%= user.username %>
+                    </div>
+                  </td>
                   <td class="text-center">
-                    <span class="badge bg-<%= note.isPublic ? 'success' : 'warning' %> rounded-pill">
-                      <%= note.isPublic ? 'Công khai' : 'Riêng tư' %>
+                    <span class="badge bg-<%= user.role === 'admin' ? 'primary' : 'secondary' %> rounded-pill">
+                      <%= user.role === 'admin' ? 'Quản trị' : 'Người dùng' %>
                     </span>
                   </td>
                   <td class="text-center text-muted">
-                    <%= new Date(note.createdAt).toLocaleString('vi-VN', { 
+                    <%= new Date(user.createdAt).toLocaleString('vi-VN', { 
                       day: '2-digit', 
                       month: '2-digit', 
                       year: 'numeric',
@@ -108,13 +103,13 @@
                     }) %>
                   </td>
                   <td class="text-center">
-                    <a href="/admin/note/detail/<%= note._id %>" class="btn btn-sm btn-outline-info rounded-pill me-1">
+                    <a href="/admin/users/detail/<%= user._id %>" class="btn btn-sm btn-outline-info rounded-pill me-1">
                       <i class="bi bi-eye me-1"></i>Xem
                     </a>
-                    <a href="/admin/note/edit/<%= note._id %>" class="btn btn-sm btn-outline-warning rounded-pill me-1">
+                    <a href="/admin/users/edit/<%= user._id %>" class="btn btn-sm btn-outline-warning rounded-pill me-1">
                       <i class="bi bi-pencil-square me-1"></i>Sửa
                     </a>
-                    <form action="/admin/note/delete/<%= note._id %>" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa ghi chú <%= note.title %>?');">
+                    <form action="/admin/users/delete/<%= user._id %>" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng <%= user.username %>?');">
                       <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
                         <i class="bi bi-trash me-1"></i>Xóa
                       </button>
@@ -129,23 +124,23 @@
 
       <!-- Phân trang -->
       <% if (totalPages > 1) { %>
-        <nav aria-label="Note pagination" class="mt-4">
+        <nav aria-label="User pagination" class="mt-4">
           <ul class="pagination justify-content-center">
             <!-- Previous -->
             <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
-              <a class="page-link rounded-pill" href="/admin/note?page=<%= page - 1 %>&search=<%= search || '' %>&room=<%= room || '' %>&isPublic=<%= isPublic || '' %>">
+              <a class="page-link rounded-pill" href="/admin/users?page=<%= page - 1 %>&search=<%= search || '' %>&role=<%= role || '' %>">
                 <i class="bi bi-chevron-left"></i>
               </a>
             </li>
             <!-- Số trang -->
             <% for (let i = 1; i <= totalPages; i++) { %>
               <li class="page-item <%= page === i ? 'active' : '' %>">
-                <a class="page-link rounded-pill" href="/admin/note?page=<%= i %>&search=<%= search || '' %>&room=<%= room || '' %>&isPublic=<%= isPublic || '' %>"><%= i %></a>
+                <a class="page-link rounded-pill" href="/admin/users?page=<%= i %>&search=<%= search || '' %>&role=<%= role || '' %>"><%= i %></a>
               </li>
             <% } %>
             <!-- Next -->
             <li class="page-item <%= page === totalPages ? 'disabled' : '' %>">
-              <a class="page-link rounded-pill" href="/admin/note?page=<%= page + 1 %>&search=<%= search || '' %>&room=<%= room || '' %>&isPublic=<%= isPublic || '' %>">
+              <a class="page-link rounded-pill" href="/admin/users?page=<%= page + 1 %>&search=<%= search || '' %>&role=<%= role || '' %>">
                 <i class="bi bi-chevron-right"></i>
               </a>
             </li>
@@ -172,6 +167,22 @@
   }
   .table-row-hover:hover {
     background-color: #f8f9fa;
+  }
+
+  /* Style cho avatar placeholder */
+  .avatar {
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  .avatar-text {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    line-height: 32px;
   }
 
   /* Style cho badge */

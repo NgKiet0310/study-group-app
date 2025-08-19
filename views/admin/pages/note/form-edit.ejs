@@ -5,7 +5,7 @@
     <!-- Header với gradient -->
     <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4 d-flex justify-content-between align-items-center">
       <span><i class="bi bi-journal-text me-2 animate__animated animate__pulse animate__infinite"></i>Chỉnh sửa ghi chú: <%= note.title %></span>
-      <a href="/admin/note" class="btn btn-light btn-sm fw-semibold rounded-pill">
+      <a href="/admin/notes" class="btn btn-light btn-sm fw-semibold rounded-pill">
         <i class="bi bi-arrow-left me-1"></i>Quay lại
       </a>
     </div>
@@ -25,7 +25,7 @@
       <% } %>
 
       <!-- Form chỉnh sửa ghi chú -->
-      <form method="POST" action="/admin/note/edit/<%= note._id %>">
+      <form method="POST" action="/admin/notes/edit/<%= note._id %>">
         <div class="row g-3">
           <!-- Tiêu đề -->
           <div class="col-md-6">
@@ -71,7 +71,7 @@
           <button type="submit" class="btn btn-primary rounded-pill">
             <i class="bi bi-save me-1"></i>Lưu
           </button>
-          <a href="/admin/note" class="btn btn-outline-secondary rounded-pill">
+          <a href="/admin/notes" class="btn btn-outline-secondary rounded-pill">
             <i class="bi bi-arrow-left me-1"></i>Quay lại
           </a>
         </div>

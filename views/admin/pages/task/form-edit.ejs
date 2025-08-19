@@ -1,0 +1,549 @@
+<% layout('layouts/main-admin') %>
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="card shadow-lg rounded-4 border-0">
+    <div class="card-header bg-gradient-warning text-white fw-semibold fs-4 p-4 d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-pencil-square me-2 animate__animated animate__pulse animate__infinite"></i>Sửa nhiệm vụ</span>
+      <a href="/admin/tasks" class="btn btn-light btn-sm fw-semibold rounded-pill">
+        <i class="bi bi-arrow-left me-1"></i>Quay lại
+      </a>
+    </div>
+    <div class="card-body p-4">
+      <!-- Hiển thị thông báo success -->
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+          <%= success %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <!-- Hiển thị thông báo lỗi -->
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <!-- Thông tin task hiện tại -->
+      <div class="alert alert-info rounded-3 mb-4">
+        <h6 class="fw-semibold mb-2"><i class="bi bi-info-circle me-1"></i>Thông tin hiện tại:</h6>
+        <p class="mb-1"><strong>ID:</strong> <%= task._id %></p>
+        <p class="mb-1"><strong>Tạo lúc:</strong> <%= new Date(task.createdAt).toLocaleString('vi-VN') %></p>
+        <% if (task.updatedAt && task.updatedAt.getTime() !== task.createdAt.getTime()) { %>
+          <p class="mb-0"><strong>Cập nhật lần cuối:</strong> <%= new Date(task.updatedAt).toLocaleString('vi-VN') %></p>
+        <% } %>
+      </div>
+
+      <!-- Form sửa task -->
+      <form method="POST" action="/admin/tasks/edit/<%= task._id %>" id="taskEditForm">
+        <input type="hidden" name="_method" value="PUT">
+        
+        <div class="row g-3">
+          <!-- Tiêu đề nhiệm vụ -->
+          <div class="col-md-6">
+            <label for="title" class="form-label fw-semibold">
+              Tiêu đề <span class="text-danger">*</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-control rounded-3" 
+              id="title" 
+              name="title" 
+              placeholder="Nhập tiêu đề nhiệm vụ" 
+              value="<%= formData?.title || task.title %>" 
+              maxlength="200"
+              required>
+            <div class="form-text">Tối đa 200 ký tự</div>
+          </div>
+
+          <!-- Chọn phòng -->
+          <div class="col-md-6">
+            <label for="room" class="form-label fw-semibold">
+              Phòng <span class="text-danger">*</span>
+            </label>
+            <select class="form-select rounded-3" id="room" name="room" required>
+              <option value="">-- Chọn phòng --</option>
+              <% rooms.forEach(room => { %>
+                <option 
+                  value="<%= room._id %>" 
+                  <%= (formData?.room || task.room._id.toString()) === room._id.toString() ? 'selected' : '' %>
+                  data-room-id="<%= room._id %>">
+                  <%= room.name %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <!-- Người tạo -->
+          <div class="col-md-6">
+            <label for="createdBy" class="form-label fw-semibold">
+              Người tạo <span class="text-danger">*</span>
+            </label>
+            <select class="form-select rounded-3" id="createdBy" name="createdBy" required>
+              <option value="">-- Chọn người tạo --</option>
+            </select>
+            <div class="form-text">Chỉ admin phòng và host phòng mới có quyền tạo task</div>
+          </div>
+
+          <!-- Người được giao nhiệm vụ -->
+          <div class="col-md-6">
+            <label for="assignedTo" class="form-label fw-semibold">
+              Người được giao nhiệm vụ
+            </label>
+            <select class="form-select rounded-3" id="assignedTo" name="assignedTo" multiple size="4">
+              <option value="" disabled>Vui lòng chọn phòng trước để tải danh sách thành viên</option>
+            </select>
+            <div class="form-text">
+              Giữ Ctrl (Windows) hoặc Cmd (Mac) để chọn nhiều người. 
+              Chỉ thành viên thường của phòng mới hiển thị.
+            </div>
+          </div>
+
+          <!-- Trạng thái -->
+          <div class="col-md-6">
+            <label for="status" class="form-label fw-semibold">Trạng thái</label>
+            <select class="form-select rounded-3" id="status" name="status">
+              <option value="pending" <%= (formData?.status || task.status) === 'pending' ? 'selected' : '' %>>
+                📋 Chờ xử lý
+              </option>
+              <option value="in-progress" <%= (formData?.status || task.status) === 'in-progress' ? 'selected' : '' %>>
+                ⚡ Đang thực hiện
+              </option>
+              <option value="completed" <%= (formData?.status || task.status) === 'completed' ? 'selected' : '' %>>
+                ✅ Hoàn thành
+              </option>
+            </select>
+          </div>
+
+          <!-- Ngày hết hạn -->
+          <div class="col-md-6">
+            <label for="dueDate" class="form-label fw-semibold">Ngày hết hạn</label>
+            <input 
+              type="datetime-local" 
+              class="form-control rounded-3" 
+              id="dueDate" 
+              name="dueDate" 
+              value="<%= formData?.dueDate || (task.dueDate ? task.dueDate.toISOString().slice(0,16) : '') %>"
+              min="<%= new Date().toISOString().slice(0,16) %>">
+            <div class="form-text">Để trống nếu không có hạn chế thời gian</div>
+          </div>
+
+          <!-- Mô tả -->
+          <div class="col-12">
+            <label for="description" class="form-label fw-semibold">Mô tả chi tiết</label>
+            <textarea 
+              class="form-control rounded-3" 
+              id="description" 
+              name="description" 
+              rows="5" 
+              placeholder="Nhập mô tả chi tiết về nhiệm vụ..."
+              maxlength="1000"><%= formData?.description || task.description || '' %></textarea>
+            <div class="form-text">Tối đa 1000 ký tự. Còn lại: <span id="descCount">1000</span></div>
+          </div>
+        </div>
+
+        <!-- Nút hành động -->
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-warning rounded-pill px-4" id="submitBtn">
+            <i class="bi bi-save me-1"></i>Cập nhật nhiệm vụ
+          </button>
+          <button type="button" class="btn btn-outline-info rounded-pill px-4" id="resetBtn">
+            <i class="bi bi-arrow-clockwise me-1"></i>Khôi phục
+          </button>
+          <a href="/admin/tasks" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left me-1"></i>Hủy bỏ
+          </a>
+          <button type="button" class="btn btn-outline-danger rounded-pill px-4 ms-auto" id="deleteBtn" 
+                  data-task-id="<%= task._id %>" data-task-title="<%= task.title %>">
+            <i class="bi bi-trash me-1"></i>Xóa nhiệm vụ
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal xác nhận xóa -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteModalLabel">
+          <i class="bi bi-exclamation-triangle me-2"></i>Xác nhận xóa
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="/admin/tasks/<%= task._id %>?_method=DELETE" id="deleteTaskForm">
+        <div class="modal-body">
+          <p class="mb-3">Bạn có chắc chắn muốn xóa nhiệm vụ này không?</p>
+          <div class="alert alert-warning">
+            <strong>Nhiệm vụ:</strong> <span id="taskTitleToDelete"><%= task.title %></span>
+          </div>
+          <p class="text-muted small mb-0">
+            <i class="bi bi-info-circle me-1"></i>
+            Hành động này không thể hoàn tác!
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">
+            <i class="bi bi-x me-1"></i>Hủy
+          </button>
+          <button type="submit" class="btn btn-danger rounded-pill" id="confirmDeleteBtn">
+            <i class="bi bi-trash me-1"></i>Xóa nhiệm vụ
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- CSS Styles -->
+<style>
+  .bg-gradient-warning {
+    background: linear-gradient(45deg, #ff8c00, #ffd700);
+  }
+  
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+  
+  .btn, .form-control, .form-select {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #ff8c00;
+    box-shadow: 0 0 0 0.2rem rgba(255, 140, 0, 0.25);
+  }
+  
+  .form-select[multiple] {
+    min-height: 120px;
+  }
+  .form-select[multiple] option {
+    padding: 8px 12px;
+    margin: 2px 0;
+  }
+  .form-select[multiple] option:checked {
+    background: linear-gradient(45deg, #ff8c00, #ffd700);
+    color: white;
+  }
+  
+  #descCount {
+    font-weight: bold;
+    color: #ff8c00;
+  }
+  
+  .alert-info {
+    background-color: #e3f2fd;
+    border-color: #bbdefb;
+    color: #0d47a1;
+  }
+  
+  @media (max-width: 768px) {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .d-flex.gap-2 {
+      flex-direction: column;
+    }
+    .d-flex.gap-2 .btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  // Dữ liệu từ server
+  const roomManagers = <%- JSON.stringify(roomManagers) %>;
+  const roomMembers = <%- JSON.stringify(roomMembers) %>;
+  const originalTask = <%- JSON.stringify(originalTask) %>;
+  const formData = <%- JSON.stringify(formData || null) %>;
+
+  /**
+   * Hạn chế tùy chọn trạng thái dựa trên trạng thái hiện tại
+   */
+  function restrictStatusOptions() {
+    const statusSelect = document.getElementById('status');
+    const currentStatus = originalTask.status;
+
+    // Nếu trạng thái là "completed", vô hiệu hóa toàn bộ select
+    if (currentStatus === 'completed') {
+      statusSelect.disabled = true;
+      statusSelect.title = 'Nhiệm vụ đã hoàn thành không thể thay đổi trạng thái';
+      return;
+    }
+
+    // Nếu trạng thái là "in-progress", vô hiệu hóa tùy chọn "pending"
+    if (currentStatus === 'in-progress') {
+      const pendingOption = statusSelect.querySelector('option[value="pending"]');
+      pendingOption.disabled = true;
+      pendingOption.title = 'Không thể chuyển từ "Đang thực hiện" về "Chờ xử lý"';
+    }
+  }
+
+  /**
+   * Cập nhật danh sách người tạo khi chọn phòng
+   */
+  function updateCreatedBy(roomId) {
+    const createdBySelect = document.getElementById('createdBy');
+    createdBySelect.innerHTML = '<option value="">-- Chọn người tạo --</option>';
+    
+    if (!roomId || !roomManagers[roomId]) {
+      return;
+    }
+
+    roomManagers[roomId].forEach(manager => {
+      const option = document.createElement('option');
+      option.value = manager._id;
+      option.textContent = `${manager.username} (${manager.role === 'admin' ? 'Admin phòng' : 'Host phòng'})`;
+      const selectedCreatedBy = formData?.createdBy || originalTask.createdBy;
+      if (selectedCreatedBy === manager._id) {
+        option.selected = true;
+      }
+      createdBySelect.appendChild(option);
+    });
+  }
+
+  /**
+   * Cập nhật danh sách người được giao khi chọn phòng
+   */
+  function updateAssignedTo(roomId) {
+    const assignedToSelect = document.getElementById('assignedTo');
+    assignedToSelect.innerHTML = '';
+    
+    if (!roomId) {
+      assignedToSelect.innerHTML = '<option value="" disabled>Vui lòng chọn phòng trước để tải danh sách thành viên</option>';
+      return;
+    }
+
+    if (!roomMembers[roomId] || roomMembers[roomId].length === 0) {
+      assignedToSelect.innerHTML = '<option value="" disabled>Phòng này chưa có thành viên nào</option>';
+      return;
+    }
+
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- Chọn thành viên (có thể chọn nhiều) --';
+    assignedToSelect.appendChild(defaultOption);
+
+    roomMembers[roomId].forEach(member => {
+      const option = document.createElement('option');
+      option.value = member._id;
+      option.textContent = member.username;
+      const selectedAssignedTo = formData?.assignedTo || originalTask.assignedTo;
+      if (selectedAssignedTo && selectedAssignedTo.includes(member._id)) {
+        option.selected = true;
+      }
+      assignedToSelect.appendChild(option);
+    });
+  }
+
+  /**
+   * Cập nhật character counter cho textarea description
+   */
+  function updateCharacterCount() {
+    const textarea = document.getElementById('description');
+    const counter = document.getElementById('descCount');
+    const maxLength = 1000;
+    
+    if (textarea && counter) {
+      const remaining = maxLength - textarea.value.length;
+      counter.textContent = remaining;
+      counter.style.color = remaining < 100 ? '#dc3545' : remaining < 200 ? '#ffc107' : '#ff8c00';
+    }
+  }
+
+  /**
+   * Validate form trước khi submit
+   */
+  function validateForm() {
+    const title = document.getElementById('title').value.trim();
+    const room = document.getElementById('room').value;
+    const createdBy = document.getElementById('createdBy').value;
+    const status = document.getElementById('status').value;
+    
+    if (!title) {
+      alert('Vui lòng nhập tiêu đề nhiệm vụ');
+      return false;
+    }
+    
+    if (title.length < 3) {
+      alert('Tiêu đề phải có ít nhất 3 ký tự');
+      return false;
+    }
+    
+    if (!room) {
+      alert('Vui lòng chọn phòng');
+      return false;
+    }
+    
+    if (!createdBy) {
+      alert('Vui lòng chọn người tạo nhiệm vụ');
+      return false;
+    }
+    
+    // Kiểm tra ngày hết hạn
+    const dueDate = document.getElementById('dueDate').value;
+    if (dueDate) {
+      const dueDateObj = new Date(dueDate);
+      const now = new Date();
+      if (dueDateObj <= now) {
+        alert('Ngày hết hạn phải là thời điểm trong tương lai');
+        return false;
+      }
+    }
+    
+    // Kiểm tra trạng thái
+    if (originalTask.status === 'completed') {
+      if (status !== 'completed') {
+        alert('Nhiệm vụ đã hoàn thành không thể thay đổi trạng thái');
+        return false;
+      }
+    } else if (originalTask.status === 'in-progress' && status === 'pending') {
+      alert('Không thể chuyển từ "Đang thực hiện" về "Chờ xử lý"');
+      return false;
+    }
+    
+    return true;
+  }
+
+  /**
+   * Khôi phục về giá trị ban đầu
+   */
+  function resetToOriginal() {
+    document.getElementById('title').value = originalTask.title;
+    document.getElementById('description').value = originalTask.description;
+    document.getElementById('room').value = originalTask.room;
+    document.getElementById('status').value = originalTask.status;
+    document.getElementById('dueDate').value = originalTask.dueDate;
+    updateCreatedBy(originalTask.room);
+    updateAssignedTo(originalTask.room);
+    updateCharacterCount();
+    restrictStatusOptions(); // Cập nhật lại trạng thái
+  }
+
+  /**
+   * Xử lý xóa task
+   */
+  function handleDeleteTask() {
+    const deleteBtn = document.getElementById('deleteBtn');
+    const taskTitle = deleteBtn.dataset.taskTitle;
+    document.getElementById('taskTitleToDelete').textContent = taskTitle;
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+  }
+
+  /**
+   * Kiểm tra thay đổi trong form
+   */
+  function hasFormChanged() {
+    const currentData = {
+      title: document.getElementById('title').value.trim(),
+      description: document.getElementById('description').value.trim(),
+      room: document.getElementById('room').value,
+      createdBy: document.getElementById('createdBy').value,
+      assignedTo: Array.from(document.getElementById('assignedTo').selectedOptions).map(opt => opt.value),
+      status: document.getElementById('status').value,
+      dueDate: document.getElementById('dueDate').value
+    };
+    
+    return (
+      currentData.title !== originalTask.title ||
+      currentData.description !== originalTask.description ||
+      currentData.room !== originalTask.room ||
+      currentData.createdBy !== originalTask.createdBy ||
+      JSON.stringify(currentData.assignedTo.sort()) !== JSON.stringify(originalTask.assignedTo.sort()) ||
+      currentData.status !== originalTask.status ||
+      currentData.dueDate !== originalTask.dueDate
+    );
+  }
+
+  /**
+   * Khởi tạo khi DOM ready
+   */
+  document.addEventListener('DOMContentLoaded', function() {
+    const roomSelect = document.getElementById('room');
+    const descriptionTextarea = document.getElementById('description');
+    const taskEditForm = document.getElementById('taskEditForm');
+    const resetBtn = document.getElementById('resetBtn');
+    const deleteBtn = document.getElementById('deleteBtn');
+    
+    // Khởi tạo trạng thái
+    restrictStatusOptions();
+    
+    // Event listener cho việc thay đổi phòng
+    if (roomSelect) {
+      roomSelect.addEventListener('change', function() {
+        const selectedRoomId = this.value;
+        updateCreatedBy(selectedRoomId);
+        updateAssignedTo(selectedRoomId);
+      });
+      if (roomSelect.value) {
+        updateCreatedBy(roomSelect.value);
+        updateAssignedTo(roomSelect.value);
+      }
+    }
+    
+    // Character counter cho description
+    if (descriptionTextarea) {
+      descriptionTextarea.addEventListener('input', updateCharacterCount);
+      updateCharacterCount();
+    }
+    
+    // Form validation khi submit
+    if (taskEditForm) {
+      taskEditForm.addEventListener('submit', function(e) {
+        if (!validateForm()) {
+          e.preventDefault();
+          return;
+        }
+        
+        if (!hasFormChanged()) {
+          e.preventDefault();
+          alert('Không có thay đổi nào để lưu');
+          return;
+        }
+        
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<i class="bi bi-spinner spinner-border spinner-border-sm me-1"></i>Đang cập nhật...';
+        }
+      });
+    }
+    
+    // Reset button functionality
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function() {
+        if (hasFormChanged()) {
+          if (confirm('Bạn có chắc muốn khôi phục về giá trị ban đầu? Các thay đổi sẽ bị mất.')) {
+            resetToOriginal();
+          }
+        }
+      });
+    }
+    
+    // Delete button functionality
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', handleDeleteTask);
+    }
+    
+    // Cảnh báo khi rời trang nếu có thay đổi
+    window.addEventListener('beforeunload', function(e) {
+      if (hasFormChanged()) {
+        e.preventDefault();
+        e.returnValue = 'Bạn có các thay đổi chưa được lưu. Bạn có chắc muốn rời khỏi trang?';
+      }
+    });
+  });
+</script>

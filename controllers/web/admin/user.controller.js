@@ -26,7 +26,7 @@ export const showUser = async (req, res ) => {
         const success = req.query.success;
         const error = req.query.error;
 
-        res.render('admin/pages/user/manage-user', {
+        res.render('admin/pages/user/manage-users', {
             users,
             path: req.path,
             success,
@@ -39,7 +39,7 @@ export const showUser = async (req, res ) => {
         });
     } catch (err) {
         console.error('Lỗi khi tải danh sách người dùng', err);
-        res.status(500).render('admin/pages/user/manage-user', {
+        res.status(500).render('admin/pages/user/manage-users', {
             users: [],
             path: req.path,
             error: 'Lỗi khi tải danh sách người dùng',
@@ -99,7 +99,7 @@ export const createUser = async(req, res) => {
 
     await newUser.save();
 
-    res.redirect('/admin/user?success=Tạo người dùng thành công');
+    res.redirect('/admin/users?success=Tạo người dùng thành công');
 
     } catch (error) {
         console.error('Lỗi khi tạo người dùng', error);
@@ -117,7 +117,7 @@ export const showEditForm = async(req, res) => {
         const userId = req.params.id;
         const user = await User.findById(userId);
         if(!user){
-            return res.redirect('/admin/user?error=Người dùng không tồn tại');
+            return res.redirect('/admin/users?error=Người dùng không tồn tại');
         }
         res.render('admin/pages/user/form-edit', {
             user,
@@ -127,7 +127,7 @@ export const showEditForm = async(req, res) => {
         })
     } catch (error) {
         console.error('Lỗi khi hiển thị form chỉnh sửa', error);
-        res.redirec('/admin/user?error=lỗi khi hiển thị form chỉnh sửa');
+        res.redirec('/admin/users?error=lỗi khi hiển thị form chỉnh sửa');
     }
 }
 
@@ -136,7 +136,7 @@ export const editUser = async(req, res) => {
         const userId = req.params.id;
         const user = await User.findById(userId);
         if(!user){
-            return res.redirect('/admin/user?error=Người dùng không tồn tại ');
+            return res.redirect('/admin/users?error=Người dùng không tồn tại ');
         }
 
         const errors = validationResult(req);
@@ -167,7 +167,7 @@ export const editUser = async(req, res) => {
         }
         user.updatedAt = Date.now();
         await user.save();
-        res.redirect('/admin/user?success=Chỉnh sửa người dùng thành công');
+        res.redirect('/admin/users?success=Chỉnh sửa người dùng thành công');
     } catch (error) {
         console.error('Lỗi khi chỉnh sửa người dùng', error);
         res.status(500).render('admin/pages/user/form-edit',{
@@ -184,7 +184,7 @@ export const showUserDetail = async(req, res) => {
         const userId  = req.params.id;
         const user = await User.findById(userId);
         if(!user){
-            return res.redirect('/admin/user?error=Người dùng không tồn tại');
+            return res.redirect('/admin/users?error=Người dùng không tồn tại');
         }
 
         res.render('admin/pages/user/user-detail', {
@@ -195,7 +195,7 @@ export const showUserDetail = async(req, res) => {
         });
     } catch (error) {
         console.error('Lỗi khi hiển thị chi tiết người dùng', error);
-        res.redirect('/admin/user?error=Lỗi khi hiển thị chi tiết người dùng');
+        res.redirect('/admin/usersss?error=Lỗi khi hiển thị chi tiết người dùng');
     }
 }
 
@@ -204,12 +204,12 @@ export const deleteUser = async(req, res) => {
         const userId = req.params.id;
     const user = await User.findById(userId);
     if(!user){
-        res.redirect('/admin/user?error=Người dùng không tồn tại');
+        res.redirect('/admin/users?error=Người dùng không tồn tại');
     }
     await User.deleteOne({ _id: userId});
-    res.redirect('/admin/user?success=Xóa người dùng thành công');
+    res.redirect('/admin/users?success=Xóa người dùng thành công');
     } catch (error) {
         console.error('Lỗi khi xóa người dùng', error);
-        res.redirect('/admin/user?error=Đã có lỗi xảy ra khi xóa người dùng');
+        res.redirect('/admin/userss?error=Đã có lỗi xảy ra khi xóa người dùng');
     }
 }
