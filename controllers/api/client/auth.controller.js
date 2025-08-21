@@ -1,7 +1,6 @@
-// authController.js
 import jwt from "jsonwebtoken";
-import User from "../../models/User.js";
-import logger from "../../utils/logger.js";
+import User from "../../../models/User.js";
+import logger from "../../../utils/logger.js";
 
 
 const generateAccessToken = (user) => jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
@@ -38,6 +37,10 @@ export const login = async (req, res) => {
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) return res.status(401).json({ error: "Invalid username or password" });
+
+    if (user.role === "admin") {
+      return res.status(403).json({ error: "Account does not exist" });
+    }
 
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
