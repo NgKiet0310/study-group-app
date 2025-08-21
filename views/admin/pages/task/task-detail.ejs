@@ -1,0 +1,314 @@
+<% layout('layouts/main-admin') %>
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">Chi tiết nhiệm vụ</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="/admin/tasks">Quản lý nhiệm vụ</a></li>
+                            <li class="breadcrumb-item active">Chi tiết nhiệm vụ</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="/admin/tasks/edit/<%= task._id %>" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Chỉnh sửa
+                    </a>
+                    <a href="/admin/tasks" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <% if (success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= success %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <% if (error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <!-- Task Detail Card -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-tasks text-primary me-2"></i>
+                        Thông tin nhiệm vụ
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Task Title -->
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <strong>Tiêu đề:</strong>
+                        </div>
+                        <div class="col-sm-9">
+                            <h5 class="text-primary"><%= task.title %></h5>
+                        </div>
+                    </div>
+
+                    <!-- Task Description -->
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <strong>Mô tả:</strong>
+                        </div>
+                        <div class="col-sm-9">
+                            <% if (task.description) { %>
+                                <p class="mb-0"><%= task.description %></p>
+                            <% } else { %>
+                                <span class="text-muted fst-italic">Không có mô tả</span>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <strong>Trạng thái:</strong>
+                        </div>
+                        <div class="col-sm-9">
+                            <% if (task.status === 'pending') { %>
+                                <span class="badge bg-warning text-dark fs-6">
+                                    <i class="fas fa-clock me-1"></i>Chờ xử lý
+                                </span>
+                            <% } else if (task.status === 'in-progress') { %>
+                                <span class="badge bg-info fs-6">
+                                    <i class="fas fa-spinner me-1"></i>Đang thực hiện
+                                </span>
+                            <% } else if (task.status === 'completed') { %>
+                                <span class="badge bg-success fs-6">
+                                    <i class="fas fa-check-circle me-1"></i>Hoàn thành
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Due Date -->
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <strong>Hạn hoàn thành:</strong>
+                        </div>
+                        <div class="col-sm-9">
+                            <% if (task.dueDate) { %>
+                                <span class="<%= isOverdue ? 'text-danger fw-bold' : '' %>">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    <%= new Date(task.dueDate).toLocaleString('vi-VN') %>
+                                </span>
+                                <% if (isOverdue && task.status !== 'completed') { %>
+                                    <span class="badge bg-danger ms-2">Quá hạn</span>
+                                <% } else if (daysRemaining !== null && daysRemaining > 0 && task.status !== 'completed') { %>
+                                    <span class="badge bg-info ms-2"><%= daysRemaining %> ngày còn lại</span>
+                                <% } %>
+                            <% } else { %>
+                                <span class="text-muted fst-italic">Không có hạn chót</span>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Created Date -->
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <strong>Ngày tạo:</strong>
+                        </div>
+                        <div class="col-sm-9">
+                            <i class="fas fa-calendar-plus me-1"></i>
+                            <%= new Date(task.createdAt).toLocaleString('vi-VN') %>
+                        </div>
+                    </div>
+
+                    <!-- Updated Date -->
+                    <% if (task.updatedAt && task.updatedAt !== task.createdAt) { %>
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <strong>Cập nhật lần cuối:</strong>
+                        </div>
+                        <div class="col-sm-9">
+                            <i class="fas fa-edit me-1"></i>
+                            <%= new Date(task.updatedAt).toLocaleString('vi-VN') %>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Room Information -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-home text-info me-2"></i>
+                        Phòng
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <h6 class="text-info"><%= task.room.name %></h6>
+                    <% if (task.room.description) { %>
+                        <small class="text-muted"><%= task.room.description %></small>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- People Involved -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-users text-success me-2"></i>
+                        Người liên quan
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <!-- Creator -->
+                    <div class="mb-3">
+                        <strong class="text-muted small">NGƯỜI TẠO:</strong>
+                        <div class="d-flex align-items-center mt-1">
+                            <i class="fas fa-user-plus text-primary me-2"></i>
+                            <div>
+                                <div class="fw-semibold"><%= task.createdBy.username %></div>
+                                <small class="text-muted"><%= task.createdBy.email %></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assignees -->
+                    <div>
+                        <strong class="text-muted small">NGƯỜI ĐƯỢC GIAO:</strong>
+                        <% if (task.assignedTo && task.assignedTo.length > 0) { %>
+                            <div class="mt-2">
+                                <% task.assignedTo.forEach(user => { %>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-user-check text-success me-2"></i>
+                                        <div>
+                                            <div class="fw-semibold"><%= user.username %></div>
+                                            <small class="text-muted"><%= user.email %></small>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        <% } else { %>
+                            <div class="text-muted fst-italic mt-1">Chưa giao cho ai</div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room Members (for context) -->
+            <% if (roomInfo && roomInfo.members && roomInfo.members.length > 0) { %>
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-users-cog text-secondary me-2"></i>
+                        Thành viên phòng
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <!-- Room Admin -->
+                    <% if (roomInfo.admin) { %>
+                        <div class="mb-2">
+                            <span class="badge bg-primary me-2">Admin</span>
+                            <%= roomInfo.admin.username %>
+                        </div>
+                    <% } %>
+                    
+                    <!-- Room Members -->
+                    <% roomInfo.members.forEach(member => { %>
+                        <div class="mb-1">
+                            <% if (member.role === 'host') { %>
+                                <span class="badge bg-warning text-dark me-2">Host</span>
+                            <% } else { %>
+                                <span class="badge bg-light text-dark me-2">Member</span>
+                            <% } %>
+                            <%= member.user.username %>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="d-flex gap-2">
+                <a href="/admin/tasks/edit/<%= task._id %>" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> Chỉnh sửa nhiệm vụ
+                </a>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="fas fa-trash"></i> Xóa nhiệm vụ
+                </button>
+                <a href="/admin/tasks" class="btn btn-secondary">
+                    <i class="fas fa-list"></i> Danh sách nhiệm vụ
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa nhiệm vụ "<strong><%= task.title %></strong>" không?</p>
+                <p class="text-danger"><small><i class="fas fa-exclamation-triangle"></i> Hành động này không thể hoàn tác!</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <form method="POST" action="/admin/tasks/<%= task._id %>/delete" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 10px 10px 0 0 !important;
+    }
+    
+    .badge {
+        font-size: 0.75em;
+    }
+    
+    .breadcrumb-item a {
+        text-decoration: none;
+    }
+    
+    .btn {
+        border-radius: 8px;
+    }
+    
+    .alert {
+        border-radius: 10px;
+    }
+</style>

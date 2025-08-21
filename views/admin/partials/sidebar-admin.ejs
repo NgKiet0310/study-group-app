@@ -1,7 +1,7 @@
 <nav class="col-md-2 d-none d-md-block sidebar">
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link <%= path === '/admin' ? 'active' : '' %>" href="/admin">🛠️ Bảng Điều Khiển</a>
+            <a class="nav-link <%= path === '/admin/dashboard' ? 'active' : '' %>" href="/admin/dashboard">🛠️ Bảng Điều Khiển</a>
         </li>
         <li class="nav-item">
             <a class="nav-link <%= path === '/admin/manage-room' ? 'active' : '' %>" href="/admin/rooms">🏢 Phòng</a>
@@ -19,8 +19,10 @@
             <a class="nav-link <%= path === '/admin/manage-users' ? 'active' : '' %>" href="/admin/users">👥 Quản Lý Người Dùng</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link <%= path === '/admin/resources' ? 'active' : '' %>" href="/admin/resources">🧩 Tài Nguyên</a>
+            <a class="nav-link <%= path === '/admin/manage-files' ? 'active' : '' %>" href="/admin/files">📂 Quản Lý File</a>
         </li>
-        
+        <li class="nav-item">
+            <a class="nav-link <%= path === '/admin/manage-messages' ? 'active' : '' %>" href="/admin/messages">💬 Quản Lý Tin Nhắn</a>
+        </li>
     </ul>
 </nav>

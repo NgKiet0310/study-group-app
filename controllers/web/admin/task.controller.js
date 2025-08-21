@@ -322,10 +322,9 @@ export const showEditForm = async (req, res) => {
     }
 };
 
-// Cập nhật nhiệm vụ
 export const editTask = async (req, res) => {
   try {
-    const taskId = req.params.id; // Định nghĩa taskId
+    const taskId = req.params.id; 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       throw new Error(errors.array()[0].msg);
@@ -333,13 +332,11 @@ export const editTask = async (req, res) => {
 
     const { title, description, room, createdBy, assignedTo, status, dueDate } = req.body;
 
-    // Tìm nhiệm vụ hiện tại
     const task = await Task.findById(taskId);
     if (!task) {
       throw new Error('Nhiệm vụ không tồn tại');
     }
 
-    // Kiểm tra trạng thái
     if (task.status === 'completed' && status !== 'completed') {
       throw new Error('Nhiệm vụ đã hoàn thành không thể thay đổi trạng thái');
     }
@@ -347,7 +344,6 @@ export const editTask = async (req, res) => {
       throw new Error('Không thể chuyển từ "Đang thực hiện" về "Chờ xử lý"');
     }
 
-    // Làm sạch dữ liệu văn bản (không dùng sanitize-html để tránh lỗi)
     const sanitizedTitle = title.trim();
     const sanitizedDescription = description ? description.trim() : undefined;
 
@@ -373,7 +369,6 @@ export const editTask = async (req, res) => {
   } catch (error) {
     console.error('Lỗi khi cập nhật nhiệm vụ:', error);
 
-    // Sử dụng taskId từ đầu hàm
     const task = await Task.findById(taskId)
       .populate('room', 'name')
       .populate('createdBy', 'username')
@@ -438,6 +433,45 @@ export const editTask = async (req, res) => {
       },
     });
   }
+};
+
+export const showDetailTask = async (req, res) => {
+    try {
+        const taskId = req.params.id;
+        
+        // Tìm task và populate các thông tin liên quan
+        const task = await Task.findById(taskId)
+            .populate('room', 'name description')
+            .populate('createdBy', 'username email role')
+            .populate('assignedTo', 'username email role');
+
+        if (!task) {
+            return res.redirect('/admin/tasks?error=Nhiệm vụ không tồn tại');
+        }
+
+        // Tính toán thông tin bổ sung
+        const isOverdue = task.dueDate && new Date() > new Date(task.dueDate) && task.status !== 'completed';
+        const daysRemaining = task.dueDate ? Math.ceil((new Date(task.dueDate) - new Date()) / (1000 * 60 * 60 * 24)) : null;
+
+        // Lấy thông tin về room members để hiển thị context
+        const roomInfo = await Room.findById(task.room._id)
+            .populate('admin', 'username')
+            .populate('members.user', 'username role');
+
+        res.render('admin/pages/task/task-detail', {
+            task,
+            roomInfo,
+            isOverdue,
+            daysRemaining,
+            path: req.path,
+            success: req.query.success || null,
+            error: req.query.error || null
+        });
+
+    } catch (error) {
+        console.error('Lỗi khi hiển thị chi tiết nhiệm vụ:', error);
+        res.redirect('/admin/tasks?error=Lỗi khi tải thông tin nhiệm vụ');
+    }
 };
 
 export const deleteTask = async (req, res) => {

@@ -1,58 +1,236 @@
 /* Custom styles for admin interface */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f6f9;
-    color: #333;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f0f4f8;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Navbar */
+.navbar {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    z-index: 999;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    transition: color 0.3s ease;
+}
+
+.navbar-brand:hover {
+    color: #e0f2fe;
+}
+
+.navbar .btn-outline-light {
+    border-radius: 8px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+    border-color: #e0f2fe;
+    color: #e0f2fe;
+    transition: all 0.3s ease;
+}
+
+.navbar .btn-outline-light:hover {
+    background-color: #93c5fd;
+    color: #1e293b;
 }
 
 .sidebar {
-    height: 100vh;
-    background-color: #2c3e50;
+    position: fixed;
+    top: 0; /* Đè thẳng từ trên cùng xuống */
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    background: linear-gradient(180deg, #1e3c72, #2a5298);
     color: #fff;
-    padding-top: 20px;
+    padding: 20px 0;
+    overflow-y: auto;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* nổi trên header */
 }
 
 .sidebar .nav-link {
-    color: #bdc3c7;
-    padding: 10px 20px;
-    font-size: 16px;
+    color: #ecf0f1;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
 }
 
-.sidebar .nav-link:hover, .sidebar .nav-link.active {
-    background-color: #34495e;
-    color: #fff;
+.sidebar .nav-link:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left-color: #3498db;
+}
+
+.sidebar .nav-link.active {
+    color: #ffffff;
+    font-weight: 600;
+    border-left-color: #3498db;
 }
 
 .content {
-    padding: 20px;
+    margin-left: 260px;
+    padding: 90px 20px 30px; /* padding-top to avoid header overlap */
+    background-color: #f0f4f8;
+    min-height: 100vh;
 }
 
+/* Card */
 .card {
     border: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
-    background-color: #fff;
-    border-bottom: 1px solid #eee;
+    background: linear-gradient(90deg, #e0f2fe, #bfdbfe);
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 1.1rem;
     font-weight: 600;
+    padding: 1rem;
+    border-radius: 8px 8px 0 0;
 }
 
+/* Table */
 .table-responsive {
     margin-top: 20px;
 }
 
+.table {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table th {
+    background-color: #e0f2fe;
+    font-weight: 600;
+    color: #1e293b;
+    padding: 0.75rem;
+}
+
+.table td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.table tr:hover {
+    background-color: #f0f4f8;
+}
+
+/* Buttons */
 .btn-primary {
-    background-color: #3498db;
-    border-color: #3498db;
+    background: linear-gradient(90deg, #60a5fa, #93c5fd);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
 }
 
 .btn-primary:hover {
-    background-color: #2980b9;
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
 }
-.content {
-  padding: 30px 20px;
-  background-color: #f5f6fa;
-  min-height: calc(100vh - 56px - 50px); /* header + footer */
+
+.btn-primary:active {
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+}
+
+.btn-info {
+    background-color: #60a5fa;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.btn-info:hover {
+    background-color: #3b82f6;
+}
+
+.btn-info:active {
+    background-color: #2563eb;
+}
+
+.btn-danger {
+    background-color: #ef4444;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+.btn-danger:active {
+    background-color: #b91c1c;
+}
+
+.btn-success {
+    background-color: #22c55e;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: #16a34a;
+}
+
+.btn-success:active {
+    background-color: #15803d;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+    
+    .content {
+        margin-left: 200px;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 100%;
+        position: relative;
+        top: 0;
+    }
+    
+    .content {
+        margin-left: 0;
+        padding: 15px;
+    }
 }

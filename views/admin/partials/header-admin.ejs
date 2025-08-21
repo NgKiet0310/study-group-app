@@ -1,7 +1,10 @@
 <header class="navbar navbar-dark bg-dark sticky-top shadow">
-  <a class="navbar-brand px-3" href="/admin">Study Group Admin</a>
-  <div class="d-flex align-items-center me-3">
-    <span class="text-white me-3">👤<%= admin && admin.username ? admin.username : 'Admin' %></span>
-    <a href="/admin/auth/logout" onclick="return confirm('Bạn chắc chắn muốn đăng xuất?')" class="btn btn-sm btn-outline-light">Đăng xuất</a>
-  </div>
+  <a class="navbar-brand px-3 d-flex align-items-center" href="/admin/dashboard">
+  <i class="bi bi-speedometer2 me-2"></i> Admin Dashboard
+</a>
+
+    <div class="d-flex align-items-center me-3">
+        <span class="text-white me-3">👤 <%= admin && admin.username ? admin.username : 'Admin' %></span>
+        <a href="/admin/auth/logout" onclick="return confirm('Bạn chắc chắn muốn đăng xuất?')" class="btn btn-sm btn-outline-light">Đăng xuất</a>
+    </div>
 </header>

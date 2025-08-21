@@ -22,6 +22,8 @@ import roomRoutes from './routes/web/admin/room.route.js';
 import userRoutes from './routes/web/admin/user.route.js';
 import noteRoutes from './routes/web/admin/note.route.js';
 import taskRoutes from './routes/web/admin/task.route.js';
+import messageRoutes from './routes/web/admin/message.route.js';
+import fileRoutes from './routes/web/admin/file.route.js';
 
 dotenv.config();
 
@@ -57,7 +59,9 @@ app.use('/admin/rooms', isAdmin, roomRoutes);
 app.use('/admin/users', isAdmin, userRoutes);
 app.use('/admin/notes', isAdmin, noteRoutes);
 app.use('/admin/tasks',isAdmin, taskRoutes);
-app.use('/admin', isAdmin, AdminRoutes);
+app.use('/admin/messages',isAdmin, messageRoutes);
+app.use('/admin/files', isAdmin, fileRoutes);
+app.use('/admin/dashboard', isAdmin, AdminRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {

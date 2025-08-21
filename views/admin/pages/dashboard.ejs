@@ -1,9 +1,246 @@
 <% layout('layouts/main-admin') %>
 
-<div class="card">
-  <div class="card-header">Bảng Điều Khiển</div>
-  <div class="card-body">
-    <h5 class="card-title">Chào mừng đến với Admin Panel!</h5>
-    <p class="card-text">Đây là khu vực quản lý chính. Vui lòng chọn một mục từ menu bên trái.</p>
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="card shadow-lg rounded-4 border-0">
+    <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4">
+      <i class="bi bi-speedometer2 me-2 animate__animated animate__pulse animate__infinite"></i>Dashboard Admin
+    </div>
+    <div class="card-body p-4">
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <!-- Form lọc -->
+      <form method="GET" action="/admin/dashboard" class="mb-4">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <select class="form-select rounded-3" name="room">
+              <option value="">Tất cả phòng</option>
+              <% rooms.forEach(room => { %>
+                <option value="<%= room._id %>" <%= room === room._id.toString() ? 'selected' : '' %>><%= room.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <input type="date" class="form-control rounded-3" name="startDate" value="<%= startDate || '' %>">
+          </div>
+          <div class="col-md-3">
+            <input type="date" class="form-control rounded-3" name="endDate" value="<%= endDate || '' %>">
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-primary rounded-pill w-100">
+              <i class="bi bi-search me-1"></i>Lọc
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Tổng quan -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-3">
+          <div class="card bg-light shadow-sm rounded-3 text-center">
+            <div class="card-body">
+              <h5 class="card-title">Tổng phòng</h5>
+              <p class="fs-2 fw-bold text-primary"><%= totalRooms %></p>
+              <a href="/admin/rooms" class="btn btn-outline-primary btn-sm rounded-pill">Xem chi tiết</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-light shadow-sm rounded-3 text-center">
+            <div class="card-body">
+              <h5 class="card-title">Tổng người dùng</h5>
+              <p class="fs-2 fw-bold text-primary"><%= totalUsers %></p>
+              <a href="/admin/users" class="btn btn-outline-primary btn-sm rounded-pill">Xem chi tiết</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-light shadow-sm rounded-3 text-center">
+            <div class="card-body">
+              <h5 class="card-title">Tổng file</h5>
+              <p class="fs-2 fw-bold text-primary"><%= totalFiles %></p>
+              <a href="/admin/files" class="btn btn-outline-primary btn-sm rounded-pill">Xem chi tiết</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-light shadow-sm rounded-3 text-center">
+            <div class="card-body">
+              <h5 class="card-title">Tổng tin nhắn</h5>
+              <p class="fs-2 fw-bold text-primary"><%= totalMessages %></p>
+              <a href="/admin/messages" class="btn btn-outline-primary btn-sm rounded-pill">Xem chi tiết</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thống kê file -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="card shadow-sm rounded-3">
+            <div class="card-header bg-light">File theo loại</div>
+            <div class="card-body">
+              <canvas id="fileByTypeChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card shadow-sm rounded-3">
+            <div class="card-header bg-light">File mới nhất</div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                <% recentFiles.forEach(file => { %>
+                  <li class="list-group-item">
+                    <a href="/admin/file/<%= file._id %>"><%= file.fileName %></a> 
+                    (<%= file.room?.name || 'Không xác định' %>)
+                  </li>
+                <% }) %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thống kê tin nhắn -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="card shadow-sm rounded-3">
+            <div class="card-header bg-light">Tin nhắn theo phòng</div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                <% messageByRoom.forEach(item => { %>
+                  <li class="list-group-item"><%= item.roomName %>: <%= item.count %> tin nhắn</li>
+                <% }) %>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card shadow-sm rounded-3">
+            <div class="card-header bg-light">Người gửi tích cực</div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                <% topSenders.forEach(sender => { %>
+                  <li class="list-group-item"><%= sender.username %>: <%= sender.count %> tin nhắn</li>
+                <% }) %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Biểu đồ xu hướng -->
+      <div class="card shadow-sm rounded-3">
+        <div class="card-header bg-light">Xu hướng file và tin nhắn (7 ngày gần nhất)</div>
+        <div class="card-body">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+<style>
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #0052cc, #00c4ff);
+  }
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+  .btn, .form-control, .form-select {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #0052cc;
+    box-shadow: 0 0 0 0.2rem rgba(0, 82, 204, 0.25);
+  }
+  .list-group-item {
+    border: none;
+  }
+  @media (max-width: 768px) {
+    .row.g-3, .row.g-4 {
+      flex-direction: column;
+    }
+  }
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Lấy dữ liệu từ server (EJS) dưới dạng JSON string
+  const fileByType = JSON.parse('<%- JSON.stringify(fileByType) %>');
+  const filesByDay = JSON.parse('<%- JSON.stringify(filesByDay) %>');
+  const messagesByDay = JSON.parse('<%- JSON.stringify(messagesByDay) %>');
+
+  // Biểu đồ file theo loại
+  const fileByTypeCtx = document.getElementById('fileByTypeChart').getContext('2d');
+  new Chart(fileByTypeCtx, {
+    type: 'pie',
+    data: {
+      labels: fileByType.map(item => item._id ? item._id.toUpperCase() : 'N/A'),
+      datasets: [{
+        data: fileByType.map(item => item.count),
+        backgroundColor: ['#007bff', '#28a745', '#dc3545', '#ffc107']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'bottom' } }
+    }
+  });
+
+  // Biểu đồ xu hướng
+  const trendCtx = document.getElementById('trendChart').getContext('2d');
+  const days = Array.from({ length: 7 }, (_, i) =>
+    moment().subtract(6 - i, 'days').format('YYYY-MM-DD')
+  );
+
+  const fileCounts = days.map(day => {
+    const item = filesByDay.find(d => d._id === day);
+    return item ? item.count : 0;
+  });
+
+  const messageCounts = days.map(day => {
+    const item = messagesByDay.find(d => d._id === day);
+    return item ? item.count : 0;
+  });
+
+  new Chart(trendCtx, {
+    type: 'line',
+    data: {
+      labels: days.map(d => moment(d).format('DD/MM')),
+      datasets: [
+        {
+          label: 'File tải lên',
+          data: fileCounts,
+          borderColor: '#007bff',
+          fill: false
+        },
+        {
+          label: 'Tin nhắn',
+          data: messageCounts,
+          borderColor: '#28a745',
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+</script>

@@ -263,15 +263,10 @@
 </style>
 
 <script>
-  // Dữ liệu từ server
-  const roomManagers = <%- JSON.stringify(roomManagers) %>;
-  const roomMembers = <%- JSON.stringify(roomMembers) %>;
-  const originalTask = <%- JSON.stringify(originalTask) %>;
-  const formData = <%- JSON.stringify(formData || null) %>;
-
-  /**
-   * Hạn chế tùy chọn trạng thái dựa trên trạng thái hiện tại
-   */
+ const roomManagers = JSON.parse('<%- JSON.stringify(roomManagers) %>');
+  const roomMembers = JSON.parse('<%- JSON.stringify(roomMembers) %>');
+  const originalTask = JSON.parse('<%- JSON.stringify(originalTask) %>');
+  const formData = JSON.parse('<%- JSON.stringify(formData || null) %>');
   function restrictStatusOptions() {
     const statusSelect = document.getElementById('status');
     const currentStatus = originalTask.status;

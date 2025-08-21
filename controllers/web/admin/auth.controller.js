@@ -32,13 +32,12 @@ export const handleLogin = async (req, res) => {
 
    req.session.admin = {
    _id: user._id,
-   email: user.email,
    role: user.role,
-   name: user.name,
+   username: user.username, 
    };
 
 
-    return res.redirect('/admin');
+    return res.redirect('/admin/dashboard');
   } catch (err) {
     console.error('Lỗi đăng nhập:', err);
     return res.redirect('/admin/auth/login?error=Đã xảy ra lỗi, vui lòng thử lại.');
@@ -57,3 +56,4 @@ export const handleLogout = (req, res) => {
     res.redirect('/admin/auth/login');
   });
 };
+  

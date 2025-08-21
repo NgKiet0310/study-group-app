@@ -1,0 +1,162 @@
+<% layout('layouts/main-admin') %>
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="card shadow-lg rounded-4 border-0">
+    <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4 d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-chat-left-text me-2 animate__animated animate__pulse animate__infinite"></i>Danh sách tin nhắn</span>
+    </div>
+    <div class="card-body p-4">
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+          <%= success %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <!-- Form tìm kiếm và lọc -->
+      <form method="GET" action="/admin/messages" class="mb-4">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <input type="text" class="form-control rounded-3" name="search" placeholder="Tìm kiếm theo nội dung tin nhắn" value="<%= search || '' %>">
+          </div>
+          <div class="col-md-4">
+            <select class="form-select rounded-3" name="room">
+              <option value="">Tất cả phòng</option>
+              <% rooms.forEach(room => { %>
+                <option value="<%= room._id %>" <%= room === room._id.toString() ? 'selected' : '' %>><%= room.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-primary rounded-pill w-100">
+              <i class="bi bi-search me-1"></i>Lọc
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Bảng danh sách tin nhắn -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="bg-light">
+            <tr>
+              <th>Nội dung</th>
+              <th>Phòng</th>
+              <th>Người gửi</th>
+              <th>Ngày gửi</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (messages.length === 0) { %>
+              <tr>
+                <td colspan="5" class="text-center text-muted">Không có tin nhắn nào</td>
+              </tr>
+            <% } else { %>
+              <% messages.forEach(message => { %>
+                <tr>
+                  <td><%= message.content.length > 50 ? message.content.substring(0, 50) + '...' : message.content %></td>
+                  <td><%= message.room?.name || 'Không xác định' %></td>
+                  <td><%= message.sender?.username || 'Không xác định' %></td>
+                  <td><%= new Date(message.createdAt).toLocaleDateString('vi-VN') %></td>
+                  <td>
+                    <a href="/admin/messages/detail/<%= message._id %>" class="btn btn-sm btn-outline-primary rounded-pill">
+                      <i class="bi bi-eye me-1"></i>Chi tiết
+                    </a>
+                    <form action="/admin/messages/delete/<%= message._id %>" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhiệm vụ <%= message.title %>?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
+                        <i class="bi bi-trash me-1"></i>Xóa
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Phân trang -->
+      <% if (totalPages > 1) { %>
+        <nav aria-label="Phân trang tin nhắn">
+          <ul class="pagination justify-content-center mt-4">
+            <li class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+              <a class="page-link" href="?page=<%= page - 1 %>&search=<%= search || '' %>&room=<%= room || '' %>">Trước</a>
+            </li>
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= page === i ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %>&search=<%= search || '' %>&room=<%= room || '' %>"><%= i %></a>
+              </li>
+            <% } %>
+            <li class="page-item <%= page >= totalPages ? 'disabled' : '' %>">
+              <a class="page-link" href="?page=<%= page + 1 %>&search=<%= search || '' %>&room=<%= room || '' %>">Sau</a>
+            </li>
+          </ul>
+        </nav>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<style>
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #0052cc, #00c4ff);
+  }
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+  .btn, .form-control, .form-select {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #0052cc;
+    box-shadow: 0 0 0 0.2rem rgba(0, 82, 204, 0.25);
+  }
+  .table th, .table td {
+    vertical-align: middle;
+  }
+  .table-hover tbody tr:hover {
+    background-color: rgba(0, 82, 204, 0.05);
+  }
+  .pagination .page-link {
+    border-radius: 0.25rem;
+    margin: 0 2px;
+  }
+  .pagination .page-item.active .page-link {
+    background-color: #0052cc;
+    border-color: #0052cc;
+  }
+  .alert {
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  @media (max-width: 768px) {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .card-header a {
+      width: 100%;
+      text-align: center;
+    }
+    .row.g-3 {
+      flex-direction: column;
+    }
+  }
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+</style>
