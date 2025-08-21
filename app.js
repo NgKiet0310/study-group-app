@@ -10,13 +10,17 @@ import methodOverride from 'method-override';
 import { sessionUser, attachUserToLocals, sessionAdmin, attachAdminToLocals } from './middleware/session.js';
 import { noCache } from './middleware/nocache.js';
 import isAdmin from './middleware/isAdmin.js';
+import { verifyAdmin } from './middleware/verifiAdmin.js';
+
+// API
+import ApiAuthRoutes from './routes/api/client/auth.route.js';
+import authAdminRoutes from './routes/api/admin/authAdmin.route.js';
+import adminNoteApiRoutes from './routes/api/admin/note.route.js';
 
 // Routes
 import ClientAuthRoutes from './routes/web/client/auth.route.js';
 import HomeRoutes from './routes/web/client/home.route.js';
-import ApiAuthRoutes from './routes/api/client/auth.route.js';
 import AdminRoutes from './routes/web/admin/admin.route.js';
-import authAdminRoutes from './routes/api/admin/authAdmin.route.js';
 import adminAuthRoutes from './routes/web/admin/auth.route.js';
 import scheduleRoutes from './routes/web/admin/schedule.route.js';
 import roomRoutes from './routes/web/admin/room.route.js';
@@ -45,9 +49,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(methodOverride('_method'));
 
-// Session + Locals + NoCache middleware
+
+app.use('/api/admin/auth',authAdminRoutes);
 app.use('/admin', sessionAdmin, attachAdminToLocals, noCache);
-app.use('/api/admin', sessionAdmin, attachAdminToLocals);
+app.use('/api/admin', verifyAdmin, sessionAdmin, attachAdminToLocals, adminNoteApiRoutes);
 app.use('/', sessionUser, attachUserToLocals, noCache);
 
 // Routes
@@ -55,7 +60,6 @@ app.use('/api/auth', ApiAuthRoutes);
 app.use('/auth', ClientAuthRoutes);
 app.use('/', HomeRoutes);
 
-app.use('/api/admin/auth',authAdminRoutes);
 app.use('/admin/auth', adminAuthRoutes);
 app.use('/admin/schedules', isAdmin, scheduleRoutes);
 app.use('/admin/rooms', isAdmin, roomRoutes);

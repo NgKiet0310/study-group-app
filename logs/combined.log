@@ -29,3 +29,36 @@
 {"level":"error","message":"[ADMIN LOGIN]","timestamp":"2025-08-21T07:33:53.477Z"}
 {"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-08-21T07:34:13.305Z"}
 {"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-08-21T07:36:17.267Z"}
+{"level":"info","message":"Lấy danh sách ghi chú thành công, page: 1 , totalNotes: 1","timestamp":"2025-08-21T11:31:53.413Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-08-21T11:35:59.803Z"}
+{"level":"info","message":"Lấy danh sách ghi chú thành công, page: 1 , totalNotes: 1","timestamp":"2025-08-21T11:43:47.445Z"}
+{"level":"error","message":"Lỗi khi lấy danh sách ghi chú","timestamp":"2025-08-21T11:44:55.382Z"}
+{"level":"error","message":"Lỗi khi lấy danh sách ghi chú","timestamp":"2025-08-21T11:45:20.162Z"}
+{"level":"error","message":"Lỗi khi lấy danh sách ghi chú","timestamp":"2025-08-21T11:45:21.999Z"}
+{"level":"error","message":"Lỗi khi lấy danh sách ghi chú","timestamp":"2025-08-21T11:45:39.137Z"}
+{"level":"error","message":"Lỗi khi lấy danh sách ghi chú","timestamp":"2025-08-21T11:45:48.848Z"}
+{"level":"error","message":"Lỗi khi lấy danh sách ghi chú","timestamp":"2025-08-21T11:46:03.965Z"}
+{"level":"error","message":"Lỗi khi lấy danh sách ghi chú","timestamp":"2025-08-21T11:46:25.649Z"}
+{"level":"error","message":"Lỗi khi lấy danh sách ghi chú","timestamp":"2025-08-21T11:46:27.791Z"}
+{"level":"info","message":"Lấy danh sách ghi chú thành công, page: 1 , totalNotes: 0","timestamp":"2025-08-21T11:48:00.125Z"}
+{"level":"info","message":"Lấy danh sách ghi chú thành công, page: 2 , totalNotes: 1","timestamp":"2025-08-21T11:48:35.187Z"}
+{"level":"info","message":"Lấy danh sách ghi chú thành công, page: 5/ , totalNotes: 1","timestamp":"2025-08-21T11:48:40.432Z"}
+{"level":"error","message":"Lỗi khi lấy danh sách ghi chú","timestamp":"2025-08-21T11:48:46.872Z"}
+{"level":"info","message":"Lấy danh sách ghi chú thành công, page: 1 , totalNotes: 1","timestamp":"2025-08-21T11:48:50.920Z"}
+{"level":"info","message":"Lấy danh sách ghi chú thành công, page: 1 , totalNotes: 1","timestamp":"2025-08-21T12:28:03.024Z"}
+{"level":"error","message":"Lỗi khi lấy danh sách ghi chú","timestamp":"2025-08-21T12:28:03.039Z"}
+{"level":"info","message":"Lấy danh sách ghi chú thành công, page: 1 , totalNotes: 1","timestamp":"2025-08-21T12:28:20.370Z"}
+{"level":"info","message":"Lấy danh sách ghi chú thành công, page: 1 , totalNotes: 1","timestamp":"2025-08-21T12:31:03.132Z"}
+{"level":"info","message":"Lấy danh sách ghi chú thành công, page: 1 , totalNotes: 1","timestamp":"2025-08-21T12:31:08.419Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-08-21T12:54:25.951Z"}
+{"level":"info","message":"Successfully fetched notes list: 1 , totalNotes: 1","timestamp":"2025-08-21T12:54:42.680Z"}
+{"error":{},"level":"error","message":"Error creating note: Cannot access 'newNote' before initialization","timestamp":"2025-08-21T13:22:54.565Z"}
+{"error":{"_message":"Note validation failed","errors":{"createdBy":{"kind":"ObjectId","message":"Cast to ObjectId failed for value \"1755782620480\" (type number) at path \"createdBy\" because of \"BSONError\"","name":"CastError","path":"createdBy","reason":{},"stringValue":"\"1755782620480\"","value":1755782620480,"valueType":"number"},"room":{"kind":"ObjectId","message":"Cast to ObjectId failed for value \"Lập trình php\" (type string) at path \"room\" because of \"BSONError\"","name":"CastError","path":"room","reason":{},"stringValue":"\"Lập trình php\"","value":"Lập trình php","valueType":"string"}},"message":"Note validation failed: room: Cast to ObjectId failed for value \"Lập trình php\" (type string) at path \"room\" because of \"BSONError\", createdBy: Cast to ObjectId failed for value \"1755782620480\" (type number) at path \"createdBy\" because of \"BSONError\"","name":"ValidationError"},"level":"error","message":"Error creating note: Note validation failed: room: Cast to ObjectId failed for value \"Lập trình php\" (type string) at path \"room\" because of \"BSONError\", createdBy: Cast to ObjectId failed for value \"1755782620480\" (type number) at path \"createdBy\" because of \"BSONError\"","timestamp":"2025-08-21T13:23:40.490Z"}
+{"error":{"_message":"Note validation failed","errors":{"createdBy":{"kind":"ObjectId","message":"Cast to ObjectId failed for value \"1755782716714\" (type number) at path \"createdBy\" because of \"BSONError\"","name":"CastError","path":"createdBy","reason":{},"stringValue":"\"1755782716714\"","value":1755782716714,"valueType":"number"}},"message":"Note validation failed: createdBy: Cast to ObjectId failed for value \"1755782716714\" (type number) at path \"createdBy\" because of \"BSONError\"","name":"ValidationError"},"level":"error","message":"Error creating note: Note validation failed: createdBy: Cast to ObjectId failed for value \"1755782716714\" (type number) at path \"createdBy\" because of \"BSONError\"","timestamp":"2025-08-21T13:25:16.736Z"}
+{"error":{},"level":"error","message":"Error creating note: mongoose is not defined","timestamp":"2025-08-21T13:29:25.250Z"}
+{"level":"info","message":"Successfully created note , title: Bất đồng bộ, createdBy: 6896189e4c0ec42bce1956dc","timestamp":"2025-08-21T13:29:37.125Z"}
+{"level":"info","message":"Successfully created note , title: Bất đồng bộ, createdBy: 6896189e4c0ec42bce1956dc","timestamp":"2025-08-21T13:35:53.296Z"}
+{"level":"info","message":"Successfully fetched note, ID: 689a26bc3c9e81bd4873e12e","timestamp":"2025-08-21T13:47:26.920Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-08-21T13:58:35.278Z"}
+{"level":"info","message":"Successfully fetched note, ID: 689a26bc3c9e81bd4873e12e","timestamp":"2025-08-21T14:00:59.277Z"}
+{"level":"info","message":"Successfully updated note: ID: 689a26bc3c9e81bd4873e12e, title: Api Note","timestamp":"2025-08-21T14:03:46.838Z"}
