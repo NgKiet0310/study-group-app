@@ -276,7 +276,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <form method="POST" action="/admin/tasks/<%= task._id %>/delete" class="d-inline">
+                <form method="POST" action="/admin/tasks/delete/<%= task._id %>" class="d-inline">
                     <button type="submit" class="btn btn-danger">Xóa</button>
                 </form>
             </div>

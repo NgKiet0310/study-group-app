@@ -1,88 +1,281 @@
 <% layout('layouts/main-admin') %>
 
-<div class="container mt-5">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold text-primary">
-      <i class="bi bi-calendar-week me-2"></i>Quản lý lịch học
-    </h2>
-    <a href="/admin/schedules/create" class="btn btn-success shadow-sm rounded-pill px-4">
-      <i class="bi bi-plus-circle me-1"></i> Thêm lịch học
-    </a>
-  </div>
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="card shadow-lg rounded-4 border-0">
+    <!-- Header với gradient và nút thêm lịch -->
+    <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4 d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-calendar-check-fill me-2 animate__animated animate__pulse animate__infinite"></i>Danh sách lịch học</span>
+      <a href="/admin/schedules/create" class="btn btn-light btn-sm fw-semibold rounded-pill">
+        <i class="bi bi-plus-circle me-1"></i>Thêm lịch học
+      </a>
+    </div>
+    <div class="card-body p-4">
+      <!-- Hiển thị thông báo lỗi hoặc thành công -->
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+          <%= success %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
 
-  <div class="table-responsive shadow-sm rounded-4 border bg-white">
-    <table class="table table-hover align-middle text-center mb-0">
-      <thead class="table-light text-dark border-bottom">
-        <tr class="align-middle">
-          <th>#</th>
-          <th class="text-start ps-4">Tiêu đề</th>
-          <th class="text-start ps-4">Mô tả</th>
-          <th>Phòng</th>
-          <th>Bắt đầu</th>
-          <th>Kết thúc</th>
-          <th>Người tạo</th>
-          <th>Tham gia</th>
-          <th>Ngày tạo</th>
-          <th>Thao tác</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (schedules.length > 0) { %>
-          <% schedules.forEach((s, i) => { %>
-            <tr>
-              <td class="fw-bold text-secondary"><%= i + 1 %></td>
-              <td class="text-start ps-4 fw-semibold text-primary"><%= s.title %></td>
-              <td class="text-start ps-4 text-muted" style="max-width: 250px;"><%= s.description || 'Không có mô tả' %></td>
-              <td>
-                <span class="badge bg-info-subtle text-dark px-3 py-1 rounded-pill"><%= s.room?.name || 'N/A' %></span>
-              </td>
-              <td class="text-success small">
-                <i class="bi bi-clock me-1"></i><%= new Date(s.startTime).toLocaleString('vi-VN') %>
-              </td>
-              <td class="text-danger small">
-                <%= s.endTime ? new Date(s.endTime).toLocaleString('vi-VN') : 'Không có' %>
-              </td>
-              <td>
-                <span class="badge bg-secondary-subtle text-dark px-3 py-1 rounded-pill"><%= s.createdBy?.username || 'N/A' %></span>
-              </td>
-              <td>
-                <% if (s.participants.length > 0) { %>
-                  <ul class="list-unstyled mb-0 text-start ps-2">
-                    <% s.participants.forEach(p => { %>
-                      <li><i class="bi bi-person-fill me-1 text-primary"></i><%= p.username %></li>
-                    <% }) %>
-                  </ul>
-                <% } else { %>
-                  <span class="text-muted fst-italic">Không có</span>
-                <% } %>
-              </td>
-              <td>
-                <span class="badge bg-light text-dark border rounded-pill px-3 py-1">
-                  <%= new Date(s.createdAt).toLocaleDateString('vi-VN') %>
-                </span>
-              </td>
-              <td>
-                <div class="d-flex justify-content-center gap-2">
-                  <a href="/admin/schedules/edit/<%= s._id %>" class="btn btn-sm btn-outline-warning rounded-pill">
-                    <i class="bi bi-pencil-square me-1"></i> Sửa
-                  </a>
-                  <form action="/admin/schedules/delete/<%= s._id %>" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xoá lịch này?')">
-                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
-                      <i class="bi bi-trash me-1"></i> Xóa
-                    </button>
-                  </form>
-                </div>
-              </td>
+      <!-- Form tìm kiếm và lọc -->
+      <form method="GET" action="/admin/schedules" class="mb-4">
+        <div class="row g-3">
+          <!-- Tìm kiếm theo tiêu đề -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Tìm kiếm</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control rounded-3" name="search" placeholder="Tiêu đề lịch học" value="<%= search || '' %>">
+            </div>
+          </div>
+          <!-- Lọc theo phòng -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Phòng</label>
+            <select class="form-select rounded-3" name="room">
+              <option value="">Tất cả</option>
+              <% rooms.forEach(room => { %>
+                <option value="<%= room._id %>" <%= room._id.toString() === room ? 'selected' : '' %>><%= room.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <!-- Lọc theo ngày -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Ngày bắt đầu</label>
+            <div class="row g-2">
+              <div class="col">
+                <input type="date" class="form-control rounded-3" name="startDate" value="<%= startDate || '' %>">
+              </div>
+              <div class="col">
+                <input type="date" class="form-control rounded-3" name="endDate" value="<%= endDate || '' %>">
+              </div>
+            </div>
+          </div>
+          <!-- Lọc theo trạng thái -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Trạng thái</label>
+            <select class="form-select rounded-3" name="status">
+              <option value="">Tất cả</option>
+              <option value="upcoming" <%= status === 'upcoming' ? 'selected' : '' %>>Sắp diễn ra</option>
+              <option value="ongoing" <%= status === 'ongoing' ? 'selected' : '' %>>Đang diễn ra</option>
+              <option value="completed" <%= status === 'completed' ? 'selected' : '' %>>Đã hoàn thành</option>
+            </select>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" class="btn btn-primary rounded-pill">
+            <i class="bi bi-funnel me-1"></i>Lọc
+          </button>
+          <a href="/admin/schedules" class="btn btn-outline-secondary rounded-pill">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>Đặt lại
+          </a>
+        </div>
+      </form>
+
+      <!-- Bảng danh sách lịch học -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle text-nowrap">
+          <thead class="table-light">
+            <tr class="text-center">
+              <th style="width: 5%;">#</th>
+              <th style="width: 20%;">Tiêu đề</th>
+              <th style="width: 15%;">Phòng</th>
+              <th style="width: 30%;">Thành viên</th>
+              <th style="width: 15%;">Thời gian</th>
+              <th style="width: 15%;">Hành động</th>
             </tr>
-          <% }) %>
-        <% } else { %>
-          <tr>
-            <td colspan="10" class="text-muted text-center py-5">
-              <i class="bi bi-exclamation-circle-fill me-2"></i>Không có lịch học nào
-            </td>
-          </tr>
-        <% } %>
-      </tbody>
-    </table>
+          </thead>
+          <tbody>
+            <% if (schedules.length === 0) { %>
+              <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                  <i class="bi bi-info-circle me-1"></i>Không có lịch học nào.
+                </td>
+              </tr>
+            <% } else { %>
+              <% schedules.forEach((schedule, index) => { %>
+                <tr class="table-row-hover">
+                  <td class="text-center fw-bold"><%= (page - 1) * limit + index + 1 %></td>
+                  <td><%= schedule.title %></td>
+                  <td class="text-center"><code class="bg-light p-1 rounded"><%= schedule.room?.code || 'Không xác định' %></code></td>
+                  <td>
+                    <div class="d-flex flex-column gap-2">
+                      <div class="d-flex align-items-center">
+                        <span class="fw-semibold text-dark">Người tạo: <%= schedule.createdBy?.username || 'Không xác định' %></span>
+                        <span class="badge bg-primary ms-2 rounded-pill">Người tạo</span>
+                      </div>
+                      <% if (schedule.participants.length > 0) { %>
+                        <% schedule.participants.slice(0, 2).forEach(participant => { %>
+                          <div class="d-flex align-items-center">
+                            <span class="fw-semibold text-dark"><%= participant.username || 'Không xác định' %></span>
+                            <span class="badge bg-secondary ms-2 rounded-pill">Thành viên</span>
+                          </div>
+                        <% }) %>
+                        <% if (schedule.participants.length > 2) { %>
+                          <div class="text-muted fst-italic">
+                            ... và <%= schedule.participants.length - 2 %> thành viên khác
+                          </div>
+                        <% } %>
+                      <% } else { %>
+                        <span class="text-muted fst-italic">Không có thành viên</span>
+                      <% } %>
+                    </div>
+                  </td>
+                  <td class="text-center text-muted">
+                    <%= new Date(schedule.startTime).toLocaleString('vi-VN', { 
+                      day: '2-digit', 
+                      month: '2-digit', 
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    }) %>
+                    <br>đến<br>
+                    <%= new Date(schedule.endTime).toLocaleString('vi-VN', { 
+                      day: '2-digit', 
+                      month: '2-digit', 
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    }) %>
+                  </td>
+                  <td class="text-center">
+                    <a href="/admin/schedules/detail/<%= schedule._id %>" class="btn btn-sm btn-outline-info rounded-pill me-1">
+                      <i class="bi bi-eye me-1"></i>Xem
+                    </a>
+                    <a href="/admin/schedules/edit/<%= schedule._id %>" class="btn btn-sm btn-outline-warning rounded-pill me-1">
+                      <i class="bi bi-pencil-square me-1"></i>Sửa
+                    </a>
+                    <form action="/admin/schedules/delete/<%= schedule._id %>" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa lịch <%= schedule.title %>?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
+                        <i class="bi bi-trash me-1"></i>Xóa
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Phân trang -->
+      <% if (totalPages > 1) { %>
+        <nav aria-label="Schedule pagination" class="mt-4">
+          <ul class="pagination justify-content-center">
+            <!-- Previous -->
+            <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
+              <a class="page-link rounded-pill" href="/admin/schedules?page=<%= page - 1 %>&search=<%= search || '' %>&room=<%= room || '' %>&startDate=<%= startDate || '' %>&endDate=<%= endDate || '' %>&status=<%= status || '' %>">
+                <i class="bi bi-chevron-left"></i>
+              </a>
+            </li>
+            <!-- Số trang -->
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= page === i ? 'active' : '' %>">
+                <a class="page-link rounded-pill" href="/admin/schedules?page=<%= i %>&search=<%= search || '' %>&room=<%= room || '' %>&startDate=<%= startDate || '' %>&endDate=<%= endDate || '' %>&status=<%= status || '' %>"><%= i %></a>
+              </li>
+            <% } %>
+            <!-- Next -->
+            <li class="page-item <%= page === totalPages ? 'disabled' : '' %>">
+              <a class="page-link rounded-pill" href="/admin/schedules?page=<%= page + 1 %>&search=<%= search || '' %>&room=<%= room || '' %>&startDate=<%= startDate || '' %>&endDate=<%= endDate || '' %>&status=<%= status || '' %>">
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      <% } %>
+    </div>
   </div>
 </div>
+
+<style>
+  /* Gradient cho header */
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #0052cc, #00c4ff);
+  }
+
+  /* Hover effect cho card và table row */
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+  .table-row-hover:hover {
+    background-color: #f8f9fa;
+  }
+
+  /* Style cho badge */
+  .badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.8em;
+    font-weight: 500;
+  }
+
+  /* Style cho button và input */
+  .btn, .form-control, .form-select {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #0052cc;
+    box-shadow: 0 0 0 0.2rem rgba(0, 82, 204, 0.25);
+  }
+
+  /* Style cho code */
+  code {
+    font-size: 0.95rem;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  /* Style cho alert */
+  .alert {
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Style cho pagination */
+  .page-link {
+    border-radius: 50px !important;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+  }
+  .page-link:hover {
+    transform: translateY(-2px);
+  }
+  .page-item.active .page-link {
+    background-color: #0052cc;
+    border-color: #0052cc;
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .card-header a {
+      width: 100%;
+      text-align: center;
+    }
+    .row.g-3 {
+      flex-direction: column;
+    }
+    .table-responsive {
+      font-size: 0.9rem;
+    }
+  }
+
+  /* Import animate.css từ CDN */
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+</style>

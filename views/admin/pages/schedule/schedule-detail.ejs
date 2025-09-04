@@ -1,0 +1,186 @@
+<% layout('layouts/main-admin') %>
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="card shadow-lg rounded-4 border-0">
+    <!-- Header với gradient -->
+    <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4 d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-calendar-event-fill me-2 animate__animated animate__pulse animate__infinite"></i>Chi tiết lịch học</span>
+      <div>
+        <a href="/admin/schedules/edit/<%= schedule._id %>" class="btn btn-light btn-sm fw-semibold rounded-pill me-2">
+          <i class="bi bi-pencil-square me-1"></i>Sửa
+        </a>
+        <a href="/admin/schedules" class="btn btn-outline-light btn-sm fw-semibold rounded-pill">
+          <i class="bi bi-arrow-left me-1"></i>Quay lại
+        </a>
+      </div>
+    </div>
+    <div class="card-body p-4">
+      <!-- Hiển thị thông báo lỗi hoặc thành công -->
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+          <%= success %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+
+      <!-- Thông tin chi tiết lịch học -->
+      <div class="row g-4">
+        <div class="col-md-6">
+          <h5 class="fw-semibold mb-3">Thông tin cơ bản</h5>
+          <div class="card border-0 shadow-sm p-3">
+            <p><strong>Tiêu đề:</strong> <%= schedule.title %></p>
+            <p><strong>Phòng:</strong> <code class="bg-light p-1 rounded"><%= schedule.room?.code || 'Không xác định' %></code> - <%= schedule.room?.name || 'Không xác định' %></p>
+            <p><strong>Mô tả:</strong> <%= schedule.description || 'Không có mô tả' %></p>
+            <p><strong>Trạng thái:</strong> 
+              <% if (scheduleStatus === 'upcoming') { %>
+                <span class="badge bg-warning rounded-pill">Sắp diễn ra</span>
+              <% } else if (scheduleStatus === 'ongoing') { %>
+                <span class="badge bg-success rounded-pill">Đang diễn ra</span>
+              <% } else { %>
+                <span class="badge bg-secondary rounded-pill">Đã hoàn thành</span>
+              <% } %>
+            </p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h5 class="fw-semibold mb-3">Thời gian</h5>
+          <div class="card border-0 shadow-sm p-3">
+            <p><strong>Bắt đầu:</strong> <%= new Date(schedule.startTime).toLocaleString('vi-VN', { 
+              day: '2-digit', 
+              month: '2-digit', 
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }) %></p>
+            <p><strong>Kết thúc:</strong> <%= new Date(schedule.endTime).toLocaleString('vi-VN', { 
+              day: '2-digit', 
+              month: '2-digit', 
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }) %></p>
+            <p><strong>Người tạo:</strong> <%= schedule.createdBy?.username || 'Không xác định' %> </p>
+            <p><strong>Ngày tạo:</strong> <%= new Date(schedule.createdAt).toLocaleString('vi-VN', { 
+              day: '2-digit', 
+              month: '2-digit', 
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }) %></p>
+          </div>
+        </div>
+        <div class="col-12">
+          <h5 class="fw-semibold mb-3">Thành viên tham gia</h5>
+          <div class="card border-0 shadow-sm p-3">
+            <% if (schedule.participants.length > 0) { %>
+              <ul class="list-group list-group-flush">
+                <% schedule.participants.forEach(participant => { %>
+                  <li class="list-group-item d-flex align-items-center">
+                    <span class="fw-semibold text-dark"><%= participant.username || 'Không xác định' %></span>
+                    <span class="badge bg-secondary ms-2 rounded-pill">Thành viên</span>
+                  </li>
+                <% }) %>
+              </ul>
+            <% } else { %>
+              <p class="text-muted fst-italic">Không có thành viên tham gia.</p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nút hành động -->
+      <div class="d-flex gap-2 mt-4">
+        <a href="/admin/schedules/edit/<%= schedule._id %>" class="btn btn-warning rounded-pill">
+          <i class="bi bi-pencil-square me-1"></i>Sửa lịch
+        </a>
+        <form action="/admin/schedules/delete/<%= schedule._id %>" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn xóa lịch <%= schedule.title %>?');">
+          <button type="submit" class="btn btn-danger rounded-pill">
+            <i class="bi bi-trash me-1"></i>Xóa lịch
+          </button>
+        </form>
+        <a href="/admin/schedules" class="btn btn-outline-secondary rounded-pill">
+          <i class="bi bi-arrow-left me-1"></i>Quay lại
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Gradient cho header */
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #0052cc, #00c4ff);
+  }
+
+  /* Hover effect cho card */
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  /* Style cho badge */
+  .badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.8em;
+    font-weight: 500;
+  }
+
+  /* Style cho button và input */
+  .btn, .form-control, .form-select {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #0052cc;
+    box-shadow: 0 0 0 0.2rem rgba(0, 82, 204, 0.25);
+  }
+
+  /* Style cho code */
+  code {
+    font-size: 0.95rem;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  /* Style cho alert */
+  .alert {
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Style cho list-group */
+  .list-group-item {
+    border: none;
+    padding: 0.75rem 0;
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .card-header .btn {
+      width: 100%;
+      text-align: center;
+    }
+    .row.g-4 {
+      flex-direction: column;
+    }
+  }
+
+  /* Import animate.css từ CDN */
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+</style>

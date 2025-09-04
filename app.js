@@ -16,6 +16,8 @@ import { verifyAdmin } from './middleware/verifiAdmin.js';
 import ApiAuthRoutes from './routes/api/client/auth.route.js';
 import authAdminRoutes from './routes/api/admin/authAdmin.route.js';
 import adminNoteApiRoutes from './routes/api/admin/note.route.js';
+import adminRoomApiRoutes from './routes/api/admin/room.route.js';
+import adminTaskApiRoutes from './routes/api/admin/task.route.js';
 
 // Routes
 import ClientAuthRoutes from './routes/web/client/auth.route.js';
@@ -52,7 +54,7 @@ app.use(methodOverride('_method'));
 
 app.use('/api/admin/auth',authAdminRoutes);
 app.use('/admin', sessionAdmin, attachAdminToLocals, noCache);
-app.use('/api/admin', verifyAdmin, sessionAdmin, attachAdminToLocals, adminNoteApiRoutes);
+app.use('/api/admin', verifyAdmin, sessionAdmin, attachAdminToLocals, adminNoteApiRoutes, adminRoomApiRoutes, adminTaskApiRoutes);
 app.use('/', sessionUser, attachUserToLocals, noCache);
 
 // Routes

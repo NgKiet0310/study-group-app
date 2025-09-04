@@ -1,84 +1,147 @@
 <% layout('layouts/main-admin') %>
 
-<div class="container mt-5">
-  <h2 class="mb-4 fw-bold text-primary">
-    <i class="bi bi-calendar-plus me-2"></i> Tạo lịch học
-  </h2>
-
-  <% if (typeof error !== 'undefined' && error) { %>
-    <div class="alert alert-danger"><%= error %></div>
-  <% } %>
-
-  <form action="/admin/schedules/create" method="POST" class="shadow p-4 rounded bg-light border">
-    <div class="mb-3">
-      <label for="title" class="form-label fw-semibold">Tiêu đề</label>
-      <input type="text" class="form-control" id="title" name="title"
-        value="<%= formData.title || '' %>" placeholder="Nhập tiêu đề" required>
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="card shadow-lg rounded-4 border-0">
+    <!-- Header với gradient -->
+    <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4 d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-calendar-plus me-2 animate__animated animate__pulse animate__infinite"></i>Tạo lịch học</span>
+      <a href="/admin/schedules" class="btn btn-outline-light btn-sm fw-semibold rounded-pill">
+        <i class="bi bi-arrow-left me-1"></i>Quay lại
+      </a>
     </div>
+    <div class="card-body p-4">
+      <!-- Hiển thị thông báo lỗi -->
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+          <%= success %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
 
-    <div class="mb-3">
-      <label for="description" class="form-label fw-semibold">Mô tả</label>
-      <textarea class="form-control" id="description" name="description" rows="3"
-        placeholder="Thêm mô tả (tuỳ chọn)"><%= formData.description || '' %></textarea>
+      <!-- Form tạo lịch học -->
+      <form action="/admin/schedules/create" method="POST" id="createScheduleForm">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="title" class="form-label fw-semibold">Tiêu đề</label>
+            <input type="text" class="form-control rounded-3" id="title" name="title" value="<%= formData.title || '' %>" placeholder="Nhập tiêu đề" required>
+          </div>
+          <div class="col-md-6">
+            <label for="room" class="form-label fw-semibold">Phòng</label>
+            <select class="form-select rounded-3" id="room" name="room" required>
+              <option value="" disabled <%= !formData.room ? 'selected' : '' %>>-- Chọn phòng học --</option>
+              <% rooms.forEach(room => { %>
+                <option value="<%= room._id %>" <%= formData.room === room._id ? 'selected' : '' %>><%= room.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-12">
+            <label for="description" class="form-label fw-semibold">Mô tả</label>
+            <textarea class="form-control rounded-3" id="description" name="description" rows="3" placeholder="Thêm mô tả (tuỳ chọn)"><%= formData.description || '' %></textarea>
+          </div>
+          <div class="col-12">
+            <label for="participants" class="form-label fw-semibold">Người tham gia</label>
+            <select class="form-select rounded-3" id="participants" name="participants" multiple required>
+              <% users.forEach(user => { %>
+                <option value="<%= user._id %>" <%= (formData.participants || []).includes(user._id.toString()) ? 'selected' : '' %>><%= user.username || user.email %></option>
+              <% }) %>
+            </select>
+            <div class="form-text">Giữ Ctrl (Windows) hoặc Command (Mac) để chọn nhiều người.</div>
+          </div>
+          <div class="col-md-6">
+            <label for="startTime" class="form-label fw-semibold">Thời gian bắt đầu</label>
+            <input type="datetime-local" class="form-control rounded-3" id="startTime" name="startTime" value="<%= formData.startTime || '' %>" required>
+          </div>
+          <div class="col-md-6">
+            <label for="endTime" class="form-label fw-semibold">Thời gian kết thúc</label>
+            <input type="datetime-local" class="form-control rounded-3" id="endTime" name="endTime" value="<%= formData.endTime || '' %>" required>
+          </div>
+        </div>
+        <% if (admin) { %>
+          <input type="hidden" name="createdBy" value="<%= admin._id %>">
+        <% } %>
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-success rounded-pill">
+            <i class="bi bi-check-circle me-1"></i>Tạo lịch
+          </button>
+          <a href="/admin/schedules" class="btn btn-outline-secondary rounded-pill">Quay lại</a>
+        </div>
+      </form>
     </div>
-
-    <div class="mb-3">
-      <label for="room" class="form-label fw-semibold">Phòng</label>
-      <select class="form-select" id="room" name="room" required>
-        <option value="" disabled <%= !formData.room ? 'selected' : '' %>>-- Chọn phòng học --</option>
-        <% rooms.forEach(room => { %>
-          <option value="<%= room._id %>" <%= formData.room === room._id ? 'selected' : '' %>>
-            <%= room.name %>
-          </option>
-        <% }) %>
-      </select>
-    </div>
-
-    <div class="mb-3">
-      <label for="participants" class="form-label fw-semibold">Người tham gia</label>
-      <select class="form-select" id="participants" name="participants" multiple required>
-        <% users.forEach(user => { %>
-          <option value="<%= user._id %>" <%= (formData.participants || []).includes(user._id) ? 'selected' : '' %>>
-            <%= user.username %>
-          </option>
-        <% }) %>
-      </select>
-      <div class="form-text">Giữ Ctrl (Windows) hoặc Command (Mac) để chọn nhiều người.</div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <label for="startTime" class="form-label fw-semibold">Thời gian bắt đầu</label>
-        <input type="datetime-local" class="form-control" id="startTime" name="startTime"
-          value="<%= formData.startTime || '' %>" required>
-      </div>
-      <div class="col-md-6 mb-3">
-        <label for="endTime" class="form-label fw-semibold">Thời gian kết thúc</label>
-        <input type="datetime-local" class="form-control" id="endTime" name="endTime"
-          value="<%= formData.endTime || '' %>" required>
-      </div>
-    </div>
-
-    <% if (admin) { %>
-      <input type="hidden" name="createdBy" value="<%= admin._id %>">
-    <% } %>
-
-    <div class="d-flex justify-content-between align-items-center">
-      <button type="submit" class="btn btn-success px-4">
-        <i class="bi bi-check-circle me-1"></i> Tạo lịch
-      </button>
-      <a href="/admin/schedules" class="btn btn-secondary">Quay lại</a>
-    </div>
-  </form>
+  </div>
 </div>
 
 <script>
-  document.querySelector('form').addEventListener('submit', function (e) {
-    const room = document.querySelector('#room').value;
-    const participants = document.querySelector('#participants').selectedOptions;
+  document.getElementById('createScheduleForm').addEventListener('submit', function (e) {
+    const room = document.getElementById('room').value;
+    const participants = document.getElementById('participants').selectedOptions;
+    const startTime = document.getElementById('startTime').value;
+    const endTime = document.getElementById('endTime').value;
     if (!room || participants.length === 0) {
       e.preventDefault();
-      alert("Vui lòng chọn đầy đủ phòng và người tham gia.");
+      alert('Vui lòng chọn đầy đủ phòng và người tham gia.');
+    } else if (new Date(startTime) >= new Date(endTime)) {
+      e.preventDefault();
+      alert('Thời gian kết thúc phải sau thời gian bắt đầu.');
     }
   });
 </script>
+
+<style>
+  /* Gradient cho header */
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #0052cc, #00c4ff);
+  }
+
+  /* Hover effect cho card */
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  /* Style cho button và input */
+  .btn, .form-control, .form-select {
+    transition: all 0.3s ease;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #0052cc;
+    box-shadow: 0 0 0 0.2rem rgba(0, 82, 204, 0.25);
+  }
+
+  /* Style cho alert */
+  .alert {
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .card-header .btn {
+      width: 100%;
+      text-align: center;
+    }
+    .row.g-3 {
+      flex-direction: column;
+    }
+  }
+
+  /* Import animate.css từ CDN */
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+</style>

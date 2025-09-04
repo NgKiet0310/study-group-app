@@ -292,7 +292,7 @@ export const editRoom = async( req, res ) => {
         let processedMembers = [];
         if (members && Array.isArray(members)) {
             const hostCount = members.filter(member => member.role === 'host').length;
-            if (hostCount > 1) {
+            if (hostCount > 2) {
                 const users = await getAllUsers();
                 return res.status(400).render('admin/pages/room/form-edit', {
                     room,
@@ -374,7 +374,7 @@ export const deleteRoom = async (req, res) => {
  
         await Room.deleteOne({ _id: roomId });
 
-        res.redirect('/admin/room?success=Xóa phòng thành công!');
+        res.redirect('/admin/rooms?success=Xóa phòng thành công!');
     } catch (error) {
         console.error('Lỗi khi xóa phòng:', error);
         res.redirect('/admin/rooms?error=Đã có lỗi xảy ra khi xóa phòng');

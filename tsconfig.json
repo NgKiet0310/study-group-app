@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    /* Đường dẫn */
+    "rootDir": ".",
+    "outDir": "./dist",
+
+    /* Module */
+    "module": "esnext",
+    "moduleResolution": "node",
+
+    /* Ngôn ngữ */
+    "target": "ES2020",
+    "lib": ["esnext"],
+
+    /* Node.js */
+    "types": ["node","express"],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+
+    /* Output */
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    /* JS compatibility */
+    "allowJs": true,
+    "checkJs": false,
+
+    /* Strict mode */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    /* Tối ưu build */
+    "skipLibCheck": true,
+
+    /* Quan trọng cho ESM */
+    "moduleDetection": "force",
+    "verbatimModuleSyntax": true
+    
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
+}

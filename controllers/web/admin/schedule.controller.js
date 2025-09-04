@@ -1,3 +1,4 @@
+import { validationResult } from 'express-validator';
 import Schedule from '../../../models/Schedule.js';
 import Room from '../../../models/Room.js';
 import User from '../../../models/User.js';
@@ -8,64 +9,139 @@ const getRoomsAndUsers = async () => {
   return { rooms, users };
 };
 
-// Helper validate input
-const validateScheduleInput = ({ title, room, participants, startTime, endTime }) => {
-  const errors = [];
-
-  if (!title || title.trim() === '') errors.push('Tiêu đề không được để trống.');
-  if (!room) errors.push('Vui lòng chọn phòng học.');
-  if (!participants || participants.length === 0) errors.push('Phải có ít nhất 1 người tham gia.');
-  if (!startTime || !endTime) errors.push('Phải chọn đầy đủ thời gian.');
-  else if (Date.parse(startTime) >= Date.parse(endTime)) {
-    errors.push('Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc.');
-  }
-
-  return errors;
-};
-
-// Helper check conflict
-const checkScheduleConflict = async (room, startTime, endTime, excludeId = null) => {
-  const query = {
-    room,
-    startTime: { $lt: new Date(endTime) },
-    endTime: { $gt: new Date(startTime) }
-  };
-
-  if (excludeId) query._id = { $ne: excludeId };
-
-  return await Schedule.findOne(query);
-};
-
-// Hiển thị danh sách lịch học
+// Hiển thị danh sách lịch học với tìm kiếm và phân trang
 export const showSchedules = async (req, res) => {
   try {
-    const schedules = await Schedule.find()
-      .populate('room', 'name')
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    // Lấy tham số tìm kiếm và lọc
+    const { search, room, startDate, endDate, status } = req.query;
+
+    // Xây dựng query
+    let query = {};
+
+    // Tìm kiếm theo tiêu đề
+    if (search) {
+      query.title = { $regex: search, $options: 'i' };
+    }
+
+    // Lọc theo phòng
+    if (room) {
+      query.room = room;
+    }
+
+    // Lọc theo ngày
+    if (startDate || endDate) {
+      query.startTime = {};
+      if (startDate) {
+        query.startTime.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setDate(end.getDate() + 1); // Bao gồm cả ngày endDate
+        query.startTime.$lt = end;
+      }
+    }
+
+    // Lọc theo trạng thái
+    if (status) {
+      const now = new Date();
+      if (status === 'upcoming') {
+        query.startTime = { ...query.startTime, $gt: now };
+      } else if (status === 'ongoing') {
+        query.startTime = { ...query.startTime, $lte: now };
+        query.endTime = { $gt: now };
+      } else if (status === 'completed') {
+        query.endTime = { $lt: now };
+      }
+    }
+
+    const totalSchedules = await Schedule.countDocuments(query);
+    const totalPages = Math.ceil(totalSchedules / limit);
+
+    const schedules = await Schedule.find(query)
+      .populate('room', 'name code')
       .populate('createdBy', 'username')
       .populate('participants', 'username')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Lấy danh sách phòng cho filter
+    const rooms = await Room.find().select('_id name');
 
     res.render('admin/pages/schedule/manage-schedules', {
       schedules,
+      rooms,
       path: req.path,
+      admin: req.session.admin,
+      // Phân trang
+      page,
+      totalPages,
+      totalSchedules,
+      limit,
+      // Tìm kiếm
+      search: search || '',
+      room: room || '',
+      startDate: startDate || '',
+      endDate: endDate || '',
+      status: status || '',
     });
   } catch (error) {
     console.error('Lỗi khi hiển thị danh sách lịch:', error);
-    res.status(500).send('Đã xảy ra lỗi khi tải lịch');
+    res.status(500).send('Đã xảy ra lỗi khi tải danh sách lịch');
   }
 };
 
-// Hiển thị form tạo
+// Hiển thị chi tiết lịch học
+export const showScheduleDetail = async (req, res) => {
+  try {
+    const schedule = await Schedule.findById(req.params.id)
+      .populate('room', 'name code description')
+      .populate('createdBy', 'username email')
+      .populate('participants', 'username email');
+
+    if (!schedule) {
+      return res.status(404).send('Không tìm thấy lịch học');
+    }
+
+    // Xác định trạng thái lịch học
+    const now = new Date();
+    let scheduleStatus = '';
+    if (schedule.startTime > now) {
+      scheduleStatus = 'upcoming'; // Sắp diễn ra
+    } else if (schedule.startTime <= now && schedule.endTime > now) {
+      scheduleStatus = 'ongoing'; // Đang diễn ra
+    } else {
+      scheduleStatus = 'completed'; // Đã hoàn thành
+    }
+
+    res.render('admin/pages/schedule/schedule-detail', {
+      schedule,
+      scheduleStatus,
+      path: req.path,
+      admin: req.session.admin,
+    });
+  } catch (error) {
+    console.error('Lỗi khi hiển thị chi tiết lịch:', error);
+    res.status(500).send('Đã xảy ra lỗi khi tải chi tiết lịch');
+  }
+};
+
+// Hiển thị form tạo lịch
 export const showCreateForm = async (req, res) => {
   try {
     const { rooms, users } = await getRoomsAndUsers();
 
     res.render('admin/pages/schedule/form-create', {
       rooms,
+      users,
       admin: req.session.admin,
       path: req.path,
-      users,
       error: null,
+      success: null,
       formData: {}
     });
   } catch (error) {
@@ -74,53 +150,46 @@ export const showCreateForm = async (req, res) => {
   }
 };
 
-// Xử lý tạo lịch
+// Xử lý tạo lịch (với validation)
 export const createSchedule = async (req, res) => {
-  const { title, description, room, participants, startTime, endTime } = req.body;
-  const { rooms, users } = await getRoomsAndUsers();
-
   try {
+    // Kiểm tra kết quả validation
+    const errors = validationResult(req);
+    
+    if (!errors.isEmpty()) {
+      const { rooms, users } = await getRoomsAndUsers();
+      
+      return res.status(400).render('admin/pages/schedule/form-create', {
+        error: errors.array().map(err => err.msg).join('. '),
+        formData: req.body,
+        rooms,
+        users,
+        path: req.path,
+        admin: req.session.admin,
+        success: null,
+      });
+    }
+
     if (!req.session.admin || !req.session.admin._id) {
+      const { rooms, users } = await getRoomsAndUsers();
       return res.status(401).render('admin/pages/schedule/form-create', {
         error: 'Phiên đăng nhập đã hết hạn.',
         formData: req.body,
         rooms,
-        path: req.path,
         users,
+        path: req.path,
         admin: null,
+        success: null,
       });
     }
 
-    const validationErrors = validateScheduleInput({ title, room, participants, startTime, endTime });
-
-    if (validationErrors.length > 0) {
-      return res.status(400).render('admin/pages/schedule/form-create', {
-        error: validationErrors.join(' '),
-        formData: req.body,
-        rooms,
-        path: req.path,
-        users,
-        admin: req.session.admin,
-      });
-    }
-
-    const conflict = await checkScheduleConflict(room, startTime, endTime);
-    if (conflict) {
-      return res.status(400).render('admin/pages/schedule/form-create', {
-        error: 'Phòng đã có lịch trong khung giờ này.',
-        formData: req.body,
-        rooms,
-        path: req.path,
-        users,
-        admin: req.session.admin,
-      });
-    }
+    const { title, description, room, participants, startTime, endTime } = req.body;
 
     const schedule = new Schedule({
-      title,
-      description,
+      title: title.trim(),
+      description: description?.trim() || '',
       room,
-      participants,
+      participants: Array.isArray(participants) ? participants : [participants],
       startTime: new Date(startTime),
       endTime: new Date(endTime),
       createdBy: req.session.admin._id,
@@ -131,29 +200,38 @@ export const createSchedule = async (req, res) => {
 
   } catch (error) {
     console.error('Lỗi tạo lịch học:', error);
+    const { rooms, users } = await getRoomsAndUsers();
+
     res.status(500).render('admin/pages/schedule/form-create', {
       error: 'Đã có lỗi xảy ra. Vui lòng thử lại.',
       formData: req.body,
       rooms,
-      path: req.path,
       users,
+      path: req.path,
       admin: req.session.admin,
+      success: null,
     });
   }
 };
 
+// Hiển thị form sửa lịch
 export const showEditForm = async (req, res) => {
   try {
     const schedule = await Schedule.findById(req.params.id);
+    if (!schedule) {
+      return res.status(404).send('Không tìm thấy lịch học');
+    }
+
     const { rooms, users } = await getRoomsAndUsers();
 
     res.render('admin/pages/schedule/form-edit', {
       schedule,
-      admin: req.session.admin,
-      path: req.path,
       rooms,
       users,
+      admin: req.session.admin,
+      path: req.path,
       error: null,
+      success: null,
     });
   } catch (error) {
     console.error('Lỗi khi hiển thị form sửa lịch:', error);
@@ -161,67 +239,43 @@ export const showEditForm = async (req, res) => {
   }
 };
 
+// Xử lý cập nhật lịch (với validation)
 export const updateSchedule = async (req, res) => {
-  const { title, description, startTime, endTime, room, participants } = req.body;
   const scheduleId = req.params.id;
 
   try {
-    const { rooms, users } = await getRoomsAndUsers();
+    // Kiểm tra kết quả validation
+    const errors = validationResult(req);
+    
+    if (!errors.isEmpty()) {
+      const schedule = await Schedule.findById(scheduleId);
+      const { rooms, users } = await getRoomsAndUsers();
+      
+      return res.status(400).render('admin/pages/schedule/form-edit', {
+        error: errors.array().map(err => err.msg).join('. '),
+        schedule,
+        rooms,
+        users,
+        path: req.path,
+        admin: req.session.admin,
+        success: null,
+      });
+    }
+
+    const { title, description, room, participants, startTime, endTime } = req.body;
 
     const schedule = await Schedule.findById(scheduleId);
-    if (!schedule) return res.status(404).send('Không tìm thấy lịch học.');
-
-    if (!title || !startTime || !endTime || !room || !participants || participants.length === 0) {
-      return res.status(400).render('admin/pages/schedule/form-edit', {
-        error: 'Vui lòng điền đầy đủ thông tin bắt buộc.',
-        schedule,
-        rooms,
-        users,
-        path: req.path,
-        admin: req.session.admin
-      });
+    if (!schedule) {
+      return res.status(404).send('Không tìm thấy lịch học.');
     }
 
-    const start = new Date(startTime);
-    const end = new Date(endTime);
-
-    if (isNaN(start.getTime()) || isNaN(end.getTime()) || start >= end) {
-      return res.status(400).render('admin/pages/schedule/form-edit', {
-        error: 'Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc và đúng định dạng.',
-        schedule,
-        rooms,
-        users,
-        path: req.path,
-        admin: req.session.admin
-      });
-    }
-
-    // Kiểm tra trùng lịch trong cùng phòng (trừ lịch hiện tại)
-    const conflict = await Schedule.findOne({
-      _id: { $ne: scheduleId },
-      room,
-      startTime: { $lt: end },
-      endTime: { $gt: start }
-    });
-
-    if (conflict) {
-      return res.status(400).render('admin/pages/schedule/form-edit', {
-        error: 'Phòng này đã có lịch trùng thời gian. Vui lòng chọn thời gian khác.',
-        schedule,
-        rooms,
-        users,
-        path: req.path,
-        admin: req.session.admin
-      });
-    }
-
-    // Cập nhật lịch
-    schedule.title = title;
-    schedule.description = description;
+    // Cập nhật thông tin
+    schedule.title = title.trim();
+    schedule.description = description?.trim() || '';
     schedule.room = room;
     schedule.participants = Array.isArray(participants) ? participants : [participants];
-    schedule.startTime = start;
-    schedule.endTime = end;
+    schedule.startTime = new Date(startTime);
+    schedule.endTime = new Date(endTime);
 
     await schedule.save();
     res.redirect('/admin/schedules');
@@ -229,7 +283,7 @@ export const updateSchedule = async (req, res) => {
   } catch (error) {
     console.error('Lỗi cập nhật lịch học:', error);
 
-    const schedule = await Schedule.findById(req.params.id);
+    const schedule = await Schedule.findById(scheduleId);
     const { rooms, users } = await getRoomsAndUsers();
 
     res.status(500).render('admin/pages/schedule/form-edit', {
@@ -238,15 +292,19 @@ export const updateSchedule = async (req, res) => {
       rooms,
       users,
       path: req.path,
-      admin: req.session.admin
+      admin: req.session.admin,
+      success: null,
     });
   }
 };
 
+// Xóa lịch học
 export const deleteSchedule = async (req, res) => {
   try {
     const deleted = await Schedule.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).send('Không tìm thấy lịch cần xóa');
+    if (!deleted) {
+      return res.status(404).send('Không tìm thấy lịch cần xóa');
+    }
 
     res.redirect('/admin/schedules');
   } catch (error) {

@@ -38,4 +38,4 @@ const NoteSchema = new Schema({
 // Index để tìm kiếm ghi chú theo phòng
 NoteSchema.index({ room: 1, createdAt: -1 });
 
-export default mongoose.model('Note', NoteSchema);
+export default mongoose.models.Note || mongoose.model('Note', NoteSchema);

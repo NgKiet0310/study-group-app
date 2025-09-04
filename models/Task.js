@@ -45,4 +45,4 @@ const TaskSchema = new Schema({
 // Index để tìm kiếm nhiệm vụ theo phòng
 TaskSchema.index({ room: 1, createdAt: -1 });
 
-export default mongoose.model('Task', TaskSchema);
+export default mongoose.models.Task || mongoose.model('Task', TaskSchema);

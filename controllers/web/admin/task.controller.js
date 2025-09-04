@@ -152,9 +152,13 @@ export const createTask = async (req, res) => {
     try {
 
         const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            throw new Error(errors.array()[0].msg);
-        }
+               if (!errors.isEmpty()) {
+                   return res.status(400).render('admin/pages/task/form-create', {
+                       path: req.path,
+                       error: errors.array()[0].msg,
+                       success: null
+                   });
+               }
 
         const { title, description, room, createdBy, assignedTo, status, dueDate } = req.body;
 
@@ -326,9 +330,13 @@ export const editTask = async (req, res) => {
   try {
     const taskId = req.params.id; 
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      throw new Error(errors.array()[0].msg);
-    }
+            if (!errors.isEmpty()) {
+                return res.status(400).render('admin/pages/task/form-edit', {
+                    path: req.path,
+                    error: errors.array()[0].msg,
+                    success: null
+                });
+            }
 
     const { title, description, room, createdBy, assignedTo, status, dueDate } = req.body;
 
@@ -470,7 +478,7 @@ export const showDetailTask = async (req, res) => {
 
     } catch (error) {
         console.error('Lỗi khi hiển thị chi tiết nhiệm vụ:', error);
-        res.redirect('/admin/tasks?error=Lỗi khi tải thông tin nhiệm vụ');
+        res.redirect('/admin/tasks?error=Task not found');
     }
 };
 
