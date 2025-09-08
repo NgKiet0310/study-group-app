@@ -146,3 +146,10 @@
 {"errors":[{"location":"body","msg":"Room is not defined","path":"room","type":"field","value":"68ab3f4f0a7b408a702d38b7"},{"location":"body","msg":"User is not defined","path":"createdBy","type":"field","value":"68ab3d9359eb30cdfc698ae3"},{"location":"body","msg":"Room is not defined","path":"assignedTo","type":"field","value":["68ab3dbb59eb30cdfc698af2","68ab3d9359eb30cdfc698ae3"]}],"level":"warn","message":"Validation error: Room is not defined","timestamp":"2025-08-26T16:04:48.854Z"}
 {"errors":[{"location":"body","msg":"Room is not defined","path":"room","type":"field","value":"68ab3f4f0a7b408a702d38b7"},{"location":"body","msg":"User is not defined","path":"createdBy","type":"field","value":"68ab3d9359eb30cdfc698ae3"},{"location":"body","msg":"Room is not defined","path":"assignedTo","type":"field","value":["68ab3dbb59eb30cdfc698af2","68ab3d9359eb30cdfc698ae3"]}],"level":"warn","message":"Validation error: Room is not defined","timestamp":"2025-08-26T16:05:14.677Z"}
 {"level":"info","message":"Updated task: id=68addb69b20a01043bebfe69, title=Hoàn thành báo cáo nhé","timestamp":"2025-08-26T16:07:12.916Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-09-07T04:39:25.979Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-09-07T05:39:36.901Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-09-07T11:18:14.659Z"}
+{"level":"info","message":"Fetched schedule: id=68962e83bcb8de1f524521ed","timestamp":"2025-09-07T11:21:21.159Z"}
+{"level":"info","message":"Fetched schedule: id=68962e83bcb8de1f524521ed","timestamp":"2025-09-07T11:21:23.745Z"}
+{"level":"info","message":"Fetched schedules: page=1, total=2","timestamp":"2025-09-07T11:21:26.793Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-09-08T09:26:11.768Z"}

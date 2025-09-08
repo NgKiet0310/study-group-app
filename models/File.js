@@ -42,4 +42,4 @@ const FileSchema = new Schema({
 // Index để tìm kiếm file theo phòng
 FileSchema.index({ room: 1, createdAt: -1 });
 
-export default mongoose.model('File', FileSchema);
+export default mongoose.models.File || mongoose.model('File', FileSchema);

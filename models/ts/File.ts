@@ -55,3 +55,4 @@ FileSchema.index({ room: 1, createdAt: -1 });
 
 const File: Model<IFile> = mongoose.models.File || mongoose.model<IFile>("File", FileSchema);
 
+export default File;

@@ -25,7 +25,6 @@ const MessageSchema = new Schema({
   }
 }, { timestamps: true });
 
-// Index để tìm kiếm tin nhắn theo phòng và thời gian
 MessageSchema.index({ room: 1, createdAt: -1 });
 
-export default mongoose.model('Message', MessageSchema);
+export default mongoose.models.Message || mongoose.model('Message', MessageSchema);

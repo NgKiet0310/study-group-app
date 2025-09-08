@@ -59,3 +59,5 @@ const ScheduleSchema: Schema<ISchedule> = new Schema(
 ScheduleSchema.index({ room: 1, createdAt: -1 });
 
 const Schedule: Model<ISchedule> = mongoose.models.Schedule || mongoose.model<ISchedule>("Schedule", ScheduleSchema);
+
+export default Schedule;

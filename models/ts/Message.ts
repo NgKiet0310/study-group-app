@@ -37,3 +37,5 @@ const MessageSchema: Schema<IMessage> = new Schema(
 MessageSchema.index({ room: 1, createdAt: -1 });
 
 const Message: Model<IMessage> = mongoose.models.Message || mongoose.model<IMessage>("Message", MessageSchema);
+
+export default Message;

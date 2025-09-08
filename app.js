@@ -18,6 +18,9 @@ import authAdminRoutes from './routes/api/admin/authAdmin.route.js';
 import adminNoteApiRoutes from './routes/api/admin/note.route.js';
 import adminRoomApiRoutes from './routes/api/admin/room.route.js';
 import adminTaskApiRoutes from './routes/api/admin/task.route.js';
+import adminScheduleApiRoutes from './routes/api/admin/schedule.route.js';
+import adminFileApiRoutes from './routes/api/admin/file.route.js';
+import adminMessageApiRoutes from './routes/api/admin/message.route.js';
 
 // Routes
 import ClientAuthRoutes from './routes/web/client/auth.route.js';
@@ -54,7 +57,7 @@ app.use(methodOverride('_method'));
 
 app.use('/api/admin/auth',authAdminRoutes);
 app.use('/admin', sessionAdmin, attachAdminToLocals, noCache);
-app.use('/api/admin', verifyAdmin, sessionAdmin, attachAdminToLocals, adminNoteApiRoutes, adminRoomApiRoutes, adminTaskApiRoutes);
+app.use('/api/admin', verifyAdmin, sessionAdmin, attachAdminToLocals, adminNoteApiRoutes, adminRoomApiRoutes, adminTaskApiRoutes, adminScheduleApiRoutes, adminFileApiRoutes, adminMessageApiRoutes);
 app.use('/', sessionUser, attachUserToLocals, noCache);
 
 // Routes

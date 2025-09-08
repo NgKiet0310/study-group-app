@@ -1,23 +1,23 @@
 <% layout('layouts/main-admin') %>
 
 <div class="container mt-5 animate__animated animate__fadeIn">
-  <div class="card shadow-lg rounded-4 border-0">
-    <div class="card-header bg-gradient-primary text-white fw-semibold fs-4 p-4">
-      <i class="bi bi-speedometer2 me-2 animate__animated animate__pulse animate__infinite"></i>Dashboard Admin
+  <div class="card shadow-lg rounded-3xl border-0 bg-glass">
+    <div class="card-header bg-gradient-primary text-white fw-bold fs-3 p-5 d-flex align-items-center">
+      <i class="bi bi-speedometer2 me-3 animate__animated animate__pulse animate__infinite animate__slower"></i> Bảng Điều Khiển Admin
     </div>
-    <div class="card-body p-4">
+    <div class="card-body p-5">
       <% if (typeof error !== 'undefined' && error) { %>
-        <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show rounded-2xl shadow-sm" role="alert">
           <%= error %>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       <% } %>
 
       <!-- Form lọc -->
-      <form method="GET" action="/admin/dashboard" class="mb-4">
-        <div class="row g-3">
+      <form method="GET" action="/admin/dashboard" class="mb-5">
+        <div class="row g-4">
           <div class="col-md-4">
-            <select class="form-select rounded-3" name="room">
+            <select class="form-select rounded-2xl shadow-sm" name="room">
               <option value="">Tất cả phòng</option>
               <% rooms.forEach(room => { %>
                 <option value="<%= room._id %>" <%= room === room._id.toString() ? 'selected' : '' %>><%= room.name %></option>
@@ -25,78 +25,78 @@
             </select>
           </div>
           <div class="col-md-3">
-            <input type="date" class="form-control rounded-3" name="startDate" value="<%= startDate || '' %>">
+            <input type="date" class="form-control rounded-2xl shadow-sm" name="startDate" value="<%= startDate || '' %>">
           </div>
           <div class="col-md-3">
-            <input type="date" class="form-control rounded-3" name="endDate" value="<%= endDate || '' %>">
+            <input type="date" class="form-control rounded-2xl shadow-sm" name="endDate" value="<%= endDate || '' %>">
           </div>
           <div class="col-md-2">
-            <button type="submit" class="btn btn-primary rounded-pill w-100">
-              <i class="bi bi-search me-1"></i>Lọc
+            <button type="submit" class="btn btn-primary rounded-2xl w-100 shadow-sm">
+              <i class="bi bi-search me-2"></i> Lọc
             </button>
           </div>
         </div>
       </form>
 
       <!-- Tổng quan -->
-      <div class="row g-4 mb-4">
+      <div class="row g-4 mb-5">
         <div class="col-md-3">
-          <div class="card bg-light shadow-sm rounded-3 text-center">
-            <div class="card-body">
-              <h5 class="card-title">Tổng phòng</h5>
-              <p class="fs-2 fw-bold text-primary"><%= totalRooms %></p>
-              <a href="/admin/rooms" class="btn btn-outline-primary btn-sm rounded-pill">Xem chi tiết</a>
+          <div class="card bg-glass shadow-lg rounded-2xl text-center animate__animated animate__fadeInUp">
+            <div class="card-body py-4">
+              <h5 class="card-title text-muted fw-semibold">Tổng phòng</h5>
+              <p class="fs-1 fw-bold text-primary mb-3"><%= totalRooms %></p>
+              <a href="/admin/rooms" class="btn btn-outline-primary btn-sm rounded-2xl px-4">Xem chi tiết</a>
             </div>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="card bg-light shadow-sm rounded-3 text-center">
-            <div class="card-body">
-              <h5 class="card-title">Tổng người dùng</h5>
-              <p class="fs-2 fw-bold text-primary"><%= totalUsers %></p>
-              <a href="/admin/users" class="btn btn-outline-primary btn-sm rounded-pill">Xem chi tiết</a>
+          <div class="card bg-glass shadow-lg rounded-2xl text-center animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+            <div class="card-body py-4">
+              <h5 class="card-title text-muted fw-semibold">Tổng người dùng</h5>
+              <p class="fs-1 fw-bold text-primary mb-3"><%= totalUsers %></p>
+              <a href="/admin/users" class="btn btn-outline-primary btn-sm rounded-2xl px-4">Xem chi tiết</a>
             </div>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="card bg-light shadow-sm rounded-3 text-center">
-            <div class="card-body">
-              <h5 class="card-title">Tổng file</h5>
-              <p class="fs-2 fw-bold text-primary"><%= totalFiles %></p>
-              <a href="/admin/files" class="btn btn-outline-primary btn-sm rounded-pill">Xem chi tiết</a>
+          <div class="card bg-glass shadow-lg rounded-2xl text-center animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+            <div class="card-body py-4">
+              <h5 class="card-title text-muted fw-semibold">Tổng file</h5>
+              <p class="fs-1 fw-bold text-primary mb-3"><%= totalFiles %></p>
+              <a href="/admin/files" class="btn btn-outline-primary btn-sm rounded-2xl px-4">Xem chi tiết</a>
             </div>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="card bg-light shadow-sm rounded-3 text-center">
-            <div class="card-body">
-              <h5 class="card-title">Tổng tin nhắn</h5>
-              <p class="fs-2 fw-bold text-primary"><%= totalMessages %></p>
-              <a href="/admin/messages" class="btn btn-outline-primary btn-sm rounded-pill">Xem chi tiết</a>
+          <div class="card bg-glass shadow-lg rounded-2xl text-center animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
+            <div class="card-body py-4">
+              <h5 class="card-title text-muted fw-semibold">Tổng tin nhắn</h5>
+              <p class="fs-1 fw-bold text-primary mb-3"><%= totalMessages %></p>
+              <a href="/admin/messages" class="btn btn-outline-primary btn-sm rounded-2xl px-4">Xem chi tiết</a>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Thống kê file -->
-      <div class="row g-4 mb-4">
+      <div class="row g-4 mb-5">
         <div class="col-md-6">
-          <div class="card shadow-sm rounded-3">
-            <div class="card-header bg-light">File theo loại</div>
+          <div class="card bg-glass shadow-lg rounded-2xl animate__animated animate__fadeInLeft">
+            <div class="card-header bg-transparent border-0 fs-5 fw-bold text-dark">File theo loại</div>
             <div class="card-body">
               <canvas id="fileByTypeChart"></canvas>
             </div>
           </div>
         </div>
         <div class="col-md-6">
-          <div class="card shadow-sm rounded-3">
-            <div class="card-header bg-light">File mới nhất</div>
+          <div class="card bg-glass shadow-lg rounded-2xl animate__animated animate__fadeInRight">
+            <div class="card-header bg-transparent border-0 fs-5 fw-bold text-dark">File mới nhất</div>
             <div class="card-body">
               <ul class="list-group list-group-flush">
                 <% recentFiles.forEach(file => { %>
-                  <li class="list-group-item">
-                    <a href="/admin/file/<%= file._id %>"><%= file.fileName %></a> 
-                    (<%= file.room?.name || 'Không xác định' %>)
+                  <li class="list-group-item bg-transparent">
+                    <a href="/admin/file/<%= file._id %>" class="text-primary fw-medium"><%= file.fileName %></a>
+                    <span class="text-muted">(<%= file.room?.name || 'Không xác định' %>)</span>
                   </li>
                 <% }) %>
               </ul>
@@ -106,26 +106,26 @@
       </div>
 
       <!-- Thống kê tin nhắn -->
-      <div class="row g-4 mb-4">
+      <div class="row g-4 mb-5">
         <div class="col-md-6">
-          <div class="card shadow-sm rounded-3">
-            <div class="card-header bg-light">Tin nhắn theo phòng</div>
+          <div class="card bg-glass shadow-lg rounded-2xl animate__animated animate__fadeInLeft">
+            <div class="card-header bg-transparent border-0 fs-5 fw-bold text-dark">Tin nhắn theo phòng</div>
             <div class="card-body">
               <ul class="list-group list-group-flush">
                 <% messageByRoom.forEach(item => { %>
-                  <li class="list-group-item"><%= item.roomName %>: <%= item.count %> tin nhắn</li>
+                  <li class="list-group-item bg-transparent text-dark"><%= item.roomName %>: <span class="fw-bold text-primary"><%= item.count %></span> tin nhắn</li>
                 <% }) %>
               </ul>
             </div>
           </div>
         </div>
         <div class="col-md-6">
-          <div class="card shadow-sm rounded-3">
-            <div class="card-header bg-light">Người gửi tích cực</div>
+          <div class="card bg-glass shadow-lg rounded-2xl animate__animated animate__fadeInRight">
+            <div class="card-header bg-transparent border-0 fs-5 fw-bold text-dark">Người gửi tích cực</div>
             <div class="card-body">
               <ul class="list-group list-group-flush">
                 <% topSenders.forEach(sender => { %>
-                  <li class="list-group-item"><%= sender.username %>: <%= sender.count %> tin nhắn</li>
+                  <li class="list-group-item bg-transparent text-dark"><%= sender.username %>: <span class="fw-bold text-primary"><%= sender.count %></span> tin nhắn</li>
                 <% }) %>
               </ul>
             </div>
@@ -134,8 +134,8 @@
       </div>
 
       <!-- Biểu đồ xu hướng -->
-      <div class="card shadow-sm rounded-3">
-        <div class="card-header bg-light">Xu hướng file và tin nhắn (7 ngày gần nhất)</div>
+      <div class="card bg-glass shadow-lg rounded-2xl animate__animated animate__fadeInUp">
+        <div class="card-header bg-transparent border-0 fs-5 fw-bold text-dark">Xu hướng file và tin nhắn (7 ngày gần nhất)</div>
         <div class="card-body">
           <canvas id="trendChart"></canvas>
         </div>
@@ -145,39 +145,131 @@
 </div>
 
 <style>
-  .bg-gradient-primary {
-    background: linear-gradient(45deg, #0052cc, #00c4ff);
+  /* Import Inter font for a clean, professional look */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    min-height: 100vh;
   }
+
+  .container {
+    max-width: 1400px;
+  }
+
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #2563eb, #60a5fa);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+    border-radius: 1.5rem;
+  }
+
+  .bg-glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1.5rem;
+  }
+
   .card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
+
   .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25) !important;
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2) !important;
   }
-  .btn, .form-control, .form-select {
+
+  .card-header {
+    border-bottom: none;
+    padding-bottom: 0.75rem;
+  }
+
+  .card-body {
+    padding: 1.75rem;
+  }
+
+  .form-control, .form-select {
+    border-radius: 1.5rem;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #1e293b;
+    padding: 0.75rem 1.25rem;
     transition: all 0.3s ease;
   }
-  .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
+
   .form-control:focus, .form-select:focus {
-    border-color: #0052cc;
-    box-shadow: 0 0 0 0.2rem rgba(0, 82, 204, 0.25);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+    outline: none;
   }
+
+  .btn-primary {
+    background: linear-gradient(45deg, #2563eb, #60a5fa);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(45deg, #1e40af, #3b82f6);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  }
+
+  .btn-outline-primary {
+    border-color: #2563eb;
+    color: #2563eb;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .btn-outline-primary:hover {
+    background: #2563eb;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  }
+
   .list-group-item {
     border: none;
+    padding: 0.75rem 0;
+    transition: background-color 0.3s ease, transform 0.3s ease;
   }
+
+  .list-group-item:hover {
+    background: rgba(37, 99, 235, 0.05);
+    transform: translateX(3px);
+  }
+
+  .text-primary {
+    color: #2563eb !important;
+  }
+
+  .text-muted {
+    color: #6b7280 !important;
+  }
+
+  /* Responsive adjustments */
   @media (max-width: 768px) {
-    .row.g-3, .row.g-4 {
+    .row.g-4 {
       flex-direction: column;
     }
+    .card {
+      margin-bottom: 1.5rem;
+    }
+    .btn, .form-control, .form-select {
+      padding: 0.65rem 1rem;
+    }
   }
-  @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 <script>
   // Lấy dữ liệu từ server (EJS) dưới dạng JSON string
   const fileByType = JSON.parse('<%- JSON.stringify(fileByType) %>');
@@ -192,12 +284,35 @@
       labels: fileByType.map(item => item._id ? item._id.toUpperCase() : 'N/A'),
       datasets: [{
         data: fileByType.map(item => item.count),
-        backgroundColor: ['#007bff', '#28a745', '#dc3545', '#ffc107']
+        backgroundColor: ['#2563eb', '#10b981', '#ef4444', '#f59e0b'],
+        borderColor: '#ffffff',
+        borderWidth: 2
       }]
     },
     options: {
       responsive: true,
-      plugins: { legend: { position: 'bottom' } }
+      animation: {
+        animateScale: true,
+        animateRotate: true,
+        duration: 800
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: { size: 14, family: 'Inter', weight: '500' },
+            padding: 20,
+            color: '#1e293b'
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(31, 41, 55, 0.9)',
+          titleFont: { family: 'Inter', size: 14, weight: '600' },
+          bodyFont: { family: 'Inter', size: 12 },
+          padding: 12,
+          cornerRadius: 8
+        }
+      }
     }
   });
 
@@ -225,21 +340,64 @@
         {
           label: 'File tải lên',
           data: fileCounts,
-          borderColor: '#007bff',
-          fill: false
+          borderColor: '#2563eb',
+          backgroundColor: 'rgba(37, 99, 235, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#ffffff',
+          pointBorderColor: '#2563eb',
+          pointBorderWidth: 2
         },
         {
           label: 'Tin nhắn',
           data: messageCounts,
-          borderColor: '#28a745',
-          fill: false
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#ffffff',
+          pointBorderColor: '#10b981',
+          pointBorderWidth: 2
         }
       ]
     },
     options: {
       responsive: true,
+      animation: {
+        duration: 1000,
+        easing: 'easeOutQuad'
+      },
       scales: {
-        y: { beginAtZero: true }
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(0, 0, 0, 0.05)' },
+          ticks: { font: { family: 'Inter', size: 12 }, color: '#1e293b' }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { font: { family: 'Inter', size: 12 }, color: '#1e293b' }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            font: { size: 14, family: 'Inter', weight: '500' },
+            padding: 20,
+            color: '#1e293b'
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(31, 41, 55, 0.9)',
+          titleFont: { family: 'Inter', size: 14, weight: '600' },
+          bodyFont: { family: 'Inter', size: 12 },
+          padding: 12,
+          cornerRadius: 8
+        }
       }
     }
   });

@@ -44,4 +44,4 @@ const ScheduleSchema = new Schema({
 // Index để tìm kiếm lịch theo phòng
 ScheduleSchema.index({ room: 1, createdAt: -1 });
 
-export default mongoose.model('Schedule', ScheduleSchema);
+export default mongoose.models.Schedule || mongoose.model('Schedule', ScheduleSchema);
