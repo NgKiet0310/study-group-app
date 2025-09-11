@@ -1,58 +1,329 @@
 <% layout('layouts/main-client') %>
 
-<div class="row justify-content-center mt-5">
-  <div class="col-md-6 col-lg-4">
-    <h1 class="display-5 fw-bold mb-4 text-center">Register</h1>
-
-    <% if (typeof error !== 'undefined') { %>
-      <div class="alert alert-danger"><%= error %></div>
-    <% } %>
-
-    <div class="card shadow-lg border-0">
-      <div class="card-body p-4">
-        <form action="/auth/register" method="POST">
-          <div class="mb-3">
-            <label for="username" class="form-label fw-medium">Username (Email or NumberPhone)</label>
-            <input
-              type="text"
-              class="form-control"
-              id="username"
-              name="username"
-              placeholder="Enter email or phone"
-              required
-              value="<%= typeof username !== 'undefined' ? username : '' %>"
-            >
-          </div>
-
-          <div class="mb-3">
-            <label for="password" class="form-label fw-medium">Password</label>
-            <input
-              type="password"
-              class="form-control"
-              id="password"
-              name="password"
-              placeholder="Enter password"
-              required
-            >
-          </div>
-
-          <div class="mb-3">
-            <label for="confirmPassword" class="form-label fw-medium">Confirm Password</label>
-            <input
-              type="password"
-              class="form-control"
-              id="confirmPassword"
-              name="confirmPassword"
-              placeholder="Confirm password"
-              required
-            >
-          </div>
-
-          <button type="submit" class="btn btn-primary w-100">Register</button>
-        </form>
-
-        <p class="text-center mt-3">Already have an account? <a href="/auth/login">Login</a></p>
+<div class="register-container">
+  <div class="row justify-content-center min-vh-100 align-items-center">
+    <div class="col-md-6 col-lg-5 col-xl-4">
+      
+      <!-- Logo and Title -->
+      <div class="text-center mb-4">
+        <div class="logo-circle mb-3">
+          <i class="fas fa-user-plus"><img src="/images/register.png" width="60px" alt="" srcset=""></i>
+        </div>
+        <h1 class="brand-title">Đăng ký tài khoản</h1>
+        <p class="brand-subtitle">Tham gia cộng đồng học tập ngay hôm nay</p>
       </div>
+
+      <!-- Register Card -->
+      <div class="register-card">
+        <div class="card-body p-4">
+          
+          <!-- Error Messages -->
+          <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger alert-modern">
+              <i class="fas fa-exclamation-circle me-2"></i>
+              <%= error %>
+            </div>
+          <% } %>
+
+          <form action="/auth/register" method="POST">
+            
+            <!-- Username Field -->
+            <div class="form-group mb-3">
+              <div class="input-wrapper">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="text" 
+                       class="form-control form-control-modern" 
+                       id="username" 
+                       name="username" 
+                       placeholder="Email hoặc số điện thoại" 
+                       required
+                       value="<%= typeof username !== 'undefined' ? username : '' %>">
+              </div>
+            </div>
+            
+            <!-- Password Field -->
+            <div class="form-group mb-3">
+              <div class="input-wrapper">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" 
+                       class="form-control form-control-modern" 
+                       id="password" 
+                       name="password" 
+                       placeholder="Mật khẩu" 
+                       required>
+              </div>
+            </div>
+            
+            <!-- Confirm Password Field -->
+            <div class="form-group mb-4">
+              <div class="input-wrapper">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" 
+                       class="form-control form-control-modern" 
+                       id="confirmPassword" 
+                       name="confirmPassword" 
+                       placeholder="Xác nhận mật khẩu" 
+                       required>
+              </div>
+            </div>
+            
+            <!-- Register Button -->
+            <button type="submit" class="btn btn-register w-100 mb-3">
+              <span>Đăng ký</span>
+              <i class="fas fa-user-plus ms-2"></i>
+            </button>
+            
+          </form>
+          
+          <!-- Login Link -->
+          <div class="text-center">
+            <p class="login-text">
+              Đã có tài khoản? 
+              <a href="/auth/login" class="login-link">Đăng nhập ngay</a>
+            </p>
+          </div>
+          
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div class="text-center mt-4">
+        <p class="footer-text">&copy; 2025 Dev By Kiet . Tất cả quyền được bảo lưu.</p>
+      </div>
+      
     </div>
   </div>
 </div>
+
+<style>
+/* Container */
+.register-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+/* Logo and Branding */
+.logo-circle {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.logo-circle i {
+  font-size: 2.5rem;
+  color: #667eea;
+}
+
+.brand-title {
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.brand-subtitle {
+  color: rgba(255,255,255,0.9);
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* Register Card */
+.register-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  backdrop-filter: blur(10px);
+}
+
+/* Form Controls */
+.form-group {
+  position: relative;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #667eea;
+  z-index: 2;
+}
+
+.form-control-modern {
+  padding: 15px 15px 15px 50px;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #ffffff;
+}
+
+.form-control-modern:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  background: #ffffff;
+}
+
+.form-control-modern::placeholder {
+  color: #adb5bd;
+  font-weight: 400;
+}
+
+.form-text {
+  color: #6c757d;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  margin-left: 50px;
+}
+
+/* Register Button */
+.btn-register {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-register::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-register:hover::before {
+  left: 100%;
+}
+
+.btn-register:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+/* Alerts */
+.alert-modern {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  color: #ffffff;
+}
+
+/* Login Link */
+.login-text {
+  color: #6c757d;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.login-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.login-link:hover {
+  color: #764ba2;
+  text-decoration: none;
+}
+
+/* Footer */
+.footer-text {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .register-container {
+    padding: 15px;
+  }
+  
+  .brand-title {
+    font-size: 1.75rem;
+  }
+  
+  .logo-circle {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .logo-circle i {
+    font-size: 2rem;
+  }
+  
+  .register-card .card-body {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .brand-title {
+    font-size: 1.5rem;
+  }
+  
+  .form-control-modern {
+    padding: 12px 12px 12px 45px;
+  }
+  
+  .input-icon {
+    left: 12px;
+  }
+  
+  .form-text {
+    margin-left: 45px;
+  }
+  
+  .btn-register {
+    padding: 12px 25px;
+    font-size: 1rem;
+  }
+}
+
+/* Animation */
+.register-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

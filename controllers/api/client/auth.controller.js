@@ -39,11 +39,11 @@ export const login = async (req, res) => {
     if (!isMatch) return res.status(401).json({ error: "Invalid username or password" });
 
     if (user.role === "admin") {
-      return res.status(403).json({ error: "Account does not exist" });
+      return res.status(403).json({ error: "Admins cannot login here" });
     }
 
-    const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
 
     user.refreshToken = refreshToken;
     await user.save();
@@ -89,3 +89,4 @@ export const logout = async (req, res) => {
     res.status(403).json({ error: "Invalid or expired refresh token" });
   }
 };
+

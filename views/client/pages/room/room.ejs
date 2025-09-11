@@ -1,0 +1,537 @@
+<% layout('layouts/main-client') %>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .room-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .nav-tabs {
+            border: none;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 8px;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            border-radius: 8px;
+            margin: 0 4px;
+            color: #6c757d;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: #007bff;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+        }
+        
+        .chat-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .chat-header {
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .chat-box {
+            height: 450px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #f8f9fa;
+        }
+        
+        .chat-message {
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.3s ease;
+        }
+        
+        .chat-message.own {
+            flex-direction: row-reverse;
+        }
+        
+        .chat-message.own .message-bubble {
+            background: #007bff;
+            color: white;
+            margin-left: 0;
+            margin-right: 1rem;
+        }
+        
+        .message-bubble {
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            margin-left: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 70%;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: white;
+        }
+        
+        .chat-input {
+            padding: 1rem 1.5rem;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .card-enhanced {
+            border: none;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card-enhanced:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+        
+        .card-header-custom {
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            border-bottom: none;
+            padding: 1.25rem;
+        }
+        
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0.25rem;
+        }
+        
+        .online-users {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: #28a745;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+        
+        .file-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .schedule-date {
+            background: #007bff;
+            color: white;
+            border-radius: 8px;
+            padding: 0.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .tab-content {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .floating-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container-fluid py-4">
+        <!-- Room Header -->
+        <div class="room-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-5 fw-bold mb-2">
+                        <i class="fas fa-users me-3"></i>Study Room: Toán Cao Cấp
+                    </h1>
+                    <p class="mb-0 opacity-75">
+                        <i class="fas fa-clock me-2"></i>Hoạt động lúc 14:30 - 25/09/2025
+                    </p>
+                </div>
+                <div class="online-users">
+                    <i class="fas fa-circle text-success me-2"></i>
+                    <span class="fw-bold">5</span> thành viên online
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs mb-4" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="chat-tab" data-bs-toggle="tab" href="#chat" role="tab">
+                    <i class="fas fa-comments me-2"></i>Chat
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="notes-tab" data-bs-toggle="tab" href="#notes" role="tab">
+                    <i class="fas fa-sticky-note me-2"></i>Ghi chú
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="schedules-tab" data-bs-toggle="tab" href="#schedules" role="tab">
+                    <i class="fas fa-calendar-alt me-2"></i>Lịch học
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="files-tab" data-bs-toggle="tab" href="#files" role="tab">
+                    <i class="fas fa-folder me-2"></i>Tài liệu
+                </a>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Chat Tab -->
+            <div class="tab-pane fade show active" id="chat" role="tabpanel">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-comments me-3"></i>
+                            <h5 class="mb-0">Thảo luận nhóm</h5>
+                        </div>
+                        <div class="d-flex">
+                            <button class="btn btn-icon btn-outline-light">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <button class="btn btn-icon btn-outline-light">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-box" id="chat-messages">
+                        <div class="chat-message d-flex">
+                            <div class="user-avatar bg-primary">AN</div>
+                            <div class="message-bubble">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <strong class="text-primary">Anh Ngọc</strong>
+                                    <small class="text-muted">10:30 AM</small>
+                                </div>
+                                <div>Chào mọi người! Hôm nay chúng ta học bài gì vậy?</div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-message d-flex">
+                            <div class="user-avatar bg-success">MH</div>
+                            <div class="message-bubble">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <strong class="text-success">Mai Hương</strong>
+                                    <small class="text-muted">10:32 AM</small>
+                                </div>
+                                <div>Hôm nay học về tích phân đấy! Mọi người chuẩn bị bài chưa?</div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-message d-flex own">
+                            <div class="user-avatar bg-warning">VD</div>
+                            <div class="message-bubble">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <strong>Văn Đức</strong>
+                                    <small class="text-muted">10:35 AM</small>
+                                </div>
+                                <div>Mình đã đọc qua rồi, nhưng vẫn chưa hiểu lắm 😅</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input">
+                        <form class="d-flex gap-2">
+                            <button type="button" class="btn btn-icon btn-outline-primary">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <input type="text" class="form-control" placeholder="Nhập tin nhắn..." style="border-radius: 25px;">
+                            <button type="button" class="btn btn-icon btn-outline-primary">
+                                <i class="far fa-smile"></i>
+                            </button>
+                            <button type="submit" class="btn btn-primary" style="border-radius: 25px; padding: 0 1.5rem;">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Tab -->
+            <div class="tab-pane fade" id="notes" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4><i class="fas fa-sticky-note me-2 text-warning"></i>Ghi chú nhóm</h4>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Tạo ghi chú mới
+                    </button>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card card-enhanced">
+                            <div class="card-header-custom">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Công thức tích phân</h5>
+                                    <span class="badge bg-primary">Toán học</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted mb-3">Tổng hợp các công thức tích phân cơ bản và nâng cao...</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-user me-1"></i>Anh Ngọc
+                                        <i class="fas fa-clock ms-2 me-1"></i>2 giờ trước
+                                    </small>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card card-enhanced">
+                            <div class="card-header-custom">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Bài tập về nhà</h5>
+                                    <span class="badge bg-warning">Cần làm</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted mb-3">Danh sách bài tập tuần này cần hoàn thành...</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-user me-1"></i>Mai Hương
+                                        <i class="fas fa-clock ms-2 me-1"></i>1 ngày trước
+                                    </small>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedules Tab -->
+            <div class="tab-pane fade" id="schedules" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4><i class="fas fa-calendar-alt me-2 text-info"></i>Lịch học tập</h4>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Thêm lịch học
+                    </button>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card card-enhanced">
+                            <div class="schedule-date">
+                                <div class="fw-bold fs-4">26</div>
+                                <div>Tháng 9, 2025</div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Ôn tập tích phân</h5>
+                                <p class="text-muted mb-3">
+                                    <i class="fas fa-clock me-2"></i>14:00 - 16:00
+                                    <br>
+                                    <i class="fas fa-map-marker-alt me-2"></i>Phòng 301, Tòa A
+                                </p>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-primary">
+                                        <i class="fas fa-check me-1"></i>Tham gia
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card card-enhanced">
+                            <div class="schedule-date bg-success">
+                                <div class="fw-bold fs-4">28</div>
+                                <div>Tháng 9, 2025</div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Kiểm tra giữa kỳ</h5>
+                                <p class="text-muted mb-3">
+                                    <i class="fas fa-clock me-2"></i>09:00 - 11:00
+                                    <br>
+                                    <i class="fas fa-map-marker-alt me-2"></i>Phòng thi 101
+                                </p>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-success">
+                                        <i class="fas fa-bookmark me-1"></i>Đã lưu
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>Quan trọng
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Files Tab -->
+            <div class="tab-pane fade" id="files" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4><i class="fas fa-folder me-2 text-secondary"></i>Tài liệu chia sẻ</h4>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-upload me-2"></i>Tải tài liệu lên
+                    </button>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="card card-enhanced text-center">
+                            <div class="card-body">
+                                <div class="file-icon text-danger">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <h6 class="card-title">Giáo trình Toán A1</h6>
+                                <p class="text-muted small">2.4 MB • PDF</p>
+                                <small class="text-muted d-block mb-3">
+                                    Tải lên: 10/09/2025
+                                    <br>Bởi: Anh Ngọc
+                                </small>
+                                <div class="d-flex gap-1 justify-content-center">
+                                    <button class="btn btn-sm btn-primary">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-share"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="card card-enhanced text-center">
+                            <div class="card-body">
+                                <div class="file-icon text-success">
+                                    <i class="fas fa-file-excel"></i>
+                                </div>
+                                <h6 class="card-title">Bài tập thực hành</h6>
+                                <p class="text-muted small">156 KB • XLSX</p>
+                                <small class="text-muted d-block mb-3">
+                                    Tải lên: 15/09/2025
+                                    <br>Bởi: Mai Hương
+                                </small>
+                                <div class="d-flex gap-1 justify-content-center">
+                                    <button class="btn btn-sm btn-primary">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-share"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="card card-enhanced text-center">
+                            <div class="card-body">
+                                <div class="file-icon text-info">
+                                    <i class="fas fa-file-word"></i>
+                                </div>
+                                <h6 class="card-title">Tóm tắt bài học</h6>
+                                <p class="text-muted small">890 KB • DOCX</p>
+                                <small class="text-muted d-block mb-3">
+                                    Tải lên: 20/09/2025
+                                    <br>Bởi: Văn Đức
+                                </small>
+                                <div class="d-flex gap-1 justify-content-center">
+                                    <button class="btn btn-sm btn-primary">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-share"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="btn btn-primary btn-lg floating-btn rounded-circle">
+        <i class="fas fa-question"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

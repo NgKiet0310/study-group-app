@@ -1,10 +1,12 @@
 import express from "express";
-import { showHomePage } from "../../../controllers/web/client/home.controller.js";
-import isAuthenticated from "../../../middleware/isAuthenticated.js";
-import { noCache } from "../../../middleware/nocache.js";
+import { profile, showHomePage, showRoom, updateProfile } from "../../../controllers/web/client/home.controller.js";
+import { updateProfileValidator } from "../../../middleware/validators/profileValidator.js";
 
 const router = express.Router();
 
-router.get("/home" ,isAuthenticated, noCache,showHomePage);
-
+router.get("/home" ,showHomePage);
+router.get("/room", showRoom);
+router.get("/profile", profile);
+router.post("/update_profile", updateProfileValidator ,updateProfile);
 export default router;
+

@@ -153,3 +153,18 @@
 {"level":"info","message":"Fetched schedule: id=68962e83bcb8de1f524521ed","timestamp":"2025-09-07T11:21:23.745Z"}
 {"level":"info","message":"Fetched schedules: page=1, total=2","timestamp":"2025-09-07T11:21:26.793Z"}
 {"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-09-08T09:26:11.768Z"}
+{"level":"info","message":"Fetched files: page=1, total=1","timestamp":"2025-09-08T09:27:21.672Z"}
+{"level":"info","message":"Fetched file: id=687638973dd14eb75c8a4922","timestamp":"2025-09-08T09:27:31.841Z"}
+{"level":"info","message":"Fetched messages: page=1, total=1","timestamp":"2025-09-08T09:28:43.756Z"}
+{"level":"info","message":"Fetched message: id=687638973dd14eb75c8a491a","timestamp":"2025-09-08T09:29:05.203Z"}
+{"level":"info","message":"[LOGIN] user@gmail.com logged in successfully","timestamp":"2025-09-10T19:30:51.291Z"}
+{"level":"error","message":"[ADMIN LOGOUT]","timestamp":"2025-09-10T19:33:46.731Z"}
+{"level":"error","message":"[ADMIN LOGOUT]","timestamp":"2025-09-10T19:34:01.147Z"}
+{"level":"error","message":"[ADMIN LOGOUT]","timestamp":"2025-09-10T19:34:10.044Z"}
+{"level":"error","message":"[ADMIN LOGOUT]","timestamp":"2025-09-10T19:34:12.243Z"}
+{"level":"error","message":"[ADMIN LOGOUT]","timestamp":"2025-09-10T19:34:25.371Z"}
+{"level":"error","message":"[ADMIN LOGOUT]","timestamp":"2025-09-10T19:34:51.697Z"}
+{"level":"error","message":"[ADMIN LOGOUT]","timestamp":"2025-09-10T19:35:12.035Z"}
+{"level":"error","message":"[ADMIN LOGOUT]","timestamp":"2025-09-10T19:35:13.694Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-09-10T19:35:32.989Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-09-10T19:45:44.011Z"}

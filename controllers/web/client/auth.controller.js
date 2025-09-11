@@ -79,8 +79,7 @@ export const register = async (req, res, next) => {
 
 export const Login = async (req, res, next) => {
   try {
-    const { username, password } = req.body;
-
+     const { username, password } = req.body;
     if (!username || !password) {
       return res.render("client/pages/login", {
         title: "Login",
@@ -91,6 +90,7 @@ export const Login = async (req, res, next) => {
 
 
     const user = await User.findOne({ username });
+    console.log('User found:', user); 
     if (!user) {
       return res.render("client/pages/login", {
         title: "Login",
@@ -112,14 +112,13 @@ export const Login = async (req, res, next) => {
 
    req.session.user = {
    _id: user._id,
-   email: user.email,
    role: user.role,
-   username: user.name,
+   username: user.username,
    };
 
 
-
-    res.redirect("/home");
+    req.session.success = "Đăng nhập thành công!";
+    res.redirect("/home?success=Đăng nhập thành công");
   } catch (error) {
     next(error);
   }

@@ -1,31 +1,316 @@
 <% layout('layouts/main-client') %>
-<div class="row justify-content-center mt-5">
-  <div class="col-md-6 col-lg-4">
-    <h1 class="display-5 fw-bold mb-4 text-center">Study Group App📚</h1>
-    <div class="card shadow-lg border-0">
-      <div class="card-body p-4">
-      <% if (typeof error !== 'undefined' && error) { %>
-      <p style="color: red;"><%= error %></p>
-      <% } %>
-      <% if (typeof success !== 'undefined' && success) { %>
-      <p style="color: green;"><%= success %></p>
-      <% } %>
 
-        <form action="/auth/login" method="POST">
-          <div class="mb-3">
-            <!-- <label for="username" class="form-label fw-medium">Username</label> -->
-            <input type="text" class="form-control" id="username" name="username" placeholder="Email or NumberPhone" required>
-          </div>
-          <div class="mb-3">
-            <!-- <label for="password" class="form-label fw-medium">Password</label> -->
-            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Login</button>
-        </form>
-        <p class="text-center mt-3">Don't have an account? <a href="/auth/register">Register</a></p>
+<div class="login-container">
+  <div class="row justify-content-center min-vh-100 align-items-center">
+    <div class="col-md-6 col-lg-5 col-xl-4">
+      
+      <!-- Logo and Title -->
+      <div class="text-center mb-4">
+        <div class="logo-circle mb-3">
+          <i class="fas fa-graduation-cap"><img src="/images/login.png" width="60px" alt="" srcset=""></i>
+        </div>
+        <h1 class="brand-title">Study Group App</h1>
+        <p class="brand-subtitle">Kết nối - Học tập - Phát triển</p>
       </div>
+
+      <!-- Login Card -->
+      <div class="login-card">
+        <div class="card-body p-4">
+          
+          <!-- Messages -->
+          <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger alert-modern">
+              <i class="fas fa-exclamation-circle me-2"></i>
+              <%= error %>
+            </div>
+          <% } %>
+          
+          <% if (typeof success !== 'undefined' && success) { %>
+            <div class="alert alert-success alert-modern">
+              <i class="fas fa-check-circle me-2"></i>
+              <%= success %>
+            </div>
+          <% } %>
+
+          <form action="/auth/login" method="POST">
+            
+            <!-- Username Field -->
+            <div class="form-group mb-3">
+              <div class="input-wrapper">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" 
+                       class="form-control form-control-modern" 
+                       id="username" 
+                       name="username" 
+                       placeholder="Email hoặc số điện thoại" 
+                       required>
+              </div>
+            </div>
+            
+            <!-- Password Field -->
+            <div class="form-group mb-4">
+              <div class="input-wrapper">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" 
+                       class="form-control form-control-modern" 
+                       id="password" 
+                       name="password" 
+                       placeholder="Mật khẩu" 
+                       required>
+              </div>
+            </div>
+            
+            <!-- Login Button -->
+            <button type="submit" class="btn btn-login w-100 mb-3">
+              <span>Đăng nhập</span>
+              <i class="fas fa-arrow-right ms-2"></i>
+            </button>
+            
+          </form>
+          
+          <!-- Register Link -->
+          <div class="text-center">
+            <p class="register-text">
+              Chưa có tài khoản? 
+              <a href="/auth/register" class="register-link">Đăng ký ngay</a>
+            </p>
+          </div>
+          
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div class="text-center mt-4">
+        <p class="footer-text">&copy; 2025 Dev By Kiet. Tất cả quyền được bảo lưu.</p>
+      </div>
+      
     </div>
   </div>
 </div>
 
+<style>
+/* Container */
+.login-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px 0;
+}
 
+/* Logo and Branding */
+.logo-circle {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.logo-circle i {
+  font-size: 2.5rem;
+  color: #667eea;
+}
+
+.brand-title {
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.brand-subtitle {
+  color: rgba(255,255,255,0.9);
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* Login Card */
+.login-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  backdrop-filter: blur(10px);
+}
+
+/* Form Controls */
+.form-group {
+  position: relative;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #667eea;
+  z-index: 2;
+}
+
+.form-control-modern {
+  padding: 15px 15px 15px 50px;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #ffffff;
+}
+
+.form-control-modern:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  background: #ffffff;
+}
+
+.form-control-modern::placeholder {
+  color: #adb5bd;
+  font-weight: 400;
+}
+
+/* Login Button */
+.btn-login {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-login::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-login:hover::before {
+  left: 100%;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+/* Alerts */
+.alert-modern {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  color: #ffffff;
+}
+
+.alert-success {
+  background: linear-gradient(135deg, #51cf66, #40c057);
+  color: #ffffff;
+}
+
+/* Register Link */
+.register-text {
+  color: #6c757d;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.register-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.register-link:hover {
+  color: #764ba2;
+  text-decoration: none;
+}
+
+/* Footer */
+.footer-text {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 15px;
+  }
+  
+  .brand-title {
+    font-size: 1.75rem;
+  }
+  
+  .logo-circle {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .logo-circle i {
+    font-size: 2rem;
+  }
+  
+  .login-card .card-body {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .brand-title {
+    font-size: 1.5rem;
+  }
+  
+  .form-control-modern {
+    padding: 12px 12px 12px 45px;
+  }
+  
+  .input-icon {
+    left: 12px;
+  }
+  
+  .btn-login {
+    padding: 12px 25px;
+    font-size: 1rem;
+  }
+}
+
+/* Animation */
+.login-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

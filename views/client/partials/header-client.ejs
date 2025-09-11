@@ -1,28 +1,471 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-  <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="/home">Study Group📚</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
+<nav class="navbar navbar-expand-lg navbar-dark shadow-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); backdrop-filter: blur(10px);">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/home">
+      <div class="logo-container me-2">
+        <i class="fas fa-graduation-cap"><img src="/images/group.png" width="30px" alt="" srcset=""></i>
+      </div>
+      <span class="brand-text">Study Group</span>
+      <span class="brand-emoji ms-1">📚</span>
+    </a>
+    
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <div class="hamburger-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto align-items-center">
         <li class="nav-item">
-          <a class="nav-link" href="/home">Home</a>
+          <a class="nav-link nav-link-custom" href="/home">
+            <i class="fas fa-home me-2"></i>
+            <span>Trang chủ</span>
+          </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-custom" href="/contact">
+            <i class="fas fa-home me-2"></i>
+            <span> Liên hệ</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-custom" href="/support">
+            <i class="fas fa-home me-2"></i>
+            <span> Hỗ trợ </span>
+          </a>
+        </li>
+        
         <% if (user) { %>
-          <li class="nav-item">
-            <a class="nav-link">Welcome, <span class="badge bg-light text-dark"><%= user.username %></span></a>
-          </li>
-          <li class="nav-item">
-      <a class="nav-link btn btn-light text-danger ms-2" href="/auth/logout" onclick="return confirm('Bạn chắc chắn muốn đăng xuất?')">Đăng xuất</a>
+          <!-- Profile Dropdown -->
+          <li class="nav-item dropdown user-dropdown">
+            <a class="nav-link dropdown-toggle user-profile-link d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="user-avatar-container">
+                <img src="https://png.pngtree.com/png-clipart/20230922/original/pngtree-blue-user-icon-profile-and-account-vector-design-vector-sign-vector-png-image_12652714.png" 
+                     alt="User Avatar" 
+                     class="user-avatar">
+                <div class="online-status"></div>
+              </div>
+              <span class="username d-none d-md-inline ms-2"><%= user.username %></span>
+              <i class="fas fa-chevron-down ms-2 dropdown-arrow"></i>
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu">
+              <li class="dropdown-header">
+                <div class="user-info">
+                  <div class="user-avatar-large">
+                    <img src="https://png.pngtree.com/png-clipart/20230922/original/pngtree-blue-user-icon-profile-and-account-vector-design-vector-sign-vector-png-image_12652714.png" alt="Avatar">
+                  </div>
+                  <div class="user-details">
+                    <h6 class="mb-0">Xin chào, <%= user && user.username ? user.username : 'User' %></h6>
+                  </div>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider my-2"></li>
+              <li>
+                <a class="dropdown-item dropdown-item-custom" href="/profile">
+                  <div class="dropdown-item-icon">
+                    <img src="/images/profile.png" alt="" height="20px">
+                  </div>
+                  <div class="dropdown-item-content">
+                    <span>Hồ sơ cá nhân</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item dropdown-item-custom" href="/notifications">
+                  <div class="dropdown-item-icon">
+                    <img src="/images/bell.png" alt="" height="20px">
+                  </div>
+                  <div class="dropdown-item-content">
+                    <span>Thông báo</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item dropdown-item-custom" href="/notifications">
+                  <div class="dropdown-item-icon">
+                    <img src="/images/shcedule.png" alt="" height="20px">
+                  </div>
+                  <div class="dropdown-item-content">
+                    <span>Lịch học của bạn</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item dropdown-item-custom" href="/notifications">
+                  <div class="dropdown-item-icon">
+                    <img src="/images/task.png" alt="" height="20px">
+                  </div>
+                  <div class="dropdown-item-content">
+                    <span>Nhiệm vụ của bạn</span>
+                  </div>
+                </a>
+              </li>
+              <li><hr class="dropdown-divider my-2"></li>
+              <li>
+                <a class="dropdown-item dropdown-item-custom text-danger" href="/auth/logout" onclick="return confirm('Bạn chắc chắn muốn đăng xuất?')">
+                  <div class="dropdown-item-icon">
+                    <img src="/images/logout.png" alt="" height="20px">
+                  </div>
+                  <div class="dropdown-item-content">
+                    <span>Đăng xuất</span>
+                  </div>
+                </a>
+              </li>
+            </ul>
           </li>
         <% } else { %>
           <li class="nav-item">
-            <a class="nav-link btn btn-light text-primary ms-2" href="/auth/login">Login</a>
+            <a class="nav-link btn auth-btn auth-btn-register me-2" href="/auth/register">
+              <i class="fas fa-user-plus me-2"></i>Đăng ký
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn auth-btn auth-btn-login" href="/auth/login">
+              <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+            </a>
           </li>
         <% } %>
       </ul>
     </div>
   </div>
 </nav>
+
+<!-- Custom CSS -->
+<style>
+  .navbar {
+    padding: 1rem 0;
+    position: relative;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Logo Styles */
+  .logo-container {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+  }
+
+  .navbar-brand:hover .logo-container {
+    transform: rotate(5deg) scale(1.1);
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .brand-text {
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .brand-emoji {
+    font-size: 1.5rem;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-5px);
+    }
+    60% {
+      transform: translateY(-3px);
+    }
+  }
+
+  /* Custom Hamburger Menu */
+  .hamburger-menu {
+    width: 24px;
+    height: 18px;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .dropdown-menu {
+  z-index: 2000 !important;
+}
+
+
+  .hamburger-menu span {
+    display: block;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    position: absolute;
+    width: 100%;
+  }
+
+  .hamburger-menu span:nth-child(1) { top: 0; }
+  .hamburger-menu span:nth-child(2) { top: 8px; }
+  .hamburger-menu span:nth-child(3) { top: 16px; }
+
+  /* Navigation Links */
+  .nav-link-custom {
+    padding: 8px 16px !important;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav-link-custom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: left 0.3s ease;
+  }
+
+  .nav-link-custom:hover::before {
+    left: 0;
+  }
+
+  .nav-link-custom:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+  }
+
+  /* User Profile */
+  .user-dropdown {
+    position: relative;
+    z-index: 1001;
+  }
+
+  .user-profile-link {
+    padding: 8px 16px !important;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .user-profile-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .user-avatar-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .online-status {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    background: #4ade80;
+    border: 2px solid white;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+  }
+
+  .dropdown-arrow {
+    transition: transform 0.3s ease;
+    font-size: 0.8rem;
+  }
+
+  .user-dropdown.show .dropdown-arrow {
+    transform: rotate(180deg);
+  }
+
+  /* Dropdown Menu */
+  .user-dropdown-menu {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+     z-index: 2000 !important;
+    background: rgba(255, 255, 255, 0.95);
+    min-width: 280px;
+    padding: 1rem 0;
+    animation: dropdownFadeIn 0.3s ease;
+  }
+
+  @keyframes dropdownFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .dropdown-header .user-info {
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+  }
+
+  .user-avatar-large {
+    width: 48px;
+    height: 48px;
+    margin-right: 12px;
+  }
+
+  .user-avatar-large img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e5e7eb;
+  }
+
+  .user-details h6 {
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .dropdown-item-custom {
+    padding: 12px 1rem !important;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    margin: 0 8px;
+    display: flex;
+    align-items: center;
+  }
+
+  .dropdown-item-custom:hover {
+    background: #f8fafc;
+    transform: translateX(4px);
+  }
+
+  .dropdown-item-custom.text-danger:hover {
+    background: #fef2f2;
+    color: #dc2626 !important;
+  }
+
+  .dropdown-item-icon {
+    width: 40px;
+    height: 40px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .dropdown-item-custom:hover .dropdown-item-icon {
+    background: #e2e8f0;
+  }
+
+  .dropdown-item-custom.text-danger:hover .dropdown-item-icon {
+    background: #fecaca;
+  }
+
+  .dropdown-item-content {
+    flex: 1;
+  }
+
+  .dropdown-item-content span {
+    font-weight: 500;
+    color: #1f2937;
+    display: block;
+  }
+
+  /* Auth Buttons */
+  .auth-btn {
+    border-radius: 25px !important;
+    padding: 8px 20px !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .auth-btn-register {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .auth-btn-register:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-2px);
+  }
+
+  .auth-btn-login {
+    background: rgba(255, 255, 255, 0.9) !important;
+    color: #667eea !important;
+  }
+
+  .auth-btn-login:hover {
+    background: white !important;
+    color: #667eea !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .user-dropdown-menu {
+      min-width: 260px;
+      margin-top: 8px;
+    }
+    
+    .navbar-brand {
+      font-size: 1.1rem;
+    }
+    
+    .brand-emoji {
+      font-size: 1.2rem;
+    }
+    
+    .nav-link-custom {
+      margin: 4px 0;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .user-dropdown-menu {
+      left: 16px !important;
+      right: 16px !important;
+      transform: none !important;
+      min-width: auto;
+    }
+  }
+  .navbar {
+  position: relative;
+  z-index: 1050 !important; /* cao hơn hero-section hoặc container phía dưới */
+}
+
+.user-dropdown-menu {
+  position: absolute !important;
+  z-index: 2000 !important;
+}
+
+</style>
