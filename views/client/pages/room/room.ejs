@@ -1,206 +1,422 @@
 <% layout('layouts/main-client') %>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-    /* Các CSS chung và CSS cho các partials khác */
-    .room-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 15px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-    }
-    
-    .nav-tabs {
-        border: none;
-        background: #f8f9fa;
-        border-radius: 12px;
-        padding: 8px;
-    }
-    
-    .nav-tabs .nav-link {
-        border: none;
-        border-radius: 8px;
-        margin: 0 4px;
-        color: #6c757d;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-    
-    .nav-tabs .nav-link:hover {
-        background: #e9ecef;
-        color: #495057;
-    }
-    
-    .nav-tabs .nav-link.active {
-        background: #007bff;
-        color: white;
-        box-shadow: 0 4px 8px rgba(0,123,255,0.3);
-    }
-    
-    .chat-container {
-        background: white;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    }
-    
-    .chat-header {
-        background: linear-gradient(90deg, #007bff, #0056b3);
-        color: white;
-        padding: 1rem 1.5rem;
-        display: flex;
-        justify-content: between;
-        align-items: center;
-    }
-    
-    .chat-box {
-        height: 450px;
-        overflow-y: auto;
-        padding: 1rem;
-        background: #f8f9fa;
-    }
-    
-    .chat-message {
-        margin-bottom: 1rem;
-        animation: fadeInUp 0.3s ease;
-    }
-    
-    .chat-message.own {
-        flex-direction: row-reverse;
-    }
-    
-    .chat-message.own .message-bubble {
-        background: #007bff;
-        color: white;
-        margin-left: 0;
-        margin-right: 1rem;
-    }
-    
-    .message-bubble {
-        background: white;
-        padding: 0.75rem 1rem;
-        border-radius: 18px;
-        margin-left: 1rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        max-width: 70%;
-    }
-    
-    .user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 0.9rem;
-        color: white;
-    }
-    
-    .chat-input {
-        padding: 1rem 1.5rem;
-        background: white;
-        border-top: 1px solid #e9ecef;
-    }
-    
-    .card-enhanced {
-        border: none;
-        border-radius: 15px;
-        transition: all 0.3s ease;
-        overflow: hidden;
-    }
-    
-    .card-enhanced:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 25px rgba(0,0,0,0.15);
-    }
-    
-    .card-header-custom {
-        background: linear-gradient(45deg, #f8f9fa, #e9ecef);
-        border-bottom: none;
-        padding: 1.25rem;
-    }
-    
-    .btn-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 0.25rem;
-    }
-    
-    .online-users {
-        background: rgba(255,255,255,0.1);
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-    }
-    
-    .status-indicator {
-        width: 8px;
-        height: 8px;
-        background: #28a745;
-        border-radius: 50%;
-        display: inline-block;
-        margin-left: 0.5rem;
-    }
-    
-    .file-icon {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-    }
-    
-    .schedule-date {
-        background: #007bff;
-        color: white;
-        border-radius: 8px;
-        padding: 0.5rem;
-        text-align: center;
-        margin-bottom: 1rem;
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .tab-content {
-        animation: fadeIn 0.3s ease;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
-    .floating-btn {
-        position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        z-index: 1000;
-        box-shadow: 0 4px 12px rgba(0,123,255,0.3);
-    }
-</style>
 
-<div class="container-fluid py-4">
-    <%- include('./partials/room-header') %>
-    <%- include('./partials/nav-tabs') %>
-    
-    <div class="tab-content">
-        <%- include('./partials/chat') %>
-        <%- include('./partials/notes') %>
-        <%- include('./partials/schedules') %>
-        <%- include('./partials/files') %>
+<div class="room-content">
+    <style>
+        /* CSS chỉ áp dụng cho room content */
+        .room-content .room-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .room-content .room-nav-tabs {
+            border: none;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 8px;
+        }
+        
+        .room-content .room-nav-tabs .nav-link {
+            border: none;
+            border-radius: 8px;
+            margin: 0 4px;
+            color: #6c757d;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .room-content .room-nav-tabs .nav-link:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        .room-content .room-nav-tabs .nav-link.active {
+            background: #007bff;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+        }
+        
+        .room-content .chat-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .room-content .chat-header {
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .room-content .chat-box {
+            height: 450px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #f8f9fa;
+        }
+        
+        .room-content .chat-message {
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .room-content .chat-message.own {
+            flex-direction: row-reverse;
+        }
+        
+        .room-content .chat-message.own .message-bubble {
+            background: #007bff;
+            color: white;
+            margin-left: 0;
+            margin-right: 1rem;
+        }
+        
+        .room-content .message-bubble {
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            margin-left: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 70%;
+        }
+        
+        .room-content .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: white;
+        }
+        
+        .room-content .chat-input {
+            padding: 1rem 1.5rem;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .room-content .card-enhanced {
+            border: none;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .room-content .card-enhanced:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+        
+        .room-content .card-header-custom {
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            border-bottom: none;
+            padding: 1.25rem;
+        }
+        
+        .room-content .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0.25rem;
+        }
+        
+        .room-content .online-users {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+        }
+        
+        .room-content .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: #28a745;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+        
+        .room-content .file-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .room-content .schedule-date {
+            background: #007bff;
+            color: white;
+            border-radius: 8px;
+            padding: 0.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .room-content .tab-content {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .room-content .floating-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        }
+
+        /* Đảm bảo navbar dropdown vẫn hoạt động */
+        .navbar .dropdown-menu {
+            z-index: 2000 !important;
+        }
+    </style>
+
+    <div class="container-fluid py-4">
+        <!-- Room Header -->
+        <div class="room-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2 class="mb-2">
+                        <i class="fas fa-users me-2"></i>
+                        Room Name
+                    </h2>
+                    <p class="mb-0 opacity-75">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Mô tả về phòng học này
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="online-users">
+                        <span class="small">
+                            <i class="fas fa-circle text-success me-1"></i>
+                            5 thành viên đang online
+                        </span>
+                        <div class="status-indicator"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav room-nav-tabs mb-4" id="roomTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat" type="button" role="tab">
+                    <i class="fas fa-comments me-2"></i>Chat
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="notes-tab" data-bs-toggle="tab" data-bs-target="#notes" type="button" role="tab">
+                    <i class="fas fa-sticky-note me-2"></i>Ghi chú
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="schedules-tab" data-bs-toggle="tab" data-bs-target="#schedules" type="button" role="tab">
+                    <i class="fas fa-calendar me-2"></i>Lịch học
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="files-tab" data-bs-toggle="tab" data-bs-target="#files" type="button" role="tab">
+                    <i class="fas fa-folder me-2"></i>Tài liệu
+                </button>
+            </li>
+        </ul>
+        
+        <div class="tab-content">
+            <!-- Chat Tab -->
+            <div class="tab-pane fade show active" id="chat" role="tabpanel">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-comments me-2"></i>
+                            Chat nhóm
+                        </h5>
+                        <div class="d-flex">
+                            <button class="btn btn-icon btn-outline-light btn-sm me-2">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <button class="btn btn-icon btn-outline-light btn-sm">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-box">
+                        <!-- Sample Messages -->
+                        <div class="chat-message">
+                            <div class="user-avatar" style="background: #007bff;">A</div>
+                            <div class="message-bubble">
+                                <div class="mb-1"><strong>Admin</strong> <small class="text-muted">10:30 AM</small></div>
+                                Chào mừng các bạn đến với phòng học!
+                            </div>
+                        </div>
+                        
+                        <div class="chat-message own">
+                            <div class="user-avatar" style="background: #28a745;">U</div>
+                            <div class="message-bubble">
+                                <div class="mb-1"><strong>You</strong> <small class="text-muted">10:32 AM</small></div>
+                                Xin chào mọi người!
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Nhập tin nhắn...">
+                            <button class="btn btn-primary" type="button">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Tab -->
+            <div class="tab-pane fade" id="notes" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card card-enhanced">
+                            <div class="card-header card-header-custom">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-sticky-note me-2"></i>
+                                    Ghi chú chung
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <textarea class="form-control" rows="10" placeholder="Viết ghi chú của bạn..."></textarea>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i>Lưu ghi chú
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card card-enhanced">
+                            <div class="card-header card-header-custom">
+                                <h6 class="mb-0">Ghi chú gần đây</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item">
+                                        <small class="text-muted">Hôm qua</small>
+                                        <p class="mb-0">Bài tập chương 1...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedules Tab -->
+            <div class="tab-pane fade" id="schedules" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card card-enhanced">
+                            <div class="card-header card-header-custom">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-calendar me-2"></i>
+                                    Lịch học tuần này
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="schedule-date">
+                                    <h6 class="mb-0">Thứ 2 - 15/01</h6>
+                                </div>
+                                <p>Toán cao cấp - 8:00 AM</p>
+                                <p>Vật lý đại cương - 2:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card card-enhanced">
+                            <div class="card-header card-header-custom">
+                                <h6 class="mb-0">Thêm lịch học mới</h6>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" placeholder="Tên môn học">
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="datetime-local" class="form-control">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Thêm</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Files Tab -->
+            <div class="tab-pane fade" id="files" role="tabpanel">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card card-enhanced">
+                            <div class="card-header card-header-custom d-flex justify-content-between">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-folder me-2"></i>
+                                    Tài liệu nhóm
+                                </h5>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-upload me-1"></i>Tải lên
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 text-center mb-3">
+                                        <div class="file-icon text-danger">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </div>
+                                        <p class="mb-0">Bài giảng 1.pdf</p>
+                                        <small class="text-muted">2.3 MB</small>
+                                    </div>
+                                    <div class="col-md-3 text-center mb-3">
+                                        <div class="file-icon text-primary">
+                                            <i class="fas fa-file-word"></i>
+                                        </div>
+                                        <p class="mb-0">Bài tập.docx</p>
+                                        <small class="text-muted">1.1 MB</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Floating Button -->
+    <button class="btn btn-primary floating-btn rounded-circle" title="Thêm nhanh">
+        <i class="fas fa-plus"></i>
+    </button>
 </div>
-
-<%- include('./partials/floating-btn') %>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
