@@ -43,26 +43,16 @@
               </div>
             </div>
             <h5><%= user.username %></h5>
-            <p class="text-muted">Thành viên từ: <%= new Date(user.createdAt || Date.now()).toLocaleDateString('vi-VN') %></p>
+            <p class="text-muted">Thành viên từ:   <%= new Date(user.createdAt).toLocaleString('vi-VN', { 
+                        day: '2-digit', 
+                        month: '2-digit', 
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }) %>
+                    </p>
           </div>
-
-          <!-- Update Avatar Form -->
-          <form action="/update_avatar" method="POST" enctype="multipart/form-data" class="mb-4">
-            <h5 class="border-bottom pb-2 mb-3">Cập nhật ảnh đại diện</h5>
-            
-            <div class="mb-3">
-              <label for="avatar" class="form-label">Chọn ảnh đại diện</label>
-              <input type="file" name="avatar" class="form-control" accept="image/*" required>
-              <div class="form-text">Chỉ chấp nhận file ảnh (JPG, PNG, GIF). Kích thước tối đa: 5MB</div>
-            </div>
-            
-            <button type="submit" class="btn btn-primary">
-              <i class="fas fa-upload me-2"></i>Cập nhật ảnh
-            </button>
-          </form>
-
-          <hr>
-
+          
           <!-- Update Username Form -->
           <form action="/update_profile" method="POST" class="mb-4">
             <h5 class="border-bottom pb-2 mb-3">Thay đổi tên người dùng</h5>

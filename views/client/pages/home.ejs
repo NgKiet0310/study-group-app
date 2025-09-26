@@ -6,30 +6,29 @@
   </script>
 <% } %>
 
-
 <!-- Hero Section -->
 <section class="hero-section py-5 mb-5">
   <div class="container">
     <div class="row align-items-center">
       <div class="col-lg-6 hero-content">
         <h1 class="display-4 fw-bold hero-title mb-4">
-          Học tập cùng nhau 🎓
+          Learn Together 🎓
         </h1>
         <p class="lead text-white mb-4 opacity-90">
-          Tham gia cộng đồng học tập, tạo phòng học, trò chuyện và chia sẻ kiến thức cùng bạn bè!
+          Join the learning community, create study rooms, chat, and share knowledge with friends!
         </p>
         <ul class="feature-list text-white mb-4">
-          <li>Tạo và tham gia phòng học trực tuyến</li>
-          <li>Chat realtime với thành viên</li>
-          <li>Chia sẻ tài liệu và ghi chú</li>
-          <li>Lên lịch học tập hiệu quả</li>
+          <li>Create and join online study rooms</li>
+          <li>Real-time chat with members</li>
+          <li>Share documents and notes</li>
+          <li>Plan effective study schedules</li>
         </ul>
         <div class="d-flex gap-3 flex-wrap">
           <a href="#your-rooms" class="btn btn-light btn-lg px-4">
-            <i class="fas fa-arrow-down me-2"></i>Xem phòng của bạn
+            <i class="fas fa-arrow-down me-2"></i>View Your Rooms
           </a>
           <a href="/create-room" class="btn btn-outline-light btn-lg px-4">
-            <i class="fas fa-plus me-2"></i>Tạo phòng mới
+            <i class="fas fa-plus me-2"></i>Create New Room
           </a>
         </div>
       </div>
@@ -48,21 +47,21 @@
   <div class="container">
     <div class="row">
       <div class="col-md-4">
-        <div class="stats-card">
-          <span class="stats-number">150+</span>
-          <span>Phòng học đang hoạt động</span>
+       <div class="stats-card">
+              <span class="stats-number"><%= room ? room.length : 0 %></span>
+              <span>Active Study Rooms</span>
         </div>
       </div>
       <div class="col-md-4">
         <div class="stats-card" style="background: linear-gradient(135deg, #dc3545, #e83e8c);">
-          <span class="stats-number">1,200+</span>
-          <span>Học sinh tham gia</span>
+          <span class="stats-number"><%= users ? users.length : 0 %></span>
+          <span>Students Participating</span>
         </div>
       </div>
       <div class="col-md-4">
         <div class="stats-card" style="background: linear-gradient(135deg, #fd7e14, #ffc107);">
-          <span class="stats-number">5,000+</span>
-          <span>Tài liệu chia sẻ</span>
+          <span class="stats-number"><%= files ? files.length : 0 %></span>
+          <span>Shared Documents</span>
         </div>
       </div>
     </div>
@@ -77,26 +76,26 @@
         <div class="card join-room-card">
           <div class="card-header card-header-gradient text-white text-center py-4">
             <h3 class="fw-bold mb-0">
-              <i class="fas fa-key me-3"></i>Tham gia phòng học
+              <i class="fas fa-key me-3"></i>Join a Study Room
             </h3>
-            <p class="mb-0 opacity-75 mt-2">Nhập mã phòng để bắt đầu học cùng nhau</p>
+            <p class="mb-0 opacity-75 mt-2">Enter the room code to start learning together</p>
           </div>
           <div class="card-body p-4">
             <form action="/api/rooms/join" method="POST">
               <div class="mb-4">
                 <label for="code" class="form-label fw-semibold text-muted mb-3">
-                  <i class="fas fa-hashtag me-2"></i>Mã phòng
+                  <i class="fas fa-hashtag me-2"></i>Room Code
                 </label>
                 <input type="text" 
                        class="form-control form-control-modern" 
                        id="code" 
                        name="code" 
-                       placeholder="Ví dụ: ABC123..." 
+                       placeholder="Example: ABC123..." 
                        required>
-                <small class="text-muted">Mã phòng gồm 6 ký tự do giảng viên cung cấp</small>
+                <small class="text-muted">Room code consists of 6 characters provided by the instructor</small>
               </div>
               <button type="submit" class="btn btn-gradient w-100">
-                <i class="fas fa-door-open me-2"></i>Vào phòng ngay
+                <i class="fas fa-door-open me-2"></i>Join Room Now
               </button>
             </form>
           </div>
@@ -110,7 +109,7 @@
 <section id="your-rooms" class="mb-5">
   <div class="container">
     <h2 class="section-title fw-bold text-primary mb-4">
-      <i class="fas fa-book-open me-3"></i>Phòng học của bạn
+      <i class="fas fa-book-open me-3"></i>Your Study Rooms
     </h2>
     
     <% if (rooms && rooms.length > 0) { %>
@@ -130,29 +129,16 @@
                   </a>
                 </h5>
                 <p class="text-muted mb-3">
-                  <%= room.description || 'Phòng học trực tuyến để thảo luận và chia sẻ kiến thức cùng nhau.' %>
+                  <%= room.description || 'Online study room for discussions and knowledge sharing.' %>
                 </p>
-                <div class="d-flex align-items-center text-muted small mb-3">
+                 <div class="d-flex align-items-center text-muted small mb-3">
                   <i class="fas fa-users me-2"></i>
-                  <span class="me-3">24 thành viên</span>
-                  <i class="fas fa-circle text-success me-2"></i>
-                  <span>12 đang online</span>
+                  <span class="me-3"><%= room.members ? room.members.length : 0 %> members</span>
                 </div>
                 <div class="d-grid gap-2">
-                  <a href="/client/room/<%= room._id %>" class="btn btn-primary">
-                    <i class="fas fa-door-open me-2"></i>Vào phòng
+                  <a href="/room/<%= room._id %>" class="btn btn-primary">
+                    <i class="fas fa-door-open me-2"></i>Join Room
                   </a>
-                  <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary btn-sm flex-fill">
-                      <i class="fas fa-bell"></i>
-                    </button>
-                    <button class="btn btn-outline-secondary btn-sm flex-fill">
-                      <i class="fas fa-bookmark"></i>
-                    </button>
-                    <button class="btn btn-outline-secondary btn-sm flex-fill">
-                      <i class="fas fa-share"></i>
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -164,7 +150,7 @@
       <% if (rooms.length > 6) { %>
         <div class="text-center">
           <button class="btn btn-outline-primary btn-lg" onclick="showMoreRooms()">
-            <i class="fas fa-chevron-down me-2"></i>Xem thêm phòng học
+            <i class="fas fa-chevron-down me-2"></i>View More Rooms
           </button>
         </div>
       <% } %>
@@ -174,20 +160,19 @@
         <div class="empty-icon">
           <i class="fas fa-book-open"></i>
         </div>
-        <h4 class="fw-bold text-muted mb-3">Chưa có phòng học nào</h4>
+        <h4 class="fw-bold text-muted mb-3">No Study Rooms Yet</h4>
         <p class="text-muted mb-4">
-          Bạn chưa tham gia phòng học nào. Hãy nhập mã phòng hoặc tạo phòng mới để bắt đầu!
+          You haven't joined any study rooms. Enter a room code or create a new room to start!
         </p>
         <div class="d-flex gap-3 justify-content-center flex-wrap">
           <a href="#" class="btn btn-primary" onclick="document.getElementById('code').focus()">
-            <i class="fas fa-key me-2"></i>Nhập mã phòng
+            <i class="fas fa-key me-2"></i>Enter Room Code
           </a>
           <a href="/create-room" class="btn btn-outline-primary">
-            <i class="fas fa-plus me-2"></i>Tạo phòng mới
+            <i class="fas fa-plus me-2"></i>Create New Room
           </a>
         </div>
       </div>
     <% } %>
   </div>
 </section>
-

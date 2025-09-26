@@ -171,6 +171,7 @@
     background: linear-gradient(135deg, transparent, rgba(0,123,255,0.05));
     opacity: 0;
     transition: opacity 0.3s ease;
+    pointer-events: none;
   }
   
   .room-card:hover::before {

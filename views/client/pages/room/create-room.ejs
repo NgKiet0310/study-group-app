@@ -1,0 +1,192 @@
+<%- layout('layouts/main-client') %>
+
+<!-- Hiển thị thông báo lỗi nếu có -->
+<% if (typeof error !== "undefined" && error) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i><%= error %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+<% } %>
+
+<!-- Hiển thị thông báo thành công nếu có -->
+<% if (typeof success !== "undefined" && success) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="fas fa-check-circle me-2"></i><%= success %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+<% } %>
+
+<!-- Main Content -->
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <!-- Header Section -->
+      <div class="text-center mb-5">
+        <div class="create-room-icon mb-3">
+          <i class="fas fa-plus-circle text-primary" style="font-size: 3rem;"></i>
+        </div>
+        <h1 class="display-5 fw-bold text-primary mb-3">
+          Tạo phòng học mới
+        </h1>
+        <p class="lead text-muted">
+          Tạo một không gian học tập để kết nối và chia sẻ kiến thức với bạn bè
+        </p>
+      </div>
+
+      <!-- Create Room Form -->
+      <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient-primary text-white py-4">
+          <h3 class="card-title mb-0 text-center">
+            <i class="fas fa-cog me-2"></i>Thông tin phòng học
+          </h3>
+        </div>
+        
+        <div class="card-body p-4">
+          <form action="/api/rooms/create" method="POST" id="createRoomForm">
+            
+            <!-- Tên phòng -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <label for="name" class="form-label fw-bold">
+                  <i class="fas fa-bookmark me-2 text-primary"></i>Tên phòng học *
+                </label>
+                <input type="text" 
+                       class="form-control form-control-lg" 
+                       id="name" 
+                       name="name" 
+                       required
+                       maxlength="100">
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Tên phòng phải là duy nhất và không được vượt quá 100 ký tự
+                </div>
+              </div>
+            </div>
+
+            <!-- Mô tả phòng -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <label for="description" class="form-label fw-bold">
+                  <i class="fas fa-align-left me-2 text-primary"></i>Mô tả phòng học
+                </label>
+                <textarea class="form-control" 
+                          id="description" 
+                          name="description" 
+                          rows="4" 
+                          maxlength="500"></textarea>
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Tối đa 500 ký tự. Mô tả giúp thành viên hiểu rõ hơn về phòng học
+                </div>
+              </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="row">
+              <div class="col-12">
+                <div class="d-flex gap-3 justify-content-center">
+                  <button type="submit" class="btn btn-primary btn-lg px-4">
+                    <i class="fas fa-save me-2"></i>Tạo phòng học
+                  </button>
+                  <a href="/home" class="btn btn-outline-secondary btn-lg px-4">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại
+                  </a>
+                </div>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+      <!-- Thông tin bổ sung -->
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <div class="card h-100 border-0 bg-light">
+            <div class="card-body text-center">
+              <i class="fas fa-crown text-warning fa-2x mb-3"></i>
+              <h5>Quyền Admin</h5>
+              <p class="text-muted small mb-0">
+                Bạn sẽ là Admin của phòng học này và có đầy đủ quyền quản lý
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="card h-100 border-0 bg-light">
+            <div class="card-body text-center">
+              <i class="fas fa-key text-info fa-2x mb-3"></i>
+              <h5>Mã phòng tự động</h5>
+              <p class="text-muted small mb-0">
+                Hệ thống sẽ tự động tạo mã phòng duy nhất để chia sẻ với thành viên
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+/* Gradient background cho header */
+.bg-gradient-primary {
+  background: linear-gradient(45deg, #007bff, #6f42c1) !important;
+}
+
+/* Custom form controls */
+.form-control:focus, .form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Member item styles */
+.member-item {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.member-item:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
+}
+
+.role-badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+}
+
+/* Animation cho các thành viên mới được thêm */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.member-item.new-added {
+  animation: slideInUp 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .display-5 {
+    font-size: 2rem;
+  }
+  
+  .card-body {
+    padding: 1.5rem !important;
+  }
+}
+</style>
+

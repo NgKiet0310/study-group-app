@@ -37,7 +37,7 @@ export const register = async (req, res, next) => {
     if (!phoneRegex.test(username) && !emailRegex.test(username)) {
       return res.render("client/pages/register", {
         title: "Đăng kí tài khoản",
-        error: "Username phải là số điện thoại hoặc email hợp lệ",
+        error: "Tên đăng nhập phải là số điện thoại hoặc email hợp lệ",
         username,
       });
     }

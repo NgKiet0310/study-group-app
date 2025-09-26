@@ -1,32 +1,25 @@
-<div class="chat-message d-flex">
-    <div class="user-avatar bg-primary">AN</div>
-    <div class="message-bubble">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-            <strong class="text-primary">Anh Ngọc</strong>
-            <small class="text-muted">10:30 AM</small>
-        </div>
-        <div>Chào mọi người! Hôm nay chúng ta học bài gì vậy?</div>
-    </div>
-</div>
+<% if (messages.length > 0) { %>
+  <% messages.forEach(msg => { %>
+    <div class="chat-message d-flex <%= (user && user._id.toString() === msg.sender._id.toString()) ? 'own' : '' %>">
+      
+      <!-- Avatar -->
+      <div class="user-avatar
+        <%= (user && user._id.toString() === msg.sender._id.toString())
+              ? 'bg-warning'
+              : 'bg-secondary' %>">
+        <%= msg.sender.username ? msg.sender.username[0].toUpperCase() : '?' %>
+      </div>
 
-<div class="chat-message d-flex">
-    <div class="user-avatar bg-success">MH</div>
-    <div class="message-bubble">
+      <!-- Bubble -->
+      <div class="message-bubble">
         <div class="d-flex justify-content-between align-items-center mb-1">
-            <strong class="text-success">Mai Hương</strong>
-            <small class="text-muted">10:32 AM</small>
+          <strong><%= msg.sender.username || "Người dùng" %></strong>
+          <small class="text-muted"><%= msg.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></small>
         </div>
-        <div>Hôm nay học về tích phân đấy! Mọi người chuẩn bị bài chưa?</div>
+        <div><%= msg.content %></div>
+      </div>
     </div>
-</div>
-
-<div class="chat-message d-flex own">
-    <div class="user-avatar bg-warning">VD</div>
-    <div class="message-bubble">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-            <strong>Văn Đức</strong>
-            <small class="text-muted">10:35 AM</small>
-        </div>
-        <div>Mình đã đọc qua rồi, nhưng vẫn chưa hiểu lắm 😅</div>
-    </div>
-</div>
+  <% }) %>
+<% } else { %>
+  <p class="text-muted">💬 Chưa có tin nhắn nào trong phòng này</p>
+<% } %>

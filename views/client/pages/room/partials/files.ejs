@@ -1,91 +1,45 @@
-<div class="tab-pane fade" id="files" role="tabpanel">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4><i class="fas fa-folder me-2 text-secondary"></i>Tài liệu chia sẻ</h4>
-        <button class="btn btn-primary">
-            <i class="fas fa-upload me-2"></i>Tải tài liệu lên
-        </button>
+<% if (files && files.length) { %>
+  <% files.forEach(file => { %>
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+      <div class="card card-enhanced text-center">
+        <div class="card-body">
+          <div class="files-icon 
+            <%= file.fileType === 'pdf' ? 'text-danger' : 
+                file.fileType === 'doc' ? 'text-info' : 
+                file.fileType === 'image' ? 'text-warning' : 
+                'text-secondary' %>">
+            <i class="fas fa-files-<%= file.fileType === 'pdf' ? 'pdf' : 
+                                      file.fileType === 'doc' ? 'word' : 
+                                      file.fileType === 'image' ? 'image' : 
+                                      'alt' %>"></i>
+          </div>
+
+          <h6 class="card-title"><%= file.fileName %></h6>
+
+          <p class="text-muted small">
+            <%= (file.fileSize / 1024).toFixed(1) %> KB • <%= file.fileType.toUpperCase() %>
+          </p>
+
+          <small class="text-muted d-block mb-3">
+            Tải lên: <%= new Date(file.createdAt).toLocaleDateString('vi-VN') %><br>
+            Bởi: <%= file.uploadedBy?.username || "Ẩn danh" %>
+          </small>
+
+          <div class="d-flex gap-1 justify-content-center">
+            <a href="<%= file.fileUrl %>" download class="btn btn-sm btn-primary">
+              <i class="fas fa-download"></i>
+            </a>
+            <a href="<%= file.fileUrl %>" target="_blank" class="btn btn-sm btn-outline-primary">
+              <i class="fas fa-eye"></i>
+            </a>
+            <button class="btn btn-sm btn-outline-secondary">
+              <i class="fas fa-share"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-    
-    <div class="row">
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-            <div class="card card-enhanced text-center">
-                <div class="card-body">
-                    <div class="file-icon text-danger">
-                        <i class="fas fa-file-pdf"></i>
-                    </div>
-                    <h6 class="card-title">Giáo trình Toán A1</h6>
-                    <p class="text-muted small">2.4 MB • PDF</p>
-                    <small class="text-muted d-block mb-3">
-                        Tải lên: 10/09/2025
-                        <br>Bởi: Anh Ngọc
-                    </small>
-                    <div class="d-flex gap-1 justify-content-center">
-                        <button class="btn btn-sm btn-primary">
-                            <i class="fas fa-download"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary">
-                            <i class="fas fa-share"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-            <div class="card card-enhanced text-center">
-                <div class="card-body">
-                    <div class="file-icon text-success">
-                        <i class="fas fa-file-excel"></i>
-                    </div>
-                    <h6 class="card-title">Bài tập thực hành</h6>
-                    <p class="text-muted small">156 KB • XLSX</p>
-                    <small class="text-muted d-block mb-3">
-                        Tải lên: 15/09/2025
-                        <br>Bởi: Mai Hương
-                    </small>
-                    <div class="d-flex gap-1 justify-content-center">
-                        <button class="btn btn-sm btn-primary">
-                            <i class="fas fa-download"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary">
-                            <i class="fas fa-share"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-            <div class="card card-enhanced text-center">
-                <div class="card-body">
-                    <div class="file-icon text-info">
-                        <i class="fas fa-file-word"></i>
-                    </div>
-                    <h6 class="card-title">Tóm tắt bài học</h6>
-                    <p class="text-muted small">890 KB • DOCX</p>
-                    <small class="text-muted d-block mb-3">
-                        Tải lên: 20/09/2025
-                        <br>Bởi: Văn Đức
-                    </small>
-                    <div class="d-flex gap-1 justify-content-center">
-                        <button class="btn btn-sm btn-primary">
-                            <i class="fas fa-download"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary">
-                            <i class="fas fa-share"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+  <% }) %>
+<% } else { %>
+  <p>Chưa có file nào</p>
+<% } %>
