@@ -1,13 +1,33 @@
 <% layout('layouts/main-client') %>
 <link rel="stylesheet" href="/css/room.css">
+
+<%
+  const currentTab = typeof activeTab !== 'undefined' ? activeTab : 'chat';
+%>
+
 <div class="container-fluid py-4">
     <%- include('./partials/room-header') %>
-    <%- include('./partials/nav-tabs') %>
+    <%- include('./partials/nav-tabs', { activeTab: currentTab }) %>
     
     <div class="tab-content">
-        <%- include('./partials/chat') %>
-        <%- include('./partials/notes') %>
-        <%- include('./partials/schedules') %>
-        <%- include('./partials/files') %>
+        <div class="tab-pane fade <%= currentTab === 'chat' ? 'show active' : '' %>" id="chat" role="tabpanel">
+            <%- include('./partials/chat', { messages: typeof messages !== 'undefined' ? messages : [] }) %>
+        </div>
+
+        <div class="tab-pane fade <%= currentTab === 'notes' ? 'show active' : '' %>" id="notes" role="tabpanel">
+            <%- include('./partials/notes', { notes: typeof notes !== 'undefined' ? notes : [] }) %>
+        </div>
+
+        <div class="tab-pane fade <%= currentTab === 'schedules' ? 'show active' : '' %>" id="schedules" role="tabpanel">
+            <%- include('./partials/schedules', { schedules: typeof schedules !== 'undefined' ? schedules : [] }) %>
+        </div>
+
+        <div class="tab-pane fade <%= currentTab === 'files' ? 'show active' : '' %>" id="files" role="tabpanel">
+            <%- include('./partials/files', { files: typeof files !== 'undefined' ? files : [] }) %>
+        </div>
+
+        <div class="tab-pane fade <%= currentTab === 'tasks' ? 'show active' : '' %>" id="tasks" role="tabpanel">
+            <%- include('./partials/tasks', { tasks: typeof tasks !== 'undefined' ? tasks : [] }) %>
+        </div>
     </div>
 </div>

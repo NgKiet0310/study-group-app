@@ -1,0 +1,53 @@
+<div class="tab-pane fade <%= activeTab === 'tasks' ? 'show active' : '' %>" id="tasks" role="tabpanel">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="fas fa-tasks me-2 text-primary"></i>Công việc</h4>
+        <button class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Thêm công việc
+        </button>
+    </div>
+
+    <div class="row">
+        <% if (tasks && tasks.length > 0) { %>
+            <% tasks.forEach(task => { %>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card card-enhanced h-100">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= task.title %></h5>
+                            <p class="text-muted"><%= task.description %></p>
+
+                            <p class="mb-2">
+                                <i class="fas fa-user me-2"></i>Người tạo: <%= task.createdBy %>
+                            </p>
+                            <p class="mb-2">
+                                <i class="fas fa-users me-2"></i>Giao cho: <%= task.assignedTo %>
+                            </p>
+                            <p class="mb-2">
+                                <i class="fas fa-calendar-alt me-2"></i>Hạn chót: <%= task.dueDate %>
+                            </p>
+                            <p class="mb-2">
+                                <i class="fas fa-clock me-2"></i>Tạo lúc: <%= task.createdAt %>
+                            </p>
+
+                            <div class="mt-3">
+                                <% if (task.statusText === "Đã hoàn thành") { %>
+                                    <span class="badge bg-success"><%= task.statusText %></span>
+                                <% } else if (task.statusText === "Quá hạn") { %>
+                                    <span class="badge bg-danger"><%= task.statusText %></span>
+                                <% } else if (task.statusText === "Đang thực hiện") { %>
+                                    <span class="badge bg-warning text-dark"><%= task.statusText %></span>
+                                <% } else { %>
+                                    <span class="badge bg-secondary"><%= task.statusText %></span>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="col-12 text-center text-muted">
+                <i class="fas fa-tasks fa-2x mb-2"></i>
+                <p>Chưa có công việc nào</p>
+            </div>
+        <% } %>
+    </div>
+</div>

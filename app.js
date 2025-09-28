@@ -29,6 +29,10 @@ import adminMessageApiRoutes from './routes/api/admin/message.route.js';
 // Web - Client
 import ClientAuthRoutes from './routes/web/client/auth.route.js';
 import HomeRoutes from './routes/web/client/home.route.js';
+import ClientfileRoutes from './routes/web/client/file.route.js';
+import ClientroomRoutes from './routes/web/client/room.route.js';
+import ClientshceduleRoutes from './routes/web/client/schedule.route.js';
+import ClienttaskRoutes from './routes/web/client/task.route.js';
 
 
 // Web - Admin
@@ -93,7 +97,7 @@ app.use('/admin/dashboard', isAdmin, AdminRoutes);
 // ================== CLIENT ROUTES ==================
 app.use('/', sessionUser, attachUserToLocals, forbidAdmin ,noCache);
 app.use('/auth', ClientAuthRoutes);
-app.use('/', forbidAdmin ,isAuthenticated, HomeRoutes);
+app.use('/', forbidAdmin ,isAuthenticated, HomeRoutes, ClientroomRoutes, ClientfileRoutes, ClientshceduleRoutes, ClienttaskRoutes );
 
 
 app.use((err, req, res, next) => {

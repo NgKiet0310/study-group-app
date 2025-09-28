@@ -1,45 +1,57 @@
 <% if (files && files.length) { %>
-  <% files.forEach(file => { %>
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-      <div class="card card-enhanced text-center">
-        <div class="card-body">
-          <div class="files-icon 
-            <%= file.fileType === 'pdf' ? 'text-danger' : 
-                file.fileType === 'doc' ? 'text-info' : 
-                file.fileType === 'image' ? 'text-warning' : 
-                'text-secondary' %>">
-            <i class="fas fa-files-<%= file.fileType === 'pdf' ? 'pdf' : 
-                                      file.fileType === 'doc' ? 'word' : 
-                                      file.fileType === 'image' ? 'image' : 
-                                      'alt' %>"></i>
-          </div>
+  <div class="row">
+    <% files.forEach(file => { %>
+      <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="card shadow-sm border-0 h-100 file-card">
+          <div class="card-body text-center d-flex flex-column justify-content-between">
+            
+            <!-- Icon file -->
+            <div class="file-icon mb-3 
+              <%= file.fileType === 'pdf' ? 'text-danger' : 
+                  file.fileType === 'doc' ? 'text-primary' : 
+                  file.fileType === 'image' ? 'text-warning' : 
+                  'text-secondary' %>">
+              <i class="fas fa-file-<%= file.fileType === 'pdf' ? 'pdf' : 
+                                        file.fileType === 'doc' ? 'word' : 
+                                        file.fileType === 'image' ? 'image' : 
+                                        'alt' %> fa-3x"></i>
+            </div>
 
-          <h6 class="card-title"><%= file.fileName %></h6>
+            <!-- Tên file -->
+            <h6 class="card-title text-truncate" title="<%= file.fileName %>">
+              <%= file.fileName %>
+            </h6>
 
-          <p class="text-muted small">
-            <%= (file.fileSize / 1024).toFixed(1) %> KB • <%= file.fileType.toUpperCase() %>
-          </p>
+            <!-- Thông tin phụ -->
+            <p class="text-muted small mb-1">
+              <%= (file.fileSize / 1024).toFixed(1) %> KB • <%= file.fileType.toUpperCase() %>
+            </p>
+            <small class="text-muted mb-3 d-block">
+              <i class="fas fa-upload me-1"></i> <%= new Date(file.createdAt).toLocaleDateString('vi-VN') %><br>
+              <i class="fas fa-user me-1"></i> <%= file.uploadedBy?.username || "Ẩn danh" %>
+            </small>
 
-          <small class="text-muted d-block mb-3">
-            Tải lên: <%= new Date(file.createdAt).toLocaleDateString('vi-VN') %><br>
-            Bởi: <%= file.uploadedBy?.username || "Ẩn danh" %>
-          </small>
+            <!-- Actions -->
+            <div class="d-flex justify-content-center gap-2 mt-auto">
+              <a href="<%= file.fileUrl %>" download class="btn btn-sm btn-primary" title="Tải xuống">
+                <i class="fas fa-download"></i>
+              </a>
+              <a href="<%= file.fileUrl %>" target="_blank" class="btn btn-sm btn-outline-primary" title="Xem">
+                <i class="fas fa-eye"></i>
+              </a>
+              <button class="btn btn-sm btn-outline-secondary" title="Chia sẻ">
+                <i class="fas fa-share"></i>
+              </button>
+            </div>
 
-          <div class="d-flex gap-1 justify-content-center">
-            <a href="<%= file.fileUrl %>" download class="btn btn-sm btn-primary">
-              <i class="fas fa-download"></i>
-            </a>
-            <a href="<%= file.fileUrl %>" target="_blank" class="btn btn-sm btn-outline-primary">
-              <i class="fas fa-eye"></i>
-            </a>
-            <button class="btn btn-sm btn-outline-secondary">
-              <i class="fas fa-share"></i>
-            </button>
           </div>
         </div>
       </div>
-    </div>
-  <% }) %>
+    <% }) %>
+  </div>
 <% } else { %>
-  <p>Chưa có file nào</p>
+  <div class="text-center text-muted p-5">
+    <i class="fas fa-folder-open fa-3x mb-3"></i>
+    <p>Chưa có file nào được tải lên</p>
+  </div>
 <% } %>

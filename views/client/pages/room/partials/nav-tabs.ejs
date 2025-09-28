@@ -1,47 +1,41 @@
 <ul class="nav nav-tabs mb-4" role="tablist">
-    <li class="nav-item" role="presentation">
-        <a class="nav-link <%= activeTab === 'chat' ? 'active' : '' %>" 
-           id="chat-tab" 
-           data-bs-toggle="tab" 
-           href="#chat" 
-           role="tab">
-           <i class="fas fa-comments me-2"></i>Chat
-        </a>
-    </li>
-    <li class="nav-item" role="presentation">
-        <a class="nav-link <%= activeTab === 'notes' ? 'active' : '' %>" 
-           id="notes-tab" 
-           data-bs-toggle="tab" 
-           href="#notes" 
-           role="tab">
-           <i class="fas fa-sticky-note me-2"></i>Note
-        </a>
-    </li>
-    <li class="nav-item" role="presentation">
-        <a class="nav-link <%= activeTab === 'schedules' ? 'active' : '' %>" 
-           id="schedules-tab" 
-           data-bs-toggle="tab" 
-           href="#schedules" 
-           role="tab">
-           <i class="fas fa-calendar-alt me-2"></i>Schedule
-        </a>
-    </li>
-    <li class="nav-item" role="presentation">
-        <a class="nav-link <%= activeTab === 'files' ? 'active' : '' %>" 
-           id="files-tab" 
-           data-bs-toggle="tab" 
-           href="#files" 
-           role="tab">
-           <i class="fas fa-folder me-2"></i>File
-        </a>
-    </li>
-    <li class="nav-item" role="presentation">
-        <a class="nav-link <%= activeTab === 'tasks' ? 'active' : '' %>" 
-           id="tasks-tab" 
-           data-bs-toggle="tab" 
-           href="#tasks" 
-           role="tab">
-           <i class="fas fa-tasks me-2"></i>Task
-        </a>
-    </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link <%= activeTab === 'chat' ? 'active' : '' %>" 
+       href="/room/<%= room._id %>" 
+       role="tab">
+       <i class="fas fa-comments me-2"></i> Chat
+    </a>
+  </li>
+
+  <li class="nav-item" role="presentation">
+    <a class="nav-link <%= activeTab === 'notes' ? 'active' : '' %>" 
+       href="/room/<%= room._id %>/notes" 
+       role="tab">
+       <i class="fas fa-sticky-note me-2"></i> Note
+    </a>
+  </li>
+
+  <li class="nav-item" role="presentation">
+    <a class="nav-link <%= activeTab === 'schedules' ? 'active' : '' %>" 
+       href="/room/<%= room._id %>/schedules" 
+       role="tab">
+       <i class="fas fa-calendar-alt me-2"></i> Schedule
+    </a>
+  </li>
+
+  <li class="nav-item" role="presentation">
+    <a class="nav-link <%= activeTab === 'files' ? 'active' : '' %>" 
+       href="/room/<%= room._id %>/files" 
+       role="tab">
+       <i class="fas fa-folder me-2"></i> File
+    </a>
+  </li>
+
+  <li class="nav-item" role="presentation">
+    <a class="nav-link <%= activeTab === 'tasks' ? 'active' : '' %>" 
+       href="/room/<%= room._id %>/tasks" 
+       role="tab">
+       <i class="fas fa-tasks me-2"></i> Task
+    </a>
+  </li>
 </ul>

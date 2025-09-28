@@ -7,61 +7,40 @@ import Task from "../../../models/Task.js";
 import Schedule from "../../../models/Schedule.js";
 import Note from "../../../models/Note.js";
 
-export const showHomePage = async(req, res) =>{
-   try {
+export const showHomePage = async (req, res) => {
+  try {
     const success = req.session.success;
-    req.session.success = null; 
-    const room = await Room.find();
+    req.session.success = null;
+
+    const allRooms = await Room.find();   // tất cả phòng
     const users = await User.find();
     const files = await File.find();
+
     let rooms = [];
-    if(req.session.user){
-        rooms = await Room.find({ "members.user": req.session.user._id});
-    }
-    res.render("client/pages/home", { 
-        rooms,
-        room,
-        users,
-        files,
-        success
-    });
-   } catch (err) {
-    console.error("Error loading homepage:", err);
-    res.render("client/pages/home", { rooms: [], success: null });
-   }
-}
-
-export const showRoom = async (req, res) => {
-  try {
-    const roomId = req.params.id;
-    const room = await Room.findById(roomId).populate("admin members.user");
-    if (!room) {
-      return res.status(404).render("client/pages/404", { message: "Room not found" });
+    if (req.session.user) {
+      rooms = await Room.find({ "members.user": req.session.user._id });
     }
 
-    const tasks = await Task.find({ room: roomId }).sort({ createdAt: -1 });
-    const schedules = await Schedule.find({ room: roomId }).sort({ createdAt: 1 });
-    const notes = await Note.find({ room: roomId }).sort({ updatedAt: -1 });
-    const files = await File.find({ room: roomId }).populate("uploadedBy","username").sort({ uploadedAt: -1 });
-    const messages = await Message.find({ room: roomId }).populate("sender") .sort({ createdAt: 1 });
-
-    res.render("client/pages/room/room", { 
-      room,
-      tasks,
-      schedules,
-      notes,
+    res.render("client/pages/home", {
+      rooms,
+      allRooms,
+      users,
       files,
-      messages
+      success
     });
-  } catch (error) {
-    console.error("Something wrong in showRoom", error);
-    res.status(500).render("client/pages/home", { error: "Server error" });
+  } catch (err) {
+    console.error("Error loading homepage:", err);
+    res.render("client/pages/home", {
+      rooms: [],
+      allRooms: [],   
+      users: [],
+      files: [],
+      success: null
+    });
   }
-};
-
-export const showCreateRoom = (req, res) => {
-    res.render("client/pages/room/create-room");
 }
+
+
 
 export const profile = async (req, res) => {
   const success = req.query.success;

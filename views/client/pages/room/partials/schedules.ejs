@@ -1,0 +1,66 @@
+<div class="tab-pane fade <%= activeTab === 'schedules' ? 'show active' : '' %>" id="schedules" role="tabpanel">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="fas fa-calendar-alt me-2 text-info"></i>Lịch học tập</h4>
+        <button class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Thêm lịch học
+        </button>
+    </div>
+
+    <div class="row">
+        <% if (schedules && schedules.length > 0) { %>
+            <% schedules.forEach(schedule => { %>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card card-enhanced">
+                        <div class="schedule-date 
+                            <%= schedule.status === 'Đã hoàn thành' ? 'bg-secondary' : 
+                                (schedule.status === 'Đang diễn ra' ? 'bg-success' : 'bg-info') %>">
+                            <div class="fw-bold fs-4">
+                                <%= new Date(schedule.startTime).getDate() %>
+                            </div>
+                            <div>
+                                Tháng <%= new Date(schedule.startTime).getMonth() + 1 %>, 
+                                <%= new Date(schedule.startTime).getFullYear() %>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title"><%= schedule.title %></h5>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-clock me-2"></i>
+                                <%= schedule.startTime %> - <%= schedule.endTime %>
+                            </p>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-user me-2"></i>Người tạo: <%= schedule.createdBy %>
+                            </p>
+                            <p class="text-muted">
+                                <i class="fas fa-calendar me-2"></i>Tạo lúc: <%= schedule.createdAt %>
+                            </p>
+                            <div class="d-flex gap-2 mt-2">
+                                <% if (schedule.status === 'Đã hoàn thành') { %>
+                                    <button class="btn btn-sm btn-success" disabled>
+                                        <i class="fas fa-check-circle me-1"></i><%= schedule.status %>
+                                    </button>
+                                <% } else if (schedule.status === 'Đang diễn ra') { %>
+                                    <button class="btn btn-sm btn-warning" disabled>
+                                        <i class="fas fa-play-circle me-1"></i><%= schedule.status %>
+                                    </button>
+                                <% } else { %>
+                                    <button class="btn btn-sm btn-primary">
+                                        <i class="fas fa-check me-1"></i>Tham gia
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="col-12 text-center text-muted">
+                <i class="fas fa-calendar-times fa-2x mb-2"></i>
+                <p>Chưa có lịch học nào</p>
+            </div>
+        <% } %>
+    </div>
+</div>
