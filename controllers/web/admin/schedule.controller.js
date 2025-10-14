@@ -71,23 +71,25 @@ export const showSchedules = async (req, res) => {
 
     // Lấy danh sách phòng cho filter
     const rooms = await Room.find().select('_id name');
+    const success = req.query.success;
+    const error = req.query.error;
 
     res.render('admin/pages/schedule/manage-schedules', {
       schedules,
       rooms,
       path: req.path,
       admin: req.session.admin,
-      // Phân trang
       page,
       totalPages,
       totalSchedules,
       limit,
-      // Tìm kiếm
       search: search || '',
       room: room || '',
       startDate: startDate || '',
       endDate: endDate || '',
       status: status || '',
+      success,
+      error
     });
   } catch (error) {
     console.error('Lỗi khi hiển thị danh sách lịch:', error);
@@ -196,7 +198,7 @@ export const createSchedule = async (req, res) => {
     });
 
     await schedule.save();
-    res.redirect('/admin/schedules');
+    res.redirect('/admin/schedules?success=Thêm lịch học thành công');
 
   } catch (error) {
     console.error('Lỗi tạo lịch học:', error);
@@ -278,7 +280,7 @@ export const updateSchedule = async (req, res) => {
     schedule.endTime = new Date(endTime);
 
     await schedule.save();
-    res.redirect('/admin/schedules');
+    res.redirect('/admin/schedules?success=Cập nhật lịch học thành công');
 
   } catch (error) {
     console.error('Lỗi cập nhật lịch học:', error);

@@ -1,315 +1,516 @@
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><radialGradient id="a" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="white" stop-opacity="0.1"/><stop offset="100%" stop-color="white" stop-opacity="0"/></radialGradient></defs><circle cx="10" cy="10" r="10" fill="url(%23a)"/><circle cx="50" cy="5" r="3" fill="url(%23a)"/><circle cx="90" cy="15" r="5" fill="url(%23a)"/></svg>');
+  animation: float 20s infinite linear;
+  opacity: 0.3;
+}
+
+@keyframes float {
+  0% { transform: translateX(-100px); }
+  100% { transform: translateX(100vw); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-title {
+  background: linear-gradient(45deg, #fff, #f0f8ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+  from { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+  to { text-shadow: 0 0 30px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.3); }
+}
+
+.hero-illustration {
+  animation: bounce 3s ease-in-out infinite;
+  filter: drop-shadow(0 10px 25px rgba(0,0,0,0.2));
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Join Room Card */
+.join-room-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.join-room-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left 0.6s ease;
+}
+
+.join-room-card:hover::before {
+  left: 100%;
+}
+
+.join-room-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+}
+
+.card-header-gradient {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-header-gradient::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: shine 4s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.1); }
+}
+
+/* Form Controls */
+.form-control-modern {
+  border: 2px solid #e9ecef;
+  border-radius: 15px;
+  padding: 1rem;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  background: rgba(255,255,255,0.9);
+}
+
+.form-control-modern:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25), 0 8px 25px rgba(0,123,255,0.1);
+  transform: translateY(-2px);
+}
+
+.btn-gradient {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+  border-radius: 15px;
+  padding: 1rem 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gradient::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.6s ease;
+}
+
+.btn-gradient:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-gradient:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(0,123,255,0.4);
+}
+
+/* Section Title */
+.section-title {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 3rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  width: 80px;
+  height: 5px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border-radius: 3px;
+  box-shadow: 0 2px 10px rgba(0,123,255,0.3);
+}
+
+/* Room Card - Redesigned */
+.room-card {
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  border: none;
+  position: relative;
+  height: 100%;
+}
+
+.room-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  border-radius: 24px;
+}
+
+.room-card:hover::after {
+  opacity: 1;
+}
+
+.room-card:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+/* Room Cover - Redesigned */
+.room-cover {
+  height: 180px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.room-cover::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255,255,255,0.05) 10px,
+    rgba(255,255,255,0.05) 20px
+  );
+  animation: slide 20s linear infinite;
+}
+
+@keyframes slide {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+.room-cover::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to top, rgba(0,0,0,0.3), transparent);
+}
+
+.room-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 3.5rem;
+  opacity: 0.9;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+  animation: iconFloat 3s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes iconFloat {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-10px); }
+}
+
+/* Room Card Body */
+.room-card .card-body {
+  padding: 1.5rem;
+  background: white;
+  position: relative;
+}
+
+.room-card .card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.room-card .card-title a {
+  color: #2c3e50;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.room-card .card-title a:hover {
+  color: #667eea;
+}
+
+.room-card .text-muted {
+  color: #6c757d !important;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.room-card .small {
+  background: #f8f9fa;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 500;
+  color: #495057;
+}
+
+.room-card .btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.room-card .btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.room-card .btn-primary:hover::before {
+  left: 100%;
+}
+
+.room-card .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+}
+
+/* Empty State - Redesigned */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 24px;
+  border: 3px dashed #dee2e6;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.empty-state::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(102,126,234,0.05) 0%, transparent 70%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.empty-icon {
+  font-size: 5rem;
+  color: #667eea;
+  margin-bottom: 1.5rem;
+  animation: float-icon 3s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes float-icon {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+.empty-state h4 {
+  color: #2c3e50;
+  font-weight: 700;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.empty-state p {
+  color: #6c757d;
+  font-size: 1.1rem;
+  max-width: 500px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+}
+
+.empty-state .btn {
+  border-radius: 12px;
+  padding: 0.875rem 2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.empty-state .btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+}
+
+.empty-state .btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+}
+
+.empty-state .btn-outline-primary {
+  border: 2px solid #667eea;
+  color: #667eea;
+  background: transparent;
+}
+
+.empty-state .btn-outline-primary:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(102,126,234,0.3);
+}
+
+/* Stats Card */
+.stats-card {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(40,167,69,0.3);
+  margin-bottom: 2rem;
+}
+
+.stats-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  display: block;
+}
+
+/* Feature List */
+.feature-list {
+  list-style: none;
+  padding: 0;
+}
+
+.feature-list li {
+  padding: 0.5rem 0;
+  position: relative;
+  padding-left: 2rem;
+}
+
+.feature-list li::before {
+  content: '✨';
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+}
+
+/* Body Background */
+body {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+  min-height: 100vh;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
   .hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .hero-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/savg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><radialGradient id="a" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="white" stop-opacity="0.1"/><stop offset="100%" stop-color="white" stop-opacity="0"/></radialGradient></defs><circle cx="10" cy="10" r="10" fill="url(%23a)"/><circle cx="50" cy="5" r="3" fill="url(%23a)"/><circle cx="90" cy="15" r="5" fill="url(%23a)"/></svg>');
-    animation: float 20s infinite linear;
-    opacity: 0.3;
-  }
-  
-  @keyframes float {
-    0% { transform: translateX(-100px); }
-    100% { transform: translateX(100vw); }
-  }
-  
-  .hero-content {
-    position: relative;
-    z-index: 2;
-  }
-  
-  .hero-title {
-    background: linear-gradient(45deg, #fff, #f0f8ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: titleGlow 3s ease-in-out infinite alternate;
-  }
-  
-  @keyframes titleGlow {
-    from { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
-    to { text-shadow: 0 0 30px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.3); }
+    text-align: center !important;
   }
   
   .hero-illustration {
-    animation: bounce 3s ease-in-out infinite;
-    filter: drop-shadow(0 10px 25px rgba(0,0,0,0.2));
-  }
-  
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-  }
-  
-  .join-room-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border: none;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    overflow: hidden;
-    position: relative;
-  }
-  
-  .join-room-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transition: left 0.6s ease;
-  }
-  
-  .join-room-card:hover::before {
-    left: 100%;
-  }
-  
-  .join-room-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-  }
-  
-  .card-header-gradient {
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .card-header-gradient::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-    animation: shine 4s ease-in-out infinite;
-  }
-  
-  @keyframes shine {
-    0%, 100% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(180deg) scale(1.1); }
-  }
-  
-  .form-control-modern {
-    border: 2px solid #e9ecef;
-    border-radius: 15px;
-    padding: 1rem;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    background: rgba(255,255,255,0.9);
-  }
-  
-  .form-control-modern:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25), 0 8px 25px rgba(0,123,255,0.1);
-    transform: translateY(-2px);
-  }
-  
-  .btn-gradient {
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    border: none;
-    border-radius: 15px;
-    padding: 1rem 2rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .btn-gradient::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: all 0.6s ease;
-  }
-  
-  .btn-gradient:hover::before {
-    width: 300px;
-    height: 300px;
-  }
-  
-  .btn-gradient:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(0,123,255,0.4);
+    max-height: 250px;
+    margin-top: 2rem;
   }
   
   .room-card {
-    border-radius: 20px;
-    overflow: hidden;
-    transition: all 0.4s ease;
-    background: white;
-    border: none;
-    position: relative;
+    margin-bottom: 1.5rem;
   }
-  
-  .room-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, transparent, rgba(0,123,255,0.05));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-  }
-  
-  .room-card:hover::before {
-    opacity: 1;
-  }
-  
-  .room-card:hover {
-    transform: translateY(-15px) scale(1.02);
-    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-  }
-  
-  .room-cover {
-    height: 200px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .room-cover::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-  }
-  
-  .room-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 3rem;
-    opacity: 0.7;
-  }
-  
+
   .section-title {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 2rem;
+    font-size: 1.5rem;
   }
-  
-  .section-title::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 60px;
-    height: 4px;
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    border-radius: 2px;
+
+  .room-cover {
+    height: 150px;
   }
-  
-  .stats-card {
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white;
-    border-radius: 15px;
-    padding: 1.5rem;
-    text-align: center;
-    box-shadow: 0 8px 25px rgba(40,167,69,0.3);
-    margin-bottom: 2rem;
-  }
-  
-  .stats-number {
+
+  .room-icon {
     font-size: 2.5rem;
-    font-weight: bold;
-    display: block;
   }
-  
+
   .empty-state {
-    text-align: center;
-    padding: 3rem 2rem;
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    border-radius: 20px;
-    border: 2px dashed #dee2e6;
-    position: relative;
-    overflow: hidden;
+    padding: 3rem 1.5rem;
   }
-  
-  .empty-state::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(0,123,255,0.05) 0%, transparent 70%);
-    animation: pulse 4s ease-in-out infinite;
-  }
-  
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-  
+
   .empty-icon {
     font-size: 4rem;
-    color: #6c757d;
-    margin-bottom: 1rem;
-    animation: float-icon 3s ease-in-out infinite;
   }
-  
-  @keyframes float-icon {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-  }
-  
-  .feature-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .feature-list li {
-    padding: 0.5rem 0;
-    position: relative;
-    padding-left: 2rem;
-  }
-  
-  .feature-list li::before {
-    content: '✨';
-    position: absolute;
-    left: 0;
-    top: 0.5rem;
-  }
-  
-  @media (max-width: 768px) {
-    .hero-section {
-      text-align: center !important;
-    }
-    
-    .hero-illustration {
-      max-height: 250px;
-      margin-top: 2rem;
-    }
-    
-    .room-card {
-      margin-bottom: 1.5rem;
-    }
-  }
+}

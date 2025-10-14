@@ -168,3 +168,4 @@
 {"level":"error","message":"[ADMIN LOGOUT]","timestamp":"2025-09-10T19:35:13.694Z"}
 {"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-09-10T19:35:32.989Z"}
 {"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-09-10T19:45:44.011Z"}
+{"level":"info","message":"[REGISTER] User created: kietntph50280@gmail.com","timestamp":"2025-10-02T04:03:10.408Z"}

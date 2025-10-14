@@ -44,14 +44,16 @@ export const showTasks = async(req, res) => {
 
         const rooms = await Room.find().select('name').sort({ name: 1 });
         const users = await User.find().select('username').sort({ username: 1 });
+        const success = req.query.success;
+        const error = req.query.error;
 
         res.render('admin/pages/task/manage-tasks',{
             tasks,
             rooms,
             users,
             path: req.path,
-            success: req.query.success || null,
-            error: req.query.error || null,
+            success,
+            error,
             search,
             room,
             status,

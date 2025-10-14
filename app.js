@@ -5,6 +5,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import engine from 'ejs-mate';
 import methodOverride from 'method-override';
+import session from "express-session";
+import MongoStore from 'connect-mongo';
 
 // Middleware
 import { sessionUser, attachUserToLocals, sessionAdmin, attachAdminToLocals } from './middleware/session.js';
@@ -33,6 +35,8 @@ import ClientfileRoutes from './routes/web/client/file.route.js';
 import ClientroomRoutes from './routes/web/client/room.route.js';
 import ClientshceduleRoutes from './routes/web/client/schedule.route.js';
 import ClienttaskRoutes from './routes/web/client/task.route.js';
+import ClientnoteRoutes from './routes/web/client/note.route.js';
+import ClientMemberRoutes from './routes/web/client/member.route.js';
 
 
 // Web - Admin
@@ -49,6 +53,7 @@ import fileRoutes from './routes/web/admin/file.route.js';
 dotenv.config();
 
 const app = express();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -62,6 +67,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+
+export const sessionMiddleware = session({
+  secret: process.env.SESSION_SECRET || 'secret',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGO_URL }),
+  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 ngày
+});
+
+app.use(sessionMiddleware);
 
 // ================== API ROUTES ==================
 // Client API
@@ -97,7 +112,7 @@ app.use('/admin/dashboard', isAdmin, AdminRoutes);
 // ================== CLIENT ROUTES ==================
 app.use('/', sessionUser, attachUserToLocals, forbidAdmin ,noCache);
 app.use('/auth', ClientAuthRoutes);
-app.use('/', forbidAdmin ,isAuthenticated, HomeRoutes, ClientroomRoutes, ClientfileRoutes, ClientshceduleRoutes, ClienttaskRoutes );
+app.use('/', forbidAdmin ,isAuthenticated, HomeRoutes, ClientroomRoutes, ClientfileRoutes, ClientshceduleRoutes, ClienttaskRoutes, ClientnoteRoutes, ClientMemberRoutes );
 
 
 app.use((err, req, res, next) => {

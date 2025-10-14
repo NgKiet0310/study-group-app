@@ -5,9 +5,9 @@ const router = express.Router();
 
 router.get('/', showNotes);
 router.get('/create', showCreateForm);
-router.post('/create', createNote, validateNote);
+router.post('/create',validateNote, createNote);
 router.get('/edit/:id',showEditForm);
-router.post('/edit/:id', editNote, validateNote);
+router.post('/edit/:id', validateNote ,editNote);
 router.get('/detail/:id', showNoteDetail);
 router.post('/delete/:id', deleteNote);
 export default router;

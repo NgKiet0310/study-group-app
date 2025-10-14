@@ -2,14 +2,12 @@ import { body } from "express-validator";
 
 export const validateRoom = [
     // Validate name
-    body('name')
-        .trim()
-        .notEmpty()
-        .withMessage('Tên phòng không được để trống')
-        .isLength({ max: 100 })
-        .withMessage('Tên phòng tối đa 100 ký tự')
-        .matches(/^[\p{L}\p{N}\s]+$/u)
-        .withMessage('Tên phòng chỉ được chứa chữ, số và khoảng trắng'),
+   body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('Tên phòng không được để trống / Name cannot be empty')
+    .isLength({ max: 100 })
+    .withMessage('Tên phòng tối đa 100 ký tự / Name can be maximum 100 characters'),
 
     // Validate code
     body('code')
@@ -46,21 +44,26 @@ export const validateRoom = [
         .withMessage('Vai trò không hợp lệ'),
 
     // Custom check cho members
-    body('members')
-        .custom((members) => {
-            if (!Array.isArray(members)) return true;
+  body('members')
+    .custom((members) => {
+        if (!Array.isArray(members)) return true;
 
-            const userIds = members.map(m => m.user?.toString());
-            const hasDuplicate = new Set(userIds).size != userIds.length;
-            if (hasDuplicate) {
-                throw new Error('Danh sách thành viên chứa ID trùng lặp');
-            }
+        // chỉ lấy những object có user
+        const validMembers = members.filter(m => m.user);
 
-            const hasHost = members.some(m => m.role === 'host');
-            if (!hasHost) {
-                throw new Error('Phòng phải có ít nhất 1 host');
-            }
+        const userIds = validMembers.map(m => m.user.toString());
+        const hasDuplicate = new Set(userIds).size !== userIds.length;
+        if (hasDuplicate) {
+            throw new Error('Danh sách thành viên chứa ID trùng lặp');
+        }
 
-            return true;    
-        })
+        // check phải có ít nhất 1 host
+        const hasHost = validMembers.some(m => m.role === 'host');
+        if (!hasHost) {
+            throw new Error('Phòng phải có ít nhất 1 host');
+        }
+
+        return true;    
+    })
+
 ];

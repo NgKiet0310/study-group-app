@@ -38,4 +38,14 @@
        <i class="fas fa-tasks me-2"></i> Task
     </a>
   </li>
+
+  <li class="nav-item">
+  <a class="nav-link <%= activeTab === 'members' ? 'active' : '' %>" 
+     id="members-tab" 
+     href="/room/<%= room._id %>/members" 
+     role="tab">
+     Members
+  </a>
+</li>
+
 </ul>

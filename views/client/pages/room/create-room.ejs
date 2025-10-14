@@ -26,10 +26,10 @@
           <i class="fas fa-plus-circle text-primary" style="font-size: 3rem;"></i>
         </div>
         <h1 class="display-5 fw-bold text-primary mb-3">
-          Tạo phòng học mới
+         Create a new classroom
         </h1>
         <p class="lead text-muted">
-          Tạo một không gian học tập để kết nối và chia sẻ kiến thức với bạn bè
+          Create a study space to connect and share knowledge with friends
         </p>
       </div>
 
@@ -37,28 +37,35 @@
       <div class="card shadow-lg border-0">
         <div class="card-header bg-gradient-primary text-white py-4">
           <h3 class="card-title mb-0 text-center">
-            <i class="fas fa-cog me-2"></i>Thông tin phòng học
+            <i class="fas fa-cog me-2"></i>Classroom information
           </h3>
         </div>
         
         <div class="card-body p-4">
-          <form action="/api/rooms/create" method="POST" id="createRoomForm">
+          <form action="/create-room" method="POST" id="createRoomForm">
             
             <!-- Tên phòng -->
             <div class="row mb-4">
               <div class="col-12">
                 <label for="name" class="form-label fw-bold">
-                  <i class="fas fa-bookmark me-2 text-primary"></i>Tên phòng học *
+                  <i class="fas fa-bookmark me-2 text-primary"></i>Name Classroom *
                 </label>
                 <input type="text" 
-                       class="form-control form-control-lg" 
-                       id="name" 
-                       name="name" 
-                       required
-                       maxlength="100">
+                  class="form-control form-control-lg" 
+                  id="name" 
+                  name="name" 
+                  value="<%= oldInput?.name || '' %>"
+                  required
+                  maxlength="100">
+                  <% if (errors) { %>
+                  <% errors.forEach(err => { if (err.path === 'name') { %>
+                    <div class="text-danger mt-1"><%= err.msg %></div>
+                  <% } }) %>
+                <% } %>
+
                 <div class="form-text">
                   <i class="fas fa-info-circle me-1"></i>
-                  Tên phòng phải là duy nhất và không được vượt quá 100 ký tự
+                  Room names must be unique and cannot exceed 100 characters.
                 </div>
               </div>
             </div>
@@ -67,16 +74,22 @@
             <div class="row mb-4">
               <div class="col-12">
                 <label for="description" class="form-label fw-bold">
-                  <i class="fas fa-align-left me-2 text-primary"></i>Mô tả phòng học
+                  <i class="fas fa-align-left me-2 text-primary"></i>Description Classroom
                 </label>
-                <textarea class="form-control" 
-                          id="description" 
-                          name="description" 
-                          rows="4" 
-                          maxlength="500"></textarea>
+               <textarea class="form-control" 
+                  id="description" 
+                  name="description" 
+                  rows="4" 
+                  maxlength="500"><%= oldInput?.description || '' %></textarea>
+                  <% if (errors) { %>
+                    <% errors.forEach(err => { if (err.path === 'description') { %>
+                      <div class="text-danger mt-1"><%= err.msg %></div>
+                    <% } }) %>
+                  <% } %>
+
                 <div class="form-text">
                   <i class="fas fa-info-circle me-1"></i>
-                  Tối đa 500 ký tự. Mô tả giúp thành viên hiểu rõ hơn về phòng học
+                  Maximum 500 characters. Description helps members better understand the classroom
                 </div>
               </div>
             </div>
@@ -86,10 +99,10 @@
               <div class="col-12">
                 <div class="d-flex gap-3 justify-content-center">
                   <button type="submit" class="btn btn-primary btn-lg px-4">
-                    <i class="fas fa-save me-2"></i>Tạo phòng học
+                    <i class="fas fa-save me-2"></i>Create Classroom
                   </button>
                   <a href="/home" class="btn btn-outline-secondary btn-lg px-4">
-                    <i class="fas fa-arrow-left me-2"></i>Quay lại
+                    <i class="fas fa-arrow-left me-2"></i>Back
                   </a>
                 </div>
               </div>
@@ -105,9 +118,9 @@
           <div class="card h-100 border-0 bg-light">
             <div class="card-body text-center">
               <i class="fas fa-crown text-warning fa-2x mb-3"></i>
-              <h5>Quyền Admin</h5>
+              <h5>Admin Rights</h5>
               <p class="text-muted small mb-0">
-                Bạn sẽ là Admin của phòng học này và có đầy đủ quyền quản lý
+                You will be the Admin of this classroom and have full management rights
               </p>
             </div>
           </div>
@@ -117,9 +130,9 @@
           <div class="card h-100 border-0 bg-light">
             <div class="card-body text-center">
               <i class="fas fa-key text-info fa-2x mb-3"></i>
-              <h5>Mã phòng tự động</h5>
+              <h5>Automatic room code</h5>
               <p class="text-muted small mb-0">
-                Hệ thống sẽ tự động tạo mã phòng duy nhất để chia sẻ với thành viên
+               The system will automatically generate a unique room code to share with members.
               </p>
             </div>
           </div>

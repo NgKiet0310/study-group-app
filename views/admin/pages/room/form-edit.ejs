@@ -37,7 +37,7 @@
         <div class="mb-3">
           <label class="form-label fw-semibold">Thành viên</label>
           <div class="row">
-         <% users.forEach((user, index) => { %>
+       <% users.forEach((user, index) => { %>
   <div class="col-md-6 mb-2">
     <div class="form-check">
       <input class="form-check-input"
@@ -51,7 +51,12 @@
         <%= user.username %>
       </label>
 
-      <% if (user._id.toString() !== room.admin._id.toString()) { %>
+      <% if (room.admin && user._id.toString() === room.admin._id.toString()) { %>
+        <!-- Admin: chủ phòng -->
+        <span class="badge bg-success ms-2 rounded-pill">Chủ phòng</span>
+        <input type="hidden" name="members[<%= index %>][role]" value="host">
+      <% } else { %>
+        <!-- Thành viên khác: cho chọn vai trò -->
         <select class="form-select form-select-sm d-inline-block w-auto ms-2"
                 name="members[<%= index %>][role]">
           <option value="member"
@@ -63,13 +68,11 @@
             Host
           </option>
         </select>
-      <% } else { %>
-        <span class="badge bg-success ms-2 rounded-pill">Chủ phòng</span>
-        <input type="hidden" name="members[<%= index %>][role]" value="host">
       <% } %>
     </div>
   </div>
 <% }) %>
+
 
           </div>
         </div>

@@ -10,7 +10,9 @@ import Note from "../../../models/Note.js";
 export const showHomePage = async (req, res) => {
   try {
     const success = req.session.success;
+    const error = req.session.error;
     req.session.success = null;
+    req.session.error = null;
 
     const allRooms = await Room.find();   // tất cả phòng
     const users = await User.find();
@@ -26,7 +28,8 @@ export const showHomePage = async (req, res) => {
       allRooms,
       users,
       files,
-      success
+      success,
+      error
     });
   } catch (err) {
     console.error("Error loading homepage:", err);
@@ -35,7 +38,8 @@ export const showHomePage = async (req, res) => {
       allRooms: [],   
       users: [],
       files: [],
-      success: null
+      success: null,
+      error: "Server Error "
     });
   }
 }

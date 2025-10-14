@@ -6,6 +6,12 @@
   </script>
 <% } %>
 
+<% if (typeof error !== "undefined" && error) { %>
+  <script>
+    alert("<%= error %>");
+  </script>
+<% } %>
+
 <!-- Hero Section -->
 <section class="hero-section py-5 mb-5">
   <div class="container">
@@ -81,7 +87,7 @@
             <p class="mb-0 opacity-75 mt-2">Enter the room code to start learning together</p>
           </div>
           <div class="card-body p-4">
-            <form action="/api/rooms/join" method="POST">
+            <form action="/room/join" method="POST">
               <div class="mb-4">
                 <label for="code" class="form-label fw-semibold text-muted mb-3">
                   <i class="fas fa-hashtag me-2"></i>Room Code

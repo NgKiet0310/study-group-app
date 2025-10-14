@@ -1,24 +1,329 @@
 <div class="tab-pane fade show active" id="chat" role="tabpanel">
-    <div class="chat-container">
-        <div class="chat-header">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-comments me-3"></i>
-                <h5 class="mb-0">Thảo luận nhóm</h5>
-            </div>
+  <div class="chat-container">
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-comments me-3"></i>
+          <h5 class="mb-0">Thảo luận nhóm</h5>
         </div>
-        
-        <div class="chat-box" id="chat-messages">
-            <%- include('./chat-messages') %>
-        </div>
-        
-        <div class="chat-input">
-            <form class="d-flex gap-2">
-                <input type="text" class="form-control" placeholder="Nhập tin nhắn..." style="border-radius: 25px;">
-                <button type="button" class="btn btn-icon btn-outline-primary">
-                    <i class="far fa-smile">Gửi</i>
-                </button>
-            </form>
-        </div>
+        <small class="text-muted">
+          <i class="fas fa-circle text-success pulse" style="font-size: 8px;"></i>
+          <span id="online-count">0</span> thành viên
+        </small>
+      </div>
     </div>
-</div> 
 
+    <!-- Online users list -->
+    <div class="online-users-section">
+      <div class="online-users-header">
+        <strong>
+          <i class="fas fa-users me-2"></i>
+          Thành viên đang online
+        </strong>
+      </div>
+      <div id="online-users-list" class="online-users-list">
+        <!-- Users will be added here dynamically -->
+      </div>
+    </div>
+
+    <!-- Chat messages -->
+    <div class="chat-box" id="chat-messages" data-room-id="<%= room._id %>">
+      <div class="text-center text-muted py-4">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p class="mb-0">Đang tải tin nhắn...</p>
+      </div>
+    </div>
+
+    <!-- Typing indicator -->
+    <div id="typing-indicator" class="typing-indicator" style="display: none;">
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+      <span id="typing-user"></span> đang nhập...
+    </div>
+
+    <!-- Chat input -->
+    <div class="chat-input">
+      <form id="chat-form" class="d-flex gap-2">
+        <input 
+          id="chat-input" 
+          type="text" 
+          class="form-control" 
+          placeholder="Nhập tin nhắn..." 
+          style="border-radius: 25px;"
+          autocomplete="off"
+          maxlength="1000"
+        >
+        <button type="submit" class="btn btn-icon btn-primary" id="send-btn">
+          <i class="fas fa-paper-plane">Send</i>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Pass data to JavaScript -->
+<script>
+  window.currentUserId = "<%= user ? user._id : '' %>";
+  window.currentUsername = "<%= user ? user.username : '' %>";
+  window.roomId = "<%= room._id %>";
+</script>
+
+<!-- Socket.IO -->
+<script src="/socket.io/socket.io.js"></script>
+
+<!-- Chat script -->
+<script src="/js/chat.js"></script>
+
+<!-- Styles -->
+<style>
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.chat-header {
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-bottom: 2px solid rgba(255,255,255,0.2);
+}
+
+.online-users-section {
+  background: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.online-users-header {
+  padding: 10px 20px;
+  background: #e9ecef;
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.online-users-list {
+  display: flex;
+  gap: 10px;
+  padding: 12px 20px;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
+}
+
+.online-users-list::-webkit-scrollbar {
+  height: 4px;
+}
+
+.online-users-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.online-users-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 2px;
+}
+
+.online-user-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: #495057;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.online-user-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.online-user-badge.me {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.online-indicator {
+  width: 8px;
+  height: 8px;
+  background: #28a745;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.chat-box {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+  height: 700px;
+  max-height: 700px;
+  /* BỎ scroll-behavior: smooth - Đây là nguyên nhân chính */
+}
+
+.chat-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-box::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.chat-box::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.chat-message {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  animation: slideIn 0.2s ease-out;
+}
+
+.chat-message:hover {
+  opacity: 0.95;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-message.own {
+  flex-direction: row-reverse;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.message-bubble {
+  max-width: 60%;
+  padding: 10px 15px;
+  border-radius: 15px;
+  background: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: box-shadow 0.2s;
+  word-wrap: break-word;
+}
+
+.chat-message.own .message-bubble {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.message-bubble:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.typing-indicator {
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.typing-dot {
+  height: 8px;
+  width: 8px;
+  background: #6c757d;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 2px;
+  animation: typing 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+}
+
+.chat-input {
+  padding: 15px 20px;
+  background: white;
+  border-top: 1px solid #dee2e6;
+}
+
+.btn-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  .chat-header {
+    padding: 10px 15px;
+  }
+  .online-users-list {
+    padding: 8px 15px;
+    gap: 8px;
+  }
+  .online-user-badge {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+  .chat-box {
+    padding: 15px;
+    height: 500px;
+    max-height: 500px;
+  }
+  .message-bubble {
+    max-width: 75%;
+  }
+}
+</style>

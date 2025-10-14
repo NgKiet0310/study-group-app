@@ -7,6 +7,7 @@
         margin-bottom: 2rem;
     }
     
+    
     .nav-tabs {
         border: none;
         background: #f8f9fa;
@@ -184,3 +185,72 @@
         z-index: 1000;
         box-shadow: 0 4px 12px rgba(0,123,255,0.3);
     }
+
+    body {
+  background-color: #f8f9fb; /* Xám nhạt hiện đại */
+}
+
+.transfer-host-section {
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.transfer-select {
+  min-width: 180px;
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  max-height: 200px; /* Giới hạn height dropdown */
+  overflow-y: auto; /* Scroll nếu dài */
+}
+
+.transfer-select:focus {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-color: #fff !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25) !important;
+  transform: scale(1.02);
+}
+
+.transfer-select option {
+  background: #007bff !important;
+  color: #fff !important;
+  padding: 0.5rem;
+  max-height: 200px; /* Áp dụng cho options nếu cần */
+}
+
+.transfer-search {
+  min-width: 180px;
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem;
+  padding-right: 2rem; /* Để chỗ cho small text */
+}
+
+.transfer-search:focus {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-color: #fff !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25) !important;
+}
+
+.transfer-search::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.transfer-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  .transfer-select, .transfer-search {
+    min-width: 140px !important;
+    font-size: 0.85rem;
+  }
+}

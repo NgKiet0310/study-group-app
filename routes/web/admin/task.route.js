@@ -5,9 +5,9 @@ const router = express.Router();
 
 router.get('/', showTasks);
 router.get('/create', showCreateForm);
-router.post('/create', createTask ,validateTask);
+router.post('/create', validateTask ,createTask);
 router.get('/edit/:id', showEditForm);
-router.post('/edit/:id', editTask, validateTask);
+router.post('/edit/:id',validateTask ,editTask);
 router.get('/detail/:id',showDetailTask);
 router.post('/delete/:id', deleteTask);
 export default router;

@@ -1,16 +1,201 @@
-<div class="room-header">
-    <div class="d-flex justify-content-between align-items-center">
-        <div>
-            <h1 class="display-5 fw-bold mb-2">
-                <i class="fas fa-users me-3"></i>Study Room: Toán Cao Cấp
-            </h1>
-            <p class="mb-0 opacity-75">
-                <i class="fas fa-clock me-2"></i>Hoạt động lúc 14:30 - 25/09/2025
-            </p>
+<div class="room-header bg-gradient-primary text-white p-5 rounded-3 shadow-xl">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <div class="me-3">
+      <h1 class="display-3 fw-bolder mb-4 room-name">
+        <%= room.name %>
+      </h1>
+      <p class="mb-2 info-text">
+        <p>Admin Room: <%= room.admin?.username || 'Not yet' %></p>
+        <% const host = room.members?.find(m => m.role === 'host'); %>
+        <p>Host Room: <%= host?.user?.username || 'Not yet' %></p>
+        
+        <!-- Phần mới: Trao quyền host (chỉ admin mới thấy) -->
+<% if (user && room.admin?._id?.toString() === user._id.toString() && room.members && room.members.length > 1) { %>
+  <div class="transfer-host-section mb-3 p-3 bg-white bg-opacity-10 rounded-2">
+    <label class="form-label fw-bold mb-2">Empowerment host:</label>
+    <form action="/room/<%= room._id %>/transfer-host" method="POST" class="d-flex gap-2 align-items-center" id="transferForm">
+      <% if (room.members.length > 10) { %>
+        <!-- Dùng input search nếu >10 members -->
+        <div class="position-relative">
+          <input type="text" name="memberId" id="memberSearch" class="form-control form-control-sm transfer-search" placeholder="Gõ tên thành viên..." required list="memberList" autocomplete="off">
+          <datalist id="memberList">
+            <% room.members.forEach(member => { %>
+              <% if (member.role !== 'host' && member.user?._id?.toString() !== user._id.toString()) { %>
+                <option value="<%= member.user?._id %>"><%= member.user?.username || 'Unknown' %></option>
+              <% } %>
+            <% }); %>
+          </datalist>
+          <small class="text-muted position-absolute bottom-0 end-0 pe-2">Select or type a name</small>
         </div>
-        <div class="online-users">
-            <i class="fas fa-circle text-success me-2"></i>
-            <span class="fw-bold">5</span> thành viên online
-        </div>
+      <% } else { %>
+        <!-- Dùng select nếu <=10 members -->
+        <select name="memberId" class="form-select form-select-sm transfer-select" required>
+          <option value="">Choose members</option>
+          <% let optionCount = 0; %>
+          <% room.members.forEach(member => { %>
+            <% if (member.role !== 'host' && member.user?._id?.toString() !== user._id.toString()) { %>
+              <% optionCount++; %>
+              <option value="<%= member.user?._id %>"><%= member.user?.username || 'Unknown' %></option>
+            <% } %>
+          <% }); %>
+          <% if (optionCount === 0) { %>
+            <option disabled class="text-muted">There are no members to delegate authority to.</option>
+          <% } %>
+        </select>
+      <% } %>
+      <button type="submit" class="btn btn-sm btn-gradient rounded-pill px-3 transfer-btn" id="transferBtn">
+        <i class="fas fa-crown me-1"></i> Empowerment
+      </button>
+    </form>
+  </div>
+<% } %>
+      </p>
+      
+      <% if (room.description) { %>
+        <p class="mb-2 info-text">
+          <strong>Description:</strong> <%= room.description %>
+        </p>
+      <% } %>
+      <p class="mb-0 info-text">
+        <strong>Created at:</strong> <%= new Date(room.createdAt).toLocaleDateString('vi-VN') %>
+      </p>
     </div>
+    <div class="room-code-box d-flex flex-column align-items-center">
+      <!-- Phần code giữ nguyên -->
+      <div class="code-label">Code</div>
+      <div class="code-value"><%= room.code %></div>
+      <button class="copy-btn mb-2" onclick="copyRoomCode()">
+        <i class="fas fa-copy"></i> Copy
+      </button>
+      <% if (user) { %>
+        <% if (room.admin?._id?.toString() === user._id.toString()) { %>
+          <form action="/room/<%= room._id %>/exit" method="POST" onsubmit="return confirm('Bạn chắc chắn muốn kết thúc phòng không?')">
+            <button type="submit" class="end-btn btn btn-gradient btn-primary rounded-pill shadow-sm">
+              <i class="fas fa-times-circle me-1"></i> End of meeting room
+            </button>
+          </form>
+        <% } else { %>
+          <form action="/room/<%= room._id %>/exit" method="POST" onsubmit="return confirm('Bạn chắc chắn muốn rời phòng không?')">
+            <button type="submit" class="leave-btn btn btn-gradient btn-primary rounded-pill shadow-sm">
+              <i class="fas fa-sign-out-alt me-1"></i> Leave Room
+            </button>
+          </form>
+        <% } %>
+      <% } %>
+    </div>
+  </div>
 </div>
+<style>
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #007bff, #00d4ff);
+    position: relative;
+    overflow: hidden;
+  }
+  .bg-gradient-primary::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+  }
+  .room-header {
+    transition: all 0.3s ease;
+  }
+  .room-header:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 50px rgba(0, 123, 255, 0.4) !important;
+  }
+  .room-name {
+    text-shadow: 2px 4px 8px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 1;
+  }
+  .info-text {
+    position: relative;
+    z-index: 1;
+    opacity: 0.95;
+  }
+  .room-code-box {
+    background: rgba(255,255,255,0.15);
+    padding: 1.5rem;
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .code-label {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    margin-bottom: 0.5rem;
+  }
+  .code-value {
+    font-size: 2rem;
+    font-weight: 800;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 4px;
+    margin-bottom: 1rem;
+    text-shadow: 1px 2px 4px rgba(0,0,0,0.2);
+  }
+  .copy-btn, .leave-btn, .end-btn {
+    background: rgba(255,255,255,0.25);
+    border: 2px solid rgba(255,255,255,0.3);
+    color: #fff;
+    padding: 0.6rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+  }
+  .copy-btn:hover, .leave-btn:hover, .end-btn:hover {
+    background: rgba(255,255,255,0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+  .btn-gradient {
+    background: linear-gradient(45deg, #007bff, #00d4ff);
+    border: none;
+  }
+  .btn-gradient:hover {
+    background: linear-gradient(45deg, #0056b3, #0096cc);
+  }
+  .leave-btn.btn-primary, .end-btn.btn-primary {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  .leave-btn.btn-primary:hover, .end-btn.btn-primary:hover {
+    transform: scale(1.05);
+  }
+  .shadow-xl {
+    box-shadow: 0 10px 40px rgba(0, 123, 255, 0.3) !important;
+  }
+  @media (max-width: 768px) {
+    .room-header { padding: 2rem !important; }
+    .room-name { font-size: 2rem; }
+    .code-value { font-size: 1.5rem; }
+    .copy-btn, .leave-btn, .end-btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
+  }
+</style>
+
+<script>
+  function copyRoomCode() {
+    const code = document.querySelector('.code-value').textContent.trim();
+    const btn = document.querySelector('.copy-btn');
+    navigator.clipboard.writeText(code).then(() => {
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      btn.style.background = 'rgba(76, 175, 80, 0.3)';
+      setTimeout(() => {
+        btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+        btn.style.background = '';
+      }, 2000);
+    });
+  }
+</script>

@@ -1,5 +1,16 @@
 <% layout('layouts/main-client') %>
 <link rel="stylesheet" href="/css/room.css">
+<% if (typeof success !== "undefined" && success) { %>
+  <script>
+    alert("<%= success %>");
+  </script>
+<% } %>
+
+<% if (typeof error !== "undefined" && error) { %>
+  <script>
+    alert("<%= error %>");
+  </script>
+<% } %>
 
 <%
   const currentTab = typeof activeTab !== 'undefined' ? activeTab : 'chat';
@@ -15,19 +26,44 @@
         </div>
 
         <div class="tab-pane fade <%= currentTab === 'notes' ? 'show active' : '' %>" id="notes" role="tabpanel">
-            <%- include('./partials/notes', { notes: typeof notes !== 'undefined' ? notes : [] }) %>
+            <%- include('./partials/notes', { notes: typeof notes !== 'undefined' ? notes : [],
+                page: typeof page !== 'undefined' ? page : 1, 
+                totalPages: typeof totalPages !== 'undefined' ? totalPages : 1,
+                search: typeof search !== 'undefined' ? search : '',
+             }) %>
         </div>
 
         <div class="tab-pane fade <%= currentTab === 'schedules' ? 'show active' : '' %>" id="schedules" role="tabpanel">
-            <%- include('./partials/schedules', { schedules: typeof schedules !== 'undefined' ? schedules : [] }) %>
+            <%- include('./partials/schedules', { schedules: typeof schedules !== 'undefined' ? schedules : [] ,
+            page: typeof page !== 'undefined' ? page : 1,
+            totalPages: typeof totalPages !== 'undefined' ? totalPages : 1,
+            search: typeof search !== 'undefined' ? search : '' ,
+            }) %>
         </div>
 
         <div class="tab-pane fade <%= currentTab === 'files' ? 'show active' : '' %>" id="files" role="tabpanel">
-            <%- include('./partials/files', { files: typeof files !== 'undefined' ? files : [] }) %>
+            <%- include('./partials/files', { files: typeof files !== 'undefined' ? files : [],
+                page: typeof page !== 'undefined' ? page : 1,
+                totalPages: typeof totalPages !== 'undefined' ? totalPages : 1,
+                search: typeof search !== 'undefined' ? search : '',
+             }) %>
         </div>
 
         <div class="tab-pane fade <%= currentTab === 'tasks' ? 'show active' : '' %>" id="tasks" role="tabpanel">
-            <%- include('./partials/tasks', { tasks: typeof tasks !== 'undefined' ? tasks : [] }) %>
+            <%- include('./partials/tasks', { tasks: typeof tasks !== 'undefined' ? tasks : [],
+            page: typeof page !== 'undefined' ? page : 1,
+            totalPages: typeof totalPages !== 'undefined' ? totalPages : 1,
+            search: typeof search !== 'undefined' ? search : '',
+             }) %>
         </div>
+
+        <div class="tab-pane fade <%= currentTab === 'members' ? 'show active' : '' %>" id="members" role="tabpanel">
+            <%- include('./partials/members', { members: typeof members !== 'undefined' ? members : [],
+            page: typeof page !== 'undefined' ? page : 1,
+            totalPages: typeof totalPages !== 'undefined' ? totalPages : 1,
+            search: typeof search !== 'undefined' ? search : '', 
+            }) %>
+        </div>
+
     </div>
 </div>

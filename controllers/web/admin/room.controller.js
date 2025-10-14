@@ -253,7 +253,7 @@ export const editRoom = async( req, res ) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
             const users = await getAllUsers();
-            return res.status(500).render('admim/pages/room/form-edit', {
+            return res.status(500).render('admin/pages/room/form-edit', {
                 room,
                 users,
                 path: req.path,
