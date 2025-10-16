@@ -5,6 +5,7 @@ import Task from "../../../models/ts/Task.js";
 import Room from "../../../models/ts/Room.js";
 import User from "../../../models/ts/User.js";
 import logger from "../../../utils/logger.js";
+import { getCache, setCache } from "../../../helpers/cache.js";
 
 interface AuthenticatedRequest extends Request {
   user: {
@@ -38,10 +39,14 @@ export const getTasks = async (req: Request<{}, {}, {}, GetTasksQuery>, res: Res
   const { search, room, status, assignedTo, dueDate, createdBy, page = 1 } = req.query;
   const limit = 5;
   const skip = (Number(page) - 1) * limit;
-
+  const cacheKey = `task:search=${search}:room=${room}:status=${status}:assignedTo=${assignedTo}:dueDate=${dueDate}:createdBy=${createdBy}:page=${page}`;
   try {
     const query: Record<string, any> = {};
-
+    const cachedData = await getCache(cacheKey);
+    if(cachedData){
+      logger.info(`Cache hit: ${cacheKey}`);
+      return res.status(200).json({ success: true, data: cachedData, message: 'Fetched from cache'});
+    }
     if (search) {
       query.title = { $regex: search, $options: "i" };
     }
@@ -81,11 +86,9 @@ export const getTasks = async (req: Request<{}, {}, {}, GetTasksQuery>, res: Res
       .skip(skip)
       .limit(limit);
 
-    // Filter out null populated references to avoid null prototype issues
     const filteredTasks = tasks.map(task => {
       const taskObj = task.toObject();
       
-      // Ensure assignedTo is always an array and filter out null values
       if (taskObj.assignedTo) {
         taskObj.assignedTo = taskObj.assignedTo.filter((user: any) => user !== null);
       } else {
@@ -95,19 +98,14 @@ export const getTasks = async (req: Request<{}, {}, {}, GetTasksQuery>, res: Res
       return taskObj;
     });
 
-    logger.info(`Fetched tasks: page=${page}, total=${totalTasks}`);
-
-    return res.status(200).json({
-      success: true,
-      data: {
-        tasks: filteredTasks,
-        page: Number(page),
-        totalPages,
-        totalTasks,
-        limit,
-      },
-      message: "Successfully fetched tasks list",
-    });
+    const responseData = {
+      tasks: filteredTasks,
+      pagination: {page: Number(page), status: String(status), assignedTo, dueDate, createdBy, totalTasks, totalPages, limit},
+      filters: {search, room }  
+    };
+    await setCache(cacheKey, responseData , 60);
+    logger.info(`Cache miss: saved ${cacheKey}`);
+    res.status(200).json({success: true, data: responseData, message: 'Successfully fetched task list'});
   } catch (err: any) {
     logger.error("Error fetching tasks list", err);
     return res.status(500).json({

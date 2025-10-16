@@ -2,10 +2,15 @@ import jwt from "jsonwebtoken";
 
 export const verifyAdmin = (req, res, next) => {
   const authHeader = req.headers["authorization"];
+  console.log("🔹 [verifyAdmin] URL:", req.originalUrl);
+  console.log("🔹 [verifyAdmin] Authorization:", authHeader);
+
   if (!authHeader) return res.status(401).json({ message: "No token provided" });
 
-  const token = authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "Invalid token format" });
+  const [scheme, token] = authHeader.split(" ");
+  if (!token || !/^Bearer$/i.test(scheme)) {
+    return res.status(401).json({ message: "No or invalid token provided" });
+  }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) return res.status(403).json({ message: "Invalid or expired token" });
@@ -14,7 +19,7 @@ export const verifyAdmin = (req, res, next) => {
       return res.status(403).json({ message: "You are not an admin" });
     }
 
-    req.user = decoded; 
+    req.user = decoded;
     next();
   });
 };

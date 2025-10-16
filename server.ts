@@ -5,8 +5,11 @@ import app, { sessionMiddleware } from './app.js';
 import { connectDB } from './config/db.js'; 
 import { Server as SocketServer } from 'socket.io'; 
 import Message from './models/ts/Message.js';
+import "./config/redis.js"; 
+import { connectRedis } from './config/redis.js';
 
 dotenv.config();
+
 
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
@@ -22,7 +25,7 @@ const io = new SocketServer(server, {
 
 
 io.use((socket, next) => {
-  sessionMiddleware(socket.request as any, {} as any, next);
+  sessionMiddleware(socket.request as any, {} as any, next as any);
 });
 
 
@@ -146,13 +149,18 @@ io.on('connection', (socket) => {
   });
 });
 
-connectDB()
-  .then(() => {
+(async () => {
+  try {
+
+    await connectRedis();
+
+    await connectDB();
+
     server.listen(PORT, () => {
-      console.log(chalk.yellow(`🚀 Server đang chạy tại http://localhost:${PORT}`));
+      console.log(chalk.yellow(`🚀 Server running at http://localhost:${PORT}/home`));
     });
-  })
-  .catch((err: unknown) => {
-    console.log(chalk.red('❌ Lỗi kết nối DB:'), err);
-    process.exit(1); 
-  });
+  } catch (err) {
+    console.error(chalk.red("❌ Lỗi khởi tạo server:"), err);
+    process.exit(1);
+  }
+})();

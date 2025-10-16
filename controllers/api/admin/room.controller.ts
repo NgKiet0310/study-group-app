@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import Room from "../../../models/ts/Room.js";
 import User from "../../../models/ts/User.js";
 import logger from "../../../utils/logger.js";
+import { getCache, setCache } from "../../../helpers/cache.js";
 
 interface AuthenticatedRequest extends Request {
   user: {
@@ -34,18 +35,18 @@ interface RoomBody {
   members?: MemberData[];
 }
 
-const getAllUsers = async () => {
-  return await User.find({ role: "user" }).select("_id username");
-};
-
 export const getRooms = async (req: Request<{}, {}, {}, GetRoomsQuery>, res: Response) => {
   const { search, memberCount, startDate, endDate, page = 1 } = req.query;
   const limit = 5;
   const skip = (Number(page) - 1) * limit;
-
+  const cacheKey = `room:search"=${search}:memberCount=${memberCount}:startDate=${startDate}:endDate=${endDate}:page=${page}`;
   try {
+    const cachedData = await getCache(cacheKey);
+    if(cachedData){
+      logger.info(`Cache hit ${cacheKey}`);
+      res.status(200).json({ success: true, data: cachedData, message: 'Fetched from cache' })
+    }
     const query: Record<string, any> = {};
-
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
@@ -100,22 +101,18 @@ export const getRooms = async (req: Request<{}, {}, {}, GetRoomsQuery>, res: Res
       room.members = room.members.filter((member) => member.user !== null);
     });
 
-    logger.info(`Fetched rooms: page=${page}, total=${totalRooms}`);
+    const responseData = {
+      rooms, 
+      panigation: {page: Number(page), totalRooms, totalPages, limit},
+      filters: {search, memberCount: Number(memberCount), startDate, endDate}
+    };
 
-    return res.status(200).json({
-      success: true,
-      data: {
-        rooms,
-        page: Number(page),
-        totalPages,
-        totalRooms,
-        limit,
-      },
-      message: "Successfully fetched rooms list",
-    });
+    await setCache(cacheKey, responseData, 60);
+    logger.info(`Cache miss: saved ${cacheKey}`);
+    res.status(200).json({success: true, data: responseData, message: 'Successfully fetched room list'});
   } catch (err: any) {
     logger.error("Error fetching rooms list", err);
-    return res.status(500).json({
+    return res.status(500).json({ 
       success: false,
       message: "Error fetching rooms list",
       error: err.message,

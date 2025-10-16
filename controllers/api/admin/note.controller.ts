@@ -3,6 +3,7 @@ import { validationResult , type ValidationError } from "express-validator";
 import mongoose from "mongoose";
 import Note from "../../../models/ts/Note.js";
 import logger from "../../../utils/logger.js";
+import { getCache, setCache } from "../../../helpers/cache.js";
 
 interface GetNotesQuery {
   search?: string;
@@ -25,10 +26,14 @@ export const getNotes = async (req: Request<{}, {}, {}, GetNotesQuery>, res: Res
   const { search, room, isPublic, page = 1 } = req.query;
   const limit = 5;
   const skip = (Number(page) - 1) * limit;
-
+  const cacheKey = `note:search=${search}:room=${room}:isPublic=${isPublic}:page=${page}`;
   try {
     const query: Record<string, any> = {};
-
+    const cachedData = await getCache(cacheKey);
+    if(cachedData){
+      logger.info(`Cache hit: ${cacheKey}`);
+      res.status(200).json({ success: true, data: cachedData, message: 'Fetched from cache'})
+    }
     if (search) query.title = { $regex: search, $options: "i" };
     if (room) query.room = room;
     if (isPublic !== undefined) query.isPublic = isPublic === "true";
@@ -43,13 +48,15 @@ export const getNotes = async (req: Request<{}, {}, {}, GetNotesQuery>, res: Res
       .skip(skip)
       .limit(limit);
 
-    logger.info(`Fetched notes: page=${page}, total=${totalNotes}`);
+      const responseData = {
+        notes,
+        panigation: {page: Number(page), isPublic: String(isPublic), totalNotes, totalPages, limit},
+        filters: {search, room}
+      };
 
-    return res.status(200).json({
-      success: true,
-      data: { notes, page: Number(page), totalPages, totalNotes, limit },
-      message: "Successfully fetched notes list",
-    });
+      await setCache(cacheKey, responseData, 60);
+      logger.info(`Cache miss : saved ${cacheKey}`);
+      res.status(200).json({ success: true, data: responseData, message: 'Successfully fetched note list ' })
   } catch (err: any) {
     logger.error("Error fetching notes list", err);
     return res.status(500).json({

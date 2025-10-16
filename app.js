@@ -7,6 +7,8 @@ import engine from 'ejs-mate';
 import methodOverride from 'method-override';
 import session from "express-session";
 import MongoStore from 'connect-mongo';
+import RedisStoreLib  from "connect-redis";
+import redisClient from './config/redis.js';
 
 // Middleware
 import { sessionUser, attachUserToLocals, sessionAdmin, attachAdminToLocals } from './middleware/session.js';
@@ -68,14 +70,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
+const RedisStore = RedisStoreLib(session);
+
 export const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET || 'secret',
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGO_URL }),
-  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 ngày
+  cookie: { maxAge: 1000 * 60 * 60 * 24 }
 });
-
 app.use(sessionMiddleware);
 
 // ================== API ROUTES ==================

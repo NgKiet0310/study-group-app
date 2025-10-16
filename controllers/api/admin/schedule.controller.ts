@@ -5,6 +5,7 @@ import Schedule from "../../../models/ts/Schedule.js";
 import Room from "../../../models/ts/Room.js";
 import User from "../../../models/ts/User.js";
 import logger from "../../../utils/logger.js";
+import { getCache, setCache } from "../../../helpers/cache.js";
 
 interface AuthenticatedRequest extends Request {
   admin: {
@@ -37,10 +38,14 @@ export const getSchedules = async (req: Request<{}, {}, {}, GetSchedulesQuery>, 
   const { search, room, startDate, endDate, status, page = 1 } = req.query;
   const limit = 10;
   const skip = (Number(page) - 1) * limit;
-
+  const cacheKey = `schedule:search=${search}:room=${room}:startDate=${startDate}:endDate=${endDate}:status=${status}:page=${page}`;
   try {
     const query: Record<string, any> = {};
-
+    const cachedData = await getCache(cacheKey);
+    if(cachedData){
+      logger.info(`Cache hit: ${cacheKey}`);
+      return res.status(200).json({success: true, data: cachedData, message: 'Fetched from cache'});
+    }
     if (search) {
       query.title = { $regex: search, $options: "i" };
     }
@@ -93,28 +98,14 @@ export const getSchedules = async (req: Request<{}, {}, {}, GetSchedulesQuery>, 
       }
       return scheduleObj;
     });
-
-    logger.info(`Fetched schedules: page=${page}, total=${totalSchedules}`);
-    return res.status(200).json({
-      success: true,
-      data: {
-        schedules: filteredSchedules,
-        pagination: {
-          page: Number(page),
-          totalPages,
-          totalSchedules,
-          limit,
-        },
-        filters: {
-          search: search || "",
-          room: room || "",
-          startDate: startDate || "",
-          endDate: endDate || "",
-          status: status || "",
-        },
-      },
-      message: "Successfully fetched schedules list",
-    });
+    const responseData = {
+      schedules: filteredSchedules,
+      pagination: {page: Number(page), startDate, endDate, status: String(status), totalPages, totalSchedules, limit},
+      filters: {search, room}
+    };
+    await setCache(cacheKey, responseData, 60);
+    logger.info(`Cache miss : save ${cacheKey}`);
+    res.status(200).json({ success: true, data: responseData, message: 'Successfully fetched schedule list'});
   } catch (err: any) {
     logger.error("Error fetching schedules list", err);
     return res.status(500).json({

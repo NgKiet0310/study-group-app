@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import User from '../../../models/User.js';
 
 export const showLoginForm = (req, res) => {
@@ -8,10 +8,10 @@ export const showLoginForm = (req, res) => {
 };
 
 export const handleLogin = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   try {
-    const user = await User.findOne({ username:email });
+    const user = await User.findOne({ username });
     console.log('User found:', user); 
 
     if (!user) {
@@ -25,6 +25,7 @@ export const handleLogin = async (req, res) => {
 
 
     const match = await bcrypt.compare(password, user.password);
+
     if (!match) {
       return res.redirect('/admin/auth/login?error=Mật khẩu không đúng.');
     }
@@ -36,7 +37,7 @@ export const handleLogin = async (req, res) => {
    username: user.username, 
    };
 
-
+   
     return res.redirect('/admin/dashboard');
   } catch (err) {
     console.error('Lỗi đăng nhập:', err);

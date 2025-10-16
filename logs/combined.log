@@ -169,3 +169,120 @@
 {"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-09-10T19:35:32.989Z"}
 {"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-09-10T19:45:44.011Z"}
 {"level":"info","message":"[REGISTER] User created: kietntph50280@gmail.com","timestamp":"2025-10-02T04:03:10.408Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-10-14T03:28:31.727Z"}
+{"level":"info","message":"Fetched messages: page=1, total=24","timestamp":"2025-10-14T03:28:45.106Z"}
+{"level":"info","message":"Cache miss: saved messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T03:38:33.576Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T03:38:34.948Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T03:38:37.731Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T03:38:39.358Z"}
+{"level":"info","message":"Fetched message: id=68edb694d7d01baf25999171","timestamp":"2025-10-14T03:38:58.603Z"}
+{"level":"info","message":"Fetched message: id=68edb694d7d01baf25999171","timestamp":"2025-10-14T03:39:02.717Z"}
+{"level":"info","message":"Fetched message: id=68edb694d7d01baf25999171","timestamp":"2025-10-14T03:39:04.355Z"}
+{"level":"info","message":"Fetched message: id=68edb694d7d01baf25999171","timestamp":"2025-10-14T03:39:06.185Z"}
+{"level":"info","message":"Cache hit: message:id=68edb694d7d01baf25999171","timestamp":"2025-10-14T03:44:03.713Z"}
+{"level":"info","message":"Cache hit: message:id=68edb694d7d01baf25999171","timestamp":"2025-10-14T03:44:12.082Z"}
+{"level":"info","message":"Cache hit: message:id=68edb694d7d01baf25999171","timestamp":"2025-10-14T03:44:13.139Z"}
+{"level":"info","message":"Cache hit: message:id=68edb694d7d01baf25999171","timestamp":"2025-10-14T03:45:10.100Z"}
+{"level":"info","message":"Cache miss: saved messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T03:45:16.787Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T03:45:18.602Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T03:45:19.844Z"}
+{"level":"info","message":"Cache miss: saved messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T03:49:00.634Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T03:49:03.060Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T03:49:57.979Z"}
+{"level":"info","message":"Cache hit: message:id=68edb694d7d01baf25999171","timestamp":"2025-10-14T03:50:20.515Z"}
+{"level":"info","message":"Cache miss: saved messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T03:50:39.996Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T03:50:41.071Z"}
+{"level":"info","message":"Cache hit: message:id=68ed1848ad87c50b87483d33","timestamp":"2025-10-14T03:50:51.832Z"}
+{"level":"info","message":"Cache hit: message:id=68ed19958fba2e8f7f9f5d0d","timestamp":"2025-10-14T03:51:14.269Z"}
+{"level":"info","message":"Cache hit: message:id=68ed19958fba2e8f7f9f5d0d","timestamp":"2025-10-14T03:51:18.282Z"}
+{"level":"info","message":"Cache miss: saved messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T03:51:40.305Z"}
+{"level":"info","message":"Cache hit: message:id=68edb694d7d01baf25999171","timestamp":"2025-10-14T03:52:04.631Z"}
+{"level":"info","message":"Cache hit: message:id=68edb694d7d01baf25999171","timestamp":"2025-10-14T03:52:08.520Z"}
+{"level":"info","message":"Fetched message: id=68edb694d7d01baf25999171","timestamp":"2025-10-14T04:15:55.092Z"}
+{"level":"info","message":"Deleted message: id=68edb694d7d01baf25999171","timestamp":"2025-10-14T04:16:20.192Z"}
+{"level":"info","message":"Fetched message: id=68ed19958fba2e8f7f9f5d0d","timestamp":"2025-10-14T04:16:31.010Z"}
+{"level":"info","message":"Fetched message: id=68ed19958fba2e8f7f9f5d0d","timestamp":"2025-10-14T04:16:32.492Z"}
+{"level":"info","message":"Fetched message: id=68ed19958fba2e8f7f9f5d0d","timestamp":"2025-10-14T04:16:33.331Z"}
+{"level":"info","message":"Cache miss: saved messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T04:48:04.628Z"}
+{"level":"info","message":"Cache miss: saved messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T04:49:53.754Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T04:50:16.389Z"}
+{"level":"info","message":"Cache miss: saved messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T05:16:42.473Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T05:17:04.830Z"}
+{"level":"error","message":"[ADMIN LOGOUT]","timestamp":"2025-10-14T05:17:08.179Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-10-14T05:17:11.862Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T05:17:15.235Z"}
+{"level":"info","message":"Cache miss: saved messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T10:24:31.372Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-10-14T10:24:41.523Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T10:24:46.987Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-10-14T11:33:33.820Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-10-14T11:33:38.261Z"}
+{"level":"info","message":"Cache miss: saved messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T11:34:01.931Z"}
+{"level":"info","message":"Cache miss: saved messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T11:36:31.871Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T11:36:34.831Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T11:37:02.723Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-10-14T14:59:47.873Z"}
+{"level":"info","message":"Cache miss: saved messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T15:00:09.898Z"}
+{"level":"info","message":"Cache hit: messsage:search=undefined:room=undefined:page=1","timestamp":"2025-10-14T15:00:22.783Z"}
+{"level":"info","message":"Cache hit: file:search=undefined:room=undefined:fileType=undefined:page=1","timestamp":"2025-10-14T15:00:32.081Z"}
+{"level":"info","message":"Cache hit: file:search=undefined:room=undefined:fileType=undefined:page=1","timestamp":"2025-10-14T15:00:44.686Z"}
+{"level":"info","message":"Cache hit: file:search=undefined:room=undefined:fileType=undefined:page=1","timestamp":"2025-10-14T15:01:12.739Z"}
+{"level":"info","message":"Cache hit: files:search=undefined:room=undefined:fileType=undefined:page=1","timestamp":"2025-10-14T15:02:56.354Z"}
+{"level":"info","message":"Cache hit: files:search=undefined:room=undefined:fileType=undefined:page=1","timestamp":"2025-10-14T15:02:59.425Z"}
+{"level":"info","message":"Cache hit: files:search=:room=:fileType=:page=1","timestamp":"2025-10-14T15:03:25.784Z"}
+{"level":"info","message":"Cache hit: files:search=:room=:fileType=:page=1","timestamp":"2025-10-14T15:03:27.079Z"}
+{"level":"info","message":"Cache miss: saved files:search=:room=:fileType=:page=1","timestamp":"2025-10-14T15:05:55.130Z"}
+{"level":"info","message":"Cache hit: files:search=:room=:fileType=:page=1","timestamp":"2025-10-14T15:06:23.109Z"}
+{"level":"info","message":"Cache hit: files:search=:room=:fileType=:page=1","timestamp":"2025-10-14T15:06:28.318Z"}
+{"level":"info","message":"Cache hit: files:search=:room=:fileType=:page=1","timestamp":"2025-10-14T15:06:38.737Z"}
+{"level":"info","message":"Cache hit: files:search=:room=:fileType=:page=1","timestamp":"2025-10-14T15:06:40.520Z"}
+{"level":"info","message":"Cache hit: files:search=:room=:fileType=:page=1","timestamp":"2025-10-14T15:06:42.020Z"}
+{"level":"info","message":"Fetched file: id=68ee61be4162dcbec1687841","timestamp":"2025-10-14T15:11:11.503Z"}
+{"level":"info","message":"Fetched file: id=68ee61be4162dcbec1687841","timestamp":"2025-10-14T15:11:13.338Z"}
+{"level":"info","message":"Fetched file: id=68ee61be4162dcbec1687841","timestamp":"2025-10-14T15:11:14.779Z"}
+{"level":"info","message":"Fetched file: id=68ee61be4162dcbec1687841","timestamp":"2025-10-14T15:24:00.582Z"}
+{"level":"info","message":"[LOGIN] user@gmail.com logged in successfully","timestamp":"2025-10-15T10:13:43.314Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-10-15T10:14:19.900Z"}
+{"level":"info","message":"Cache miss: saved room:search\"=undefined:memberCount=undefined:startDate=undefined:endDate=undefined:page=1","timestamp":"2025-10-15T10:14:40.452Z"}
+{"level":"info","message":"Cache hit room:search\"=undefined:memberCount=undefined:startDate=undefined:endDate=undefined:page=1","timestamp":"2025-10-15T10:14:42.889Z"}
+{"level":"info","message":"Cache miss: saved room:search\"=undefined:memberCount=undefined:startDate=undefined:endDate=undefined:page=1","timestamp":"2025-10-15T10:14:42.902Z"}
+{"code":"ERR_HTTP_HEADERS_SENT","level":"error","message":"Error fetching rooms list Cannot set headers after they are sent to the client","stack":"Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client\n    at ServerResponse.setHeader (node:_http_outgoing:655:11)\n    at ServerResponse.header (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:684:10)\n    at ServerResponse.send (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:161:12)\n    at ServerResponse.json (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:250:15)\n    at getRooms (file:///C:/laragon/www/study-group-app/controllers/api/admin/room.controller.ts:78:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)","timestamp":"2025-10-15T10:14:42.910Z"}
+{"level":"info","message":"Cache hit room:search\"=undefined:memberCount=undefined:startDate=undefined:endDate=undefined:page=1","timestamp":"2025-10-15T10:14:44.237Z"}
+{"level":"info","message":"Cache miss: saved room:search\"=undefined:memberCount=undefined:startDate=undefined:endDate=undefined:page=1","timestamp":"2025-10-15T10:14:44.250Z"}
+{"code":"ERR_HTTP_HEADERS_SENT","level":"error","message":"Error fetching rooms list Cannot set headers after they are sent to the client","stack":"Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client\n    at ServerResponse.setHeader (node:_http_outgoing:655:11)\n    at ServerResponse.header (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:684:10)\n    at ServerResponse.send (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:161:12)\n    at ServerResponse.json (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:250:15)\n    at getRooms (file:///C:/laragon/www/study-group-app/controllers/api/admin/room.controller.ts:78:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)","timestamp":"2025-10-15T10:14:44.252Z"}
+{"kind":"ObjectId","level":"error","message":"Error fetching room Cast to ObjectId failed for value \"memberCount\" (type string) at path \"_id\" for model \"Room\"","path":"_id","reason":{},"stack":"CastError: Cast to ObjectId failed for value \"memberCount\" (type string) at path \"_id\" for model \"Room\"\n    at SchemaObjectId.cast (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\schema\\objectId.js:251:11)\n    at SchemaType.applySetters (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\schemaType.js:1258:12)\n    at SchemaType.castForQuery (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\schemaType.js:1676:17)\n    at cast (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\cast.js:390:32)\n    at Query.cast (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\query.js:5055:12)\n    at Query._castConditions (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\query.js:2351:10)\n    at model.Query._findOne (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\query.js:2674:8)\n    at model.Query.exec (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\query.js:4604:80)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async getRoomById (file:///C:/laragon/www/study-group-app/controllers/api/admin/room.controller.ts:187:22)","stringValue":"\"memberCount\"","timestamp":"2025-10-15T10:15:17.732Z","value":"memberCount","valueType":"string"}
+{"kind":"ObjectId","level":"error","message":"Error fetching room Cast to ObjectId failed for value \"memberCount=2\" (type string) at path \"_id\" for model \"Room\"","path":"_id","reason":{},"stack":"CastError: Cast to ObjectId failed for value \"memberCount=2\" (type string) at path \"_id\" for model \"Room\"\n    at SchemaObjectId.cast (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\schema\\objectId.js:251:11)\n    at SchemaType.applySetters (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\schemaType.js:1258:12)\n    at SchemaType.castForQuery (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\schemaType.js:1676:17)\n    at cast (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\cast.js:390:32)\n    at Query.cast (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\query.js:5055:12)\n    at Query._castConditions (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\query.js:2351:10)\n    at model.Query._findOne (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\query.js:2674:8)\n    at model.Query.exec (C:\\laragon\\www\\study-group-app\\node_modules\\mongoose\\lib\\query.js:4604:80)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async getRoomById (file:///C:/laragon/www/study-group-app/controllers/api/admin/room.controller.ts:187:22)","stringValue":"\"memberCount=2\"","timestamp":"2025-10-15T10:17:47.663Z","value":"memberCount=2","valueType":"string"}
+{"level":"info","message":"Cache miss: saved room:search\"=undefined:memberCount=undefined:startDate=undefined:endDate=undefined:page=1","timestamp":"2025-10-15T10:18:05.751Z"}
+{"level":"info","message":"Cache hit room:search\"=undefined:memberCount=undefined:startDate=undefined:endDate=undefined:page=1","timestamp":"2025-10-15T10:18:58.300Z"}
+{"level":"info","message":"Cache miss: saved room:search\"=undefined:memberCount=undefined:startDate=undefined:endDate=undefined:page=1","timestamp":"2025-10-15T10:18:58.312Z"}
+{"code":"ERR_HTTP_HEADERS_SENT","level":"error","message":"Error fetching rooms list Cannot set headers after they are sent to the client","stack":"Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client\n    at ServerResponse.setHeader (node:_http_outgoing:655:11)\n    at ServerResponse.header (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:684:10)\n    at ServerResponse.send (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:161:12)\n    at ServerResponse.json (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:250:15)\n    at getRooms (file:///C:/laragon/www/study-group-app/controllers/api/admin/room.controller.ts:78:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)","timestamp":"2025-10-15T10:18:58.314Z"}
+{"level":"info","message":"Cache miss: saved room:search\"=Phòng:memberCount=undefined:startDate=undefined:endDate=undefined:page=1","timestamp":"2025-10-15T10:28:01.522Z"}
+{"level":"info","message":"Cache miss: saved room:search\"=phong:memberCount=undefined:startDate=undefined:endDate=undefined:page=1","timestamp":"2025-10-15T10:29:26.900Z"}
+{"level":"info","message":"Cache miss: saved room:search\"=Phong:memberCount=undefined:startDate=undefined:endDate=undefined:page=1","timestamp":"2025-10-15T10:29:34.457Z"}
+{"level":"info","message":"Cache miss: saved room:search\"=undefined:memberCount=0-5:startDate=undefined:endDate=undefined:page=1","timestamp":"2025-10-15T10:29:43.866Z"}
+{"level":"info","message":"Cache miss: saved room:search\"=Backend:memberCount=undefined:startDate=undefined:endDate=undefined:page=1","timestamp":"2025-10-15T10:32:52.391Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-10-15T13:20:25.373Z"}
+{"level":"info","message":"Cache miss : saved note:search=undefined:room=undefined:isPublic=undefined:page=1","timestamp":"2025-10-15T13:20:45.367Z"}
+{"level":"info","message":"Cache hit: note:search=undefined:room=undefined:isPublic=undefined:page=1","timestamp":"2025-10-15T13:20:47.097Z"}
+{"level":"info","message":"Cache miss : saved note:search=undefined:room=undefined:isPublic=undefined:page=1","timestamp":"2025-10-15T13:20:47.112Z"}
+{"code":"ERR_HTTP_HEADERS_SENT","level":"error","message":"Error fetching notes list Cannot set headers after they are sent to the client","stack":"Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client\n    at ServerResponse.setHeader (node:_http_outgoing:655:11)\n    at ServerResponse.header (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:684:10)\n    at ServerResponse.send (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:161:12)\n    at ServerResponse.json (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:250:15)\n    at getNotes (file:///C:/laragon/www/study-group-app/controllers/api/admin/note.controller.ts:41:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)","timestamp":"2025-10-15T13:20:47.113Z"}
+{"level":"info","message":"Cache miss : saved note:search=undefined:room=undefined:isPublic=true:page=1","timestamp":"2025-10-15T13:22:59.964Z"}
+{"level":"info","message":"Cache hit: note:search=undefined:room=undefined:isPublic=true:page=1","timestamp":"2025-10-15T13:23:02.262Z"}
+{"level":"info","message":"Cache miss : saved note:search=undefined:room=undefined:isPublic=true:page=1","timestamp":"2025-10-15T13:23:02.282Z"}
+{"code":"ERR_HTTP_HEADERS_SENT","level":"error","message":"Error fetching notes list Cannot set headers after they are sent to the client","stack":"Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client\n    at ServerResponse.setHeader (node:_http_outgoing:655:11)\n    at ServerResponse.header (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:684:10)\n    at ServerResponse.send (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:161:12)\n    at ServerResponse.json (C:\\laragon\\www\\study-group-app\\node_modules\\express\\lib\\response.js:250:15)\n    at getNotes (file:///C:/laragon/www/study-group-app/controllers/api/admin/note.controller.ts:41:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)","timestamp":"2025-10-15T13:23:02.287Z"}
+{"level":"info","message":"Cache miss : save schedule:search=undefined:room=undefined:startDate=undefined:endDate=undefined:status=undefined:page=1","timestamp":"2025-10-15T13:45:29.128Z"}
+{"level":"info","message":"Cache hit: schedule:search=undefined:room=undefined:startDate=undefined:endDate=undefined:status=undefined:page=1","timestamp":"2025-10-15T13:45:34.794Z"}
+{"level":"info","message":"Cache hit: schedule:search=undefined:room=undefined:startDate=undefined:endDate=undefined:status=undefined:page=1","timestamp":"2025-10-15T13:45:35.785Z"}
+{"level":"info","message":"Cache miss : save schedule:search=undefined:room=undefined:startDate=undefined:endDate=undefined:status=undefined:page=1","timestamp":"2025-10-15T13:56:48.468Z"}
+{"level":"info","message":"Cache miss : save schedule:search=undefined:room=undefined:startDate=undefined:endDate=undefined:status=pending:page=1","timestamp":"2025-10-15T13:59:01.378Z"}
+{"level":"error","message":"CLI Error: username is not defined","timestamp":"2025-10-15T15:01:34.727Z"}
+{"level":"error","message":"CLI Error: username is not defined","timestamp":"2025-10-15T15:06:02.383Z"}
+{"level":"info","message":"CLI: User created admin2@gmail.com","timestamp":"2025-10-15T15:06:26.451Z"}
+{"level":"info","message":"CLI: User created admin","timestamp":"2025-10-15T15:20:06.892Z"}
+{"level":"warn","message":"CLI: Username exists: admin@gmail.com","timestamp":"2025-10-15T15:20:41.090Z"}
+{"level":"info","message":"CLI: User created admin2@gmail.com","timestamp":"2025-10-15T15:20:57.099Z"}
+{"level":"info","message":"CLI: User created admin2@gmail.com","timestamp":"2025-10-15T15:30:58.946Z"}
+{"level":"info","message":"CLI: User created admin2@gmail.com","timestamp":"2025-10-15T15:40:32.014Z"}
+{"level":"info","message":"CLI: User created admin2@gmail.com","timestamp":"2025-10-15T15:42:54.421Z"}
+{"level":"info","message":"CLI: User created admin2@gmail.com","timestamp":"2025-10-15T15:47:09.523Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin2@gmail.com logged in successfully","timestamp":"2025-10-15T15:48:00.545Z"}
+{"level":"info","message":"CLI: User created kiet@gmail.com","timestamp":"2025-10-15T16:28:53.038Z"}
