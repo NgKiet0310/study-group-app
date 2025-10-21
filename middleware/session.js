@@ -1,4 +1,3 @@
-// middleware/session.js
 import session from 'express-session';
 import { sessionOptions } from '../config/session.js';
 

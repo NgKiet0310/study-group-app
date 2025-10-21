@@ -286,3 +286,4 @@
 {"level":"info","message":"CLI: User created admin2@gmail.com","timestamp":"2025-10-15T15:47:09.523Z"}
 {"level":"info","message":"[ADMIN LOGIN]: admin2@gmail.com logged in successfully","timestamp":"2025-10-15T15:48:00.545Z"}
 {"level":"info","message":"CLI: User created kiet@gmail.com","timestamp":"2025-10-15T16:28:53.038Z"}
+{"level":"info","message":"[ADMIN LOGIN]: admin@gmail.com logged in successfully","timestamp":"2025-10-17T16:03:15.539Z"}

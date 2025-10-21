@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "68ee61be4162dcbec1687832",
+    "username": "user@gmail.com",
+    "role": "user",
+    "createdAt": "2025-10-14T14:44:14.463Z"
+  },
+  {
+    "_id": "68ee61be4162dcbec1687834",
+    "username": "admin@gmail.com",
+    "role": "admin",
+    "createdAt": "2025-10-14T14:44:14.522Z"
+  },
+  {
+    "_id": "68ee6242d6fc7b79ef706cf6",
+    "username": "user1@gmail.com",
+    "role": "user",
+    "createdAt": "2025-10-14T14:46:26.068Z"
+  },
+  {
+    "_id": "68ee624ed6fc7b79ef706cfb",
+    "username": "client@gmail.com",
+    "role": "user",
+    "createdAt": "2025-10-14T14:46:38.583Z"
+  },
+  {
+    "_id": "68efc1fd2cb3006f4d886203",
+    "username": "admin2@gmail.com",
+    "role": "admin",
+    "createdAt": "2025-10-15T15:47:09.461Z"
+  },
+  {
+    "_id": "68efcbc4d3c782bfc119cebf",
+    "username": "kiet@gmail.com",
+    "role": "user",
+    "createdAt": "2025-10-15T16:28:52.963Z"
+  }
+]

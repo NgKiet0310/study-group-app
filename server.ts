@@ -151,11 +151,8 @@ io.on('connection', (socket) => {
 
 (async () => {
   try {
-
     await connectRedis();
-
     await connectDB();
-
     server.listen(PORT, () => {
       console.log(chalk.yellow(`🚀 Server running at http://localhost:${PORT}/home`));
     });

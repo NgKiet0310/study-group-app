@@ -2,6 +2,7 @@ import { validationResult } from 'express-validator';
 import Room from '../../../models/Room.js';
 import User from '../../../models/User.js';
 import { v4 as uuidv4 } from 'uuid';
+import mongoose from 'mongoose';
 
 const getAllUsers = async () => {
     return await User.find({ role: 'user'}).select('_id username');
@@ -245,99 +246,98 @@ export const showEditRoom = async (req, res) => {
     }
 }
 
-export const editRoom = async( req, res ) => {
-    try {
-        const roomId = req.params.id;
-        const room = await Room.findById(roomId);
+export const editRoom = async (req, res) => {
+  try {
+    const roomId = req.params.id;
+    const room = await Room.findById(roomId).populate('members.user admin');
 
-        const errors = validationResult(req);
-        if(!errors.isEmpty()) {
-            const users = await getAllUsers();
-            return res.status(500).render('admin/pages/room/form-edit', {
-                room,
-                users,
-                path: req.path,
-                error: errors.array()[0].msg,
-                success: null
-            });
-        }
-
-        const {name, code, description, members} = req.body;
-        
-        const existingRoom = await Room.findOne({ name, _id: {$ne: roomId}});
-        if(existingRoom) {
-            const users = await getAllUsers();
-            return res.status(400).render('admin/pages/room/form-edit', {
-                room,
-                users,
-                path: req.path,
-                error: 'Tên phòng đã tồn tại',
-                success: null
-            })
-        }
-
-        let roomCode = code || room.code;
-        const codeExists = await Room.findOne({ code: roomCode, _id: {$ne: roomId} });
-        if(codeExists) {
-            const users = await getAllUsers();
-            return res.status(400).render('admin/pages/room/form-edit', {
-                room,
-                users,
-                path: req.p,
-                error: 'Mã phòng đã được sử dụng',
-                success: null
-            })
-        }
-
-        let processedMembers = [];
-        if (members && Array.isArray(members)) {
-            const hostCount = members.filter(member => member.role === 'host').length;
-            if (hostCount > 2) {
-                const users = await getAllUsers();
-                return res.status(400).render('admin/pages/room/form-edit', {
-                    room,
-                    users,
-                    path: req.path,
-                    error: 'Chỉ được phép có tối đa một thành viên với vai trò Host',
-                    success: null
-                });
-            }
-
-            const userIds = members.map(member => member.user).filter(Boolean);
-            const validUsers = await User.find({ _id: { $in: userIds }, role: 'user' }).select('_id username');
-            const validUserIds = validUsers.map(user => user._id.toString());
-
-            processedMembers = members
-                .filter(member => member.user && validUserIds.includes(member.user))
-                .map(member => ({
-                    user: member.user,
-                    role: member.role || 'member'
-                }));
-
-            processedMembers = [...new Map(processedMembers.map(item => [item.user, item])).values()];
-        }
-
-        
-        await Room.findByIdAndUpdate(roomId, {
-            name,
-            code: roomCode,
-            description: description || '',
-            members: processedMembers,
-            updatedAt: Date.now()
-        });
-
-        res.redirect('/admin/rooms?success=Cập nhật phòng thành công!');
-    } catch (error) {
-        console.error('Lỗi khi chỉnh sửa phòng:', error);
-        const users = await getAllUsers();
-        return res.status(500).render('admin/pages/room/form-edit', {
-            room: await Room.findById(req.params.id),
-            users,
-            path: req.path,
-            error: 'Đã có lỗi xảy ra khi chỉnh sửa phòng',
-            success: null
-        });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const users = await getAllUsers();
+      return res.status(400).render('admin/pages/room/form-edit', {
+        room,
+        users,
+        path: req.path,
+        error: errors.array()[0].msg,
+        success: null,
+      });
     }
+
+    const { name, code, description, members } = req.body;
+
+    // Kiểm tra tên và mã phòng
+    const existingRoom = await Room.findOne({ name, _id: { $ne: roomId } });
+    if (existingRoom) throw new Error('Tên phòng đã tồn tại');
+
+    const roomCode = code || room.code;
+    const codeExists = await Room.findOne({ code: roomCode, _id: { $ne: roomId } });
+    if (codeExists) throw new Error('Mã phòng đã được sử dụng');
+
+    let processedMembers = [];
+    if (members && Array.isArray(members)) {
+      const userIds = members.map(m => m.user).filter(Boolean);
+      const validUsers = await User.find({ _id: { $in: userIds }, role: 'user' }).select('_id username');
+      const validUserIds = validUsers.map(u => u._id.toString());
+
+      processedMembers = members
+        .filter(m => m.user && validUserIds.includes(m.user))
+        .map(m => ({
+          user: new mongoose.Types.ObjectId(m.user),
+          role: m.role || 'member',
+        }));
+
+      // Loại bỏ duplicate
+      processedMembers = [...new Map(processedMembers.map(item => [item.user.toString(), item])).values()];
+
+      // 🔹 Xử lý chuyển host
+      const newHost = processedMembers.find(m => m.role === 'host');
+
+      if (newHost) {
+        const oldHost = room.members.find(m => m.role === 'host');
+
+        if (oldHost && oldHost.user._id.toString() !== newHost.user.toString()) {
+          if (room.admin && oldHost.user._id.toString() === room.admin._id.toString()) {
+            // Host cũ là admin → xoá khỏi members
+            processedMembers = processedMembers.filter(
+              m => m.user.toString() !== oldHost.user._id.toString()
+            );
+          } else {
+            // Host cũ là user thường → chuyển thành member
+            processedMembers = processedMembers.map(m =>
+              m.user.toString() === oldHost.user._id.toString() ? { ...m, role: 'member' } : m
+            );
+          }
+        }
+      }
+
+      // 🔹 Debug: log nếu có nhiều host (không báo lỗi cho UI)
+      const hostCount = processedMembers.filter(m => m.role === 'host').length;
+      if (hostCount > 1) {
+        console.warn(`⚠️ Phòng ${roomId} có nhiều host cùng lúc!`);
+      }
+    }
+
+    // Cập nhật phòng
+    await Room.findByIdAndUpdate(roomId, {
+      name,
+      code: roomCode,
+      description: description || '',
+      members: processedMembers,
+      updatedAt: Date.now(),
+    });
+
+    res.redirect('/admin/rooms?success=Cập nhật phòng thành công!');
+  } catch (error) {
+    console.error('Lỗi khi chỉnh sửa phòng:', error.message);
+    const users = await getAllUsers();
+    return res.status(500).render('admin/pages/room/form-edit', {
+      room: await Room.findById(req.params.id).populate('members.user admin'),
+      users,
+      path: req.path,
+      error: 'Đã có lỗi xảy ra khi chỉnh sửa phòng',
+      success: null,
+    });
+  }
 };
 
 export const showRoomDetail = async(req, res ) => {

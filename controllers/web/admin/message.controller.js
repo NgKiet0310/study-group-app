@@ -55,7 +55,7 @@ export const showMessageDetail = async(req,res) => {
         });
     } catch (error) {
         console.error('Lỗi khi hiển thị chi tiết tin nhắn', error);
-        res.redirec('/admin/messages?error=Đã có lỗi');
+        res.redirect('/admin/messages?error=Đã có lỗi');
     }
 }
 
@@ -67,9 +67,9 @@ export const deleteMessage = async(req,res) => {
             return res.redirec('/admin/messages?error=Tin nhắn không tồn tại');
         }
         await Message.deleteOne({ _id: messageId});
-        res.redirec('/admin/messages?success=Xóa tin nhắn thành công');
+        res.redirect('/admin/messages?success=Xóa tin nhắn thành công');
     } catch (error) {
         console.error('Lỗi khi xóa tin nhắn', error);
-        res,redirec('/admin/messages?error=Đã có lỗi xảy ra khi xóa tin nhắn');
+        res.redirect('/admin/messages?error=Đã có lỗi xảy ra khi xóa tin nhắn');
     }
 }

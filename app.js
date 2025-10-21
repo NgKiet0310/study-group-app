@@ -9,6 +9,8 @@ import session from "express-session";
 import MongoStore from 'connect-mongo';
 import RedisStoreLib  from "connect-redis";
 import redisClient from './config/redis.js';
+import helmet from 'helmet';
+import { sessionOptions } from './config/session.js';
 
 // Middleware
 import { sessionUser, attachUserToLocals, sessionAdmin, attachAdminToLocals } from './middleware/session.js';
@@ -69,16 +71,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
-
-const RedisStore = RedisStoreLib(session);
-
-export const sessionMiddleware = session({
-  secret: process.env.SESSION_SECRET || 'secret',
-  resave: false,
-  saveUninitialized: false,
-  cookie: { maxAge: 1000 * 60 * 60 * 24 }
-});
+export const sessionMiddleware = session(sessionOptions);
 app.use(sessionMiddleware);
+app.use(helmet({
+    crossOriginResourcePolicy: false, 
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: false, 
+}));
 
 // ================== API ROUTES ==================
 // Client API
@@ -120,6 +119,9 @@ app.use('/', forbidAdmin ,isAuthenticated, HomeRoutes, ClientroomRoutes, Clientf
 app.use((err, req, res, next) => {
   console.log(chalk.red('❌ Lỗi toàn cục:', err.message));
   res.status(500).send({ error: 'Đã có lỗi xảy ra phía server' });
+});
+app.use((req, res) => {
+  res.status(404).render('404', { title: 'Không tìm thấy trang' });
 });
 
 export default app;
