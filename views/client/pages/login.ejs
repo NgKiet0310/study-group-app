@@ -39,11 +39,12 @@
               <div class="input-wrapper">
                 <i class="fas fa-user input-icon"></i>
                 <input type="text" 
-                       class="form-control form-control-modern" 
-                       id="username" 
-                       name="username" 
-                       placeholder="Email hoặc số điện thoại" 
-                       required>
+                      class="form-control form-control-modern" 
+                      id="username" 
+                      name="username" 
+                      value="<%= typeof username !== 'undefined' ? username : '' %>" 
+                      placeholder="Email hoặc số điện thoại" 
+                      required>
               </div>
             </div>
             

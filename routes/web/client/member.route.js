@@ -1,7 +1,9 @@
 import express from "express";
-import { showRoomMembers } from "../../../controllers/web/client/member.controller.js";
+import { deleteMember, showRoomMembers } from "../../../controllers/web/client/member.controller.js";
+import { checkRoomAccess } from "../../../middleware/checkRoom.js";
 const router = express.Router();
 
-router.get("/room/:id/members", showRoomMembers);
+router.get("/room/:id/members", checkRoomAccess ,showRoomMembers);
+router.post("/room/:roomId/delete/member/:memberId", deleteMember);
 
 export default router;

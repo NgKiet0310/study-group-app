@@ -41,11 +41,12 @@ io.on('connection', (socket) => {
   const user = (socket.request as any).session?.user;
   
   if (!user) {
-    console.log(chalk.red('User không có session'));
+    console.log(chalk.red('❌ User không có session'));
+    socket.disconnect(true);
     return;
   }
 
-  console.log(chalk.green('User connected:', user.username));
+  console.log(chalk.green(`✅ Socket connected: ${user.username}`));
 
   socket.on('joinRoom', async (roomId: string) => {
     try {

@@ -25,6 +25,11 @@
             <%- include('./partials/chat', { messages: typeof messages !== 'undefined' ? messages : [] }) %>
         </div>
 
+        <div class="tab-pane fade <%= currentTab === 'meet' ? 'show active' : '' %>" id="meet" role="tabpanel">
+            <%- include('./partials/meet') %>
+        </div>
+
+
         <div class="tab-pane fade <%= currentTab === 'notes' ? 'show active' : '' %>" id="notes" role="tabpanel">
             <%- include('./partials/notes', { notes: typeof notes !== 'undefined' ? notes : [],
                 page: typeof page !== 'undefined' ? page : 1, 

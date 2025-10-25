@@ -111,8 +111,10 @@ app.use('/admin/files', isAdmin, fileRoutes);
 app.use('/admin/dashboard', isAdmin, AdminRoutes);
 
 // ================== CLIENT ROUTES ==================
-app.use('/', sessionUser, attachUserToLocals, forbidAdmin ,noCache);
 app.use('/auth', ClientAuthRoutes);
+app.use(sessionUser);
+app.use(attachUserToLocals);
+app.use(noCache);
 app.use('/', forbidAdmin ,isAuthenticated, HomeRoutes, ClientroomRoutes, ClientfileRoutes, ClientshceduleRoutes, ClienttaskRoutes, ClientnoteRoutes, ClientMemberRoutes );
 
 

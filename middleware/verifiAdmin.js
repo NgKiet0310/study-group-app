@@ -2,9 +2,6 @@ import jwt from "jsonwebtoken";
 
 export const verifyAdmin = (req, res, next) => {
   const authHeader = req.headers["authorization"];
-  console.log("🔹 [verifyAdmin] URL:", req.originalUrl);
-  console.log("🔹 [verifyAdmin] Authorization:", authHeader);
-
   if (!authHeader) return res.status(401).json({ message: "No token provided" });
 
   const [scheme, token] = authHeader.split(" ");

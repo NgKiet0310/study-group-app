@@ -1,6 +1,8 @@
 import express from "express";
 import { showScheduleRoom } from "../../../controllers/web/client/schedule.controller.js";
 const router = express.Router();
-router.get("/room/:id/schedules", showScheduleRoom);
+import { checkRoomAccess } from "../../../middleware/checkRoom.js";
+
+router.get("/room/:id/schedules", checkRoomAccess ,showScheduleRoom);
 
 export default router;    

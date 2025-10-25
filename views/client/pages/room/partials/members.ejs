@@ -48,7 +48,28 @@
                 <p class="text-muted mb-3 text-truncate" title="<%= member.name %>">
                   <%= member.name %>
                 </p>
-             
+                <% 
+                  let isHost = false;
+                  if (user && room.members) {
+                    for (let i = 0; i < room.members.length; i++) {
+                      if (room.members[i].user._id == user._id && room.members[i].role === "host") {
+                        isHost = true;
+                        break;
+                      }
+                    }
+                  }
+                %>
+              <% if (user && (room.admin._id == user._id || isHost)) { %>
+              <% if (member.role === 'member') { %>
+                <form action="/room/<%= room._id %>/delete/member/<%= member._id %>" method="POST">
+                  <button 
+                    class="btn btn-sm btn-outline-danger rounded-pill" 
+                    onclick="return confirm('Are you sure you want to delete the member? <%= member.name %>?');">
+                   Delte
+                  </button>
+                </form>
+              <% } %>
+            <% } %>
               </div>
             </div>
           </div>

@@ -105,7 +105,8 @@ export const Login = async (req, res, next) => {
       return res.render("client/pages/login", {
         title: "Login",
         error: "Mật khẩu không chính xác",
-        success: null
+        success: null,
+        username
       });
     }
 
@@ -128,8 +129,10 @@ export const Logout = (req, res) => {
   req.session.destroy((err) =>{
     if(err){
       console.error("Error Destroying Session:", err);
+      res.clearCookie('connect.sid');
       return res.redirect("client/pages/home?error=Đăng xuất thất bại");
     }
-    res.redirect("login?success=Đăng xuất thành công");
+    res.clearCookie('connect.sid');
+    res.redirect("/auth/login?success=Đăng xuất thành công");
   });
 };

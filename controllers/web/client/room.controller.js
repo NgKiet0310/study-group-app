@@ -22,7 +22,7 @@ export const showRoom = async (req, res) => {
       .populate("members.user", "username email");
 
     if (!room) {
-      req.session.error = "Phòng không tồn tại!";
+      req.session.error = "Room does not exist!";
       return res.redirect("/home");
     }
 
@@ -31,7 +31,7 @@ export const showRoom = async (req, res) => {
     );
 
     if (!isMember) {
-      req.session.error = "Path error";
+      req.session.error = "Room does not exist!";
       return res.redirect("/home");
     }
 
@@ -39,19 +39,27 @@ export const showRoom = async (req, res) => {
       .populate("sender")
       .sort({ createdAt: 1 });
 
+    let success = req.session.success || null;
+    let error = req.session.error || null;
+    if (req.session.success) delete req.session.success;  
+    if (req.session.error) delete req.session.error;
+
+    console.log("Session success in showRoom:", success ? "Có message (sau join)" : "Null");
+
     res.render("client/pages/room/room", {
       room,
       user: req.session.user,
       messages,
-      activeTab: "chat"
+      activeTab: "chat",
+      success,  
+      error,
     });
   } catch (error) {
     console.error("Something wrong in showRoom", error);
-    req.session.error = "Lỗi hệ thống!";
-    return res.redirect("/home");
+    req.session.error = "Lỗi hệ thống!";  
+    return res.redirect("/home");  
   }
 };
-
 export const showCreateRoom = (req, res) => {
     res.render("client/pages/room/create-room",{
       errors: [],
@@ -154,22 +162,22 @@ export const joinRoomByCode = async(req, res) => {
     const userId = req.session.user?._id;
     const room = await Room.findOne({ code });
     if(!room){
-      req.session.error = " Mã phòng không tồn tại ";
+      req.session.error = " Room code does not exist";
       res.redirect("/home");
     }
 
     const isMember = room.members.some(m => m.user.toString() === userId.toString());
     if(isMember){
-      req.session.success = "Bạn đã có trong phòng này ";
+      req.session.success = "You have been in this room";
       return res.redirect(`/room/${room._id}`);
     }
     room.members.push({ user: userId, role: "member"});
     await room.save();
-    req.session.success = "Tham gia phòng thành công";
+    req.session.success = "Join room successfully";
     return res.redirect(`/room/${room._id}`);
   } catch (error) {
     console.error("Join room error", error);
-    req.session.error = "Có lỗi khi tham gia phòng";
+    req.session.error = "Error joining room";
     return res.redirect('/home');
   }
 }
@@ -196,3 +204,12 @@ export const joinRoomByCode = async(req, res) => {
     res.redirect("/room?error=Không thể tải danh sách thành viên");
   }
 }
+
+export const showMeet = async (req, res) => {
+  const roomId = req.params.id;
+  const room = await Room.findById(roomId);
+  res.render("client/pages/room/room", {
+    room,
+    activeTab: 'meet'
+  });
+};
