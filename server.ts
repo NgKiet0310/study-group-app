@@ -154,8 +154,8 @@ io.on('connection', (socket) => {
   try {
     // await connectRedis();
     await connectDB();
-    server.listen(PORT, () => {
-      console.log(chalk.yellow(`🚀 Server running at http://localhost:${PORT}/home`));
+    server.listen(PORT, '0.0.0.0', () => {
+    console.log(chalk.yellow(`🚀 Server running at http://0.0.0.0:${PORT}/home`));
     });
   } catch (err) {
     console.error(chalk.red("❌ Lỗi khởi tạo server:"), err);
