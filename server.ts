@@ -2,7 +2,7 @@ import http from 'http';
 import dotenv from 'dotenv';
 import chalk from 'chalk'; 
 import app, { sessionMiddleware } from './app.js'; 
-import { connectDB } from './config/db.js'; 
+import { connectDB } from './config/atlas.js'; 
 import { Server as SocketServer } from 'socket.io'; 
 import Message from './models/ts/Message.js';
 import "./config/redis.js"; 
