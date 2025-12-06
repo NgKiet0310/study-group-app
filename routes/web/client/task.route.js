@@ -1,7 +1,16 @@
 import express from "express";
-import { showTaskRoom } from "../../../controllers/web/client/task.controller.js";
-const router = express.Router();
+import { 
+  showTaskRoom, 
+  createTask, 
+  updateTask, 
+  deleteTask 
+} from "../../../controllers/web/client/task.controller.js";
 import { checkRoomAccess } from "../../../middleware/checkRoom.js";
+import { taskValidator } from "../../../middleware/validators/client/taskClientValidator.js";
+const router = express.Router();
+router.get("/room/:id/tasks", checkRoomAccess, showTaskRoom);
+router.post("/room/:id/tasks", checkRoomAccess, taskValidator, createTask);
+router.post("/room/:id/tasks/:taskId", checkRoomAccess, taskValidator, updateTask);
+router.post("/room/:id/tasks/:taskId/delete", checkRoomAccess, deleteTask);
 
-router.get("/room/:id/tasks", checkRoomAccess ,showTaskRoom);
 export default router;

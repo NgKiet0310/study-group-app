@@ -2,28 +2,48 @@
   <!-- Header with Title and Add Task Button -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="fw-bold text-primary">
-      <i class="fas fa-tasks me-2"></i>List Task
+      <i class="fas fa-tasks me-2"></i>Danh sách Task
     </h4>
     <% 
       const isAdmin = room.admin && user && room.admin._id.toString() === user._id.toString();
       const isHost = room.members && room.members.some(m => m.user._id.toString() === user._id.toString() && m.role === 'host');
       const canManage = isAdmin || isHost;
+      const allMembers = [
+        { _id: room.admin._id, username: room.admin.username, role: 'admin' },
+        ...(room.members || []).map(m => ({ _id: m.user._id, username: m.user.username, role: m.role }))
+      ];
     %>
     <% if (canManage) { %>
-      <button class="btn btn-gradient btn-primary shadow-sm">
-        <i class="fas fa-plus me-2"></i>Create Task
+      <button type="button" class="btn btn-gradient btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+        <i class="fas fa-plus me-2"></i>Tạo Task
       </button>
     <% } %>
   </div>
+
+  <!-- Thông báo thành công -->
+  <% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success alert-dismissible fade show">
+      <i class="fas fa-check-circle me-2"></i><%= success %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  <% } %>
+
+  <!-- Thông báo lỗi -->
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-danger alert-dismissible fade show">
+      <i class="fas fa-exclamation-triangle me-2"></i><%= error %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  <% } %>
 
   <!-- Search Bar -->
   <div class="mb-4 d-flex justify-content-start">
     <form action="/room/<%= room._id %>/tasks" method="GET" class="w-100" style="max-width: 400px;">
       <div class="input-group">
         <input type="text" name="search" class="form-control rounded-start-pill shadow-sm" 
-               placeholder="Search task by title..." value="<%= search || '' %>">
+               placeholder="Tìm theo tiêu đề..." value="<%= search || '' %>">
         <button type="submit" class="btn btn-gradient btn-primary rounded-end-pill">
-          <i class="fas fa-search me-1"></i>Search
+          <i class="fas fa-search me-1"></i>Tìm
         </button>
       </div>
     </form>
@@ -42,73 +62,220 @@
             </div>
             <div class="card-body d-flex flex-column p-4">
               <!-- Status and Due Date at the top -->
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
+              <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                <div class="mb-2">
                   <i class="fas fa-calendar-alt me-2 text-primary"></i>
-                  <strong>Expiry Date:</strong> <%= task.dueDate %>
+                  <strong>Hết hạn:</strong> <%= task.dueDateDisplay %>
                 </div>
                 <% if (task.statusText === "Completed") { %>
                   <span class="badge rounded-pill bg-success px-3 py-2 shadow-sm">
-                    <i class="fas fa-check-circle me-1"></i><%= task.statusText %>
+                    <i class="fas fa-check-circle me-1"></i>Hoàn thành
                   </span>
                 <% } else if (task.statusText === "Overdue") { %>
                   <span class="badge rounded-pill bg-danger px-3 py-2 shadow-sm">
-                    <i class="fas fa-exclamation-triangle me-1"></i><%= task.statusText %>
+                    <i class="fas fa-exclamation-triangle me-1"></i>Quá hạn
                   </span>
                 <% } else if (task.statusText === "In progress") { %>
                   <span class="badge rounded-pill bg-warning text-dark px-3 py-2 shadow-sm">
-                    <i class="fas fa-spinner me-1"></i><%= task.statusText %>
+                    <i class="fas fa-spinner me-1"></i>Đang làm
                   </span>
                 <% } else { %>
                   <span class="badge rounded-pill bg-secondary px-3 py-2 shadow-sm">
-                    <i class="fas fa-hourglass-start me-1"></i><%= task.statusText %>
+                    <i class="fas fa-hourglass-start me-1"></i>Chờ làm
                   </span>
                 <% } %>
               </div>
 
               <!-- Description -->
-              <p class="text-muted small mb-3 text-truncate" title="<%= task.description %>">
-                <%= task.description.length > 100 ? task.description.substring(0, 100) + '...' : task.description %>
+              <p class="text-muted small mb-3" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                <%= task.description || 'Không có mô tả' %>
               </p>
 
               <!-- Other details -->
               <ul class="list-unstyled mb-3 small">
                 <li class="mb-2">
                   <i class="fas fa-user me-2 text-secondary"></i>
-                  <strong>Created by:</strong> <%= task.createdBy || 'Ẩn danh' %>
+                  <strong>Tạo bởi:</strong> <%= task.createdBy %>
                 </li>
                 <li class="mb-2">
                   <i class="fas fa-users me-2 text-secondary"></i>
-                  <strong>Assigned to:</strong> <%= task.assignedTo  || 'Chưa giao' %>
+                  <strong>Giao cho:</strong> <%= task.assignedTo %>
                 </li>
                 <li>
                   <i class="fas fa-clock me-2 text-secondary"></i>
-                  <strong>Created on:</strong> <%= task.createdAt %>
+                  <strong>Ngày tạo:</strong> <%= task.createdAt %>
                 </li>
               </ul>
 
               <!-- Action buttons -->
               <div class="d-flex gap-2 mt-auto flex-wrap">
-                <button class="btn btn-sm btn-primary rounded-pill">
-                  <i class="fas fa-eye me-1"></i>See
+                <button type="button" class="btn btn-sm btn-primary rounded-pill" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#viewTaskModal<%= task._id %>">
+                  <i class="fas fa-eye me-1"></i>Xem
                 </button>
-                <% if (canManage) { %>
-                  <button class="btn btn-sm btn-outline-secondary rounded-pill">
-                    <i class="fas fa-edit me-1"></i>Edit
-                  </button>
-                  <button class="btn btn-sm btn-outline-danger rounded-pill">
-                    <i class="fas fa-trash me-1"></i>Delete
+                <% if (canManage && !task.isCompleted) { %>
+                  <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill"
+                          data-bs-toggle="modal" 
+                          data-bs-target="#editTaskModal<%= task._id %>">
+                    <i class="fas fa-edit me-1"></i>Sửa
                   </button>
                 <% } %>
+                 <form action="/room/<%= room._id %>/tasks/<%= task._id %>/delete" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"
+                            onclick="return confirm('Bạn có chắc chắn muốn xóa task này?')">
+                      <i class="fas fa-trash me-1"></i>Xóa
+                    </button>
+                  </form>
               </div>
             </div>
           </div>
         </div>
+
+        <!-- ====================== MODAL XEM CHI TIẾT ====================== -->
+        <div class="modal fade" id="viewTaskModal<%= task._id %>" tabindex="-1" aria-labelledby="viewTaskModalLabel<%= task._id %>" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+              <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="viewTaskModalLabel<%= task._id %>">
+                  <i class="fas fa-clipboard-list me-2"></i><%= task.title %>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body p-4">
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <strong class="text-primary">Trạng thái:</strong>
+                    <% if (task.statusText === "Completed") { %>
+                      <span class="badge rounded-pill bg-success ms-2">
+                        <i class="fas fa-check-circle me-1"></i>Hoàn thành
+                      </span>
+                    <% } else if (task.statusText === "Overdue") { %>
+                      <span class="badge rounded-pill bg-danger ms-2">
+                        <i class="fas fa-exclamation-triangle me-1"></i>Quá hạn
+                      </span>
+                    <% } else if (task.statusText === "In progress") { %>
+                      <span class="badge rounded-pill bg-warning text-dark ms-2">
+                        <i class="fas fa-spinner me-1"></i>Đang làm
+                      </span>
+                    <% } else { %>
+                      <span class="badge rounded-pill bg-secondary ms-2">
+                        <i class="fas fa-hourglass-start me-1"></i>Chờ làm
+                      </span>
+                    <% } %>
+                  </div>
+                  <div class="col-md-6">
+                    <strong class="text-primary">Hết hạn:</strong> <%= task.dueDateDisplay %>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <strong class="text-primary">Mô tả:</strong>
+                  <p class="mt-2" style="white-space: pre-wrap; line-height: 1.8;"><%= task.description || 'Không có mô tả' %></p>
+                </div>
+
+                <hr>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <small class="text-muted">
+                      <i class="fas fa-user me-1"></i><strong>Tạo bởi:</strong> <%= task.createdBy %>
+                    </small>
+                  </div>
+                  <div class="col-md-6">
+                    <small class="text-muted">
+                      <i class="fas fa-users me-1"></i><strong>Giao cho:</strong> <%= task.assignedTo %>
+                    </small>
+                  </div>
+                  <div class="col-md-12 mt-2">
+                    <small class="text-muted">
+                      <i class="fas fa-clock me-1"></i><strong>Ngày tạo:</strong> <%= task.createdAt %>
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                  <i class="fas fa-times me-1"></i>Đóng
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====================== MODAL SỬA TASK ====================== -->
+        <% if (canManage && !task.isCompleted) { %>
+        <div class="modal fade" id="editTaskModal<%= task._id %>" tabindex="-1" aria-labelledby="editTaskModalLabel<%= task._id %>" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <form action="/room/<%= room._id %>/tasks/<%= task._id %>" method="POST">
+              <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-gradient-warning text-white">
+                  <h5 class="modal-title" id="editTaskModalLabel<%= task._id %>">
+                    <i class="fas fa-edit me-2"></i>Sửa Task
+                  </h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Tiêu đề <span class="text-danger">*</span></label>
+                    <input type="text" name="title" class="form-control" maxlength="200"
+                           value="<%= task.title %>" required>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Mô tả</label>
+                    <textarea name="description" class="form-control" rows="4" maxlength="2000"><%= task.description %></textarea>
+                    <small class="text-muted">Tối đa 2000 kí tự</small>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label fw-semibold">Hết hạn <span class="text-danger">*</span></label>
+                      <input type="datetime-local" name="dueDate" class="form-control"
+                             value="<%= task.dueDate %>" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label fw-semibold">Trạng thái</label>
+                      <select name="status" class="form-select">
+                        <option value="Pending" <%= task.status === 'Pending' ? 'selected' : '' %>>Chờ làm</option>
+                        <option value="In progress" <%= task.status === 'In progress' ? 'selected' : '' %>>Đang làm</option>
+                        <option value="Completed" <%= task.status === 'Completed' ? 'selected' : '' %>>Hoàn thành</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Giao cho</label>
+                    <select name="assignedTo" class="form-select">
+                      <option value="">-- Chưa giao --</option>
+                      <% allMembers.forEach(m => { %>
+                        <option value="<%= m._id %>" <%= task.assignedToId === m._id.toString() ? 'selected' : '' %>>
+                          <%= m.username %> (<%= m.role %>)
+                        </option>
+                      <% }) %>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Hủy
+                  </button>
+                  <button type="submit" class="btn btn-gradient btn-warning">
+                    <i class="fas fa-save me-1"></i>Lưu thay đổi
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <% } %>
       <% }) %>
     <% } else { %>
       <div class="col-12 text-center text-muted py-5">
         <i class="fas fa-tasks fa-3x mb-3 text-secondary"></i>
-        <p class="fw-semibold">No tasks yet</p>
+        <p class="fw-semibold">Chưa có task nào</p>
       </div>
     <% } %>
   </div>
@@ -117,24 +284,103 @@
   <% if (totalPages > 1) { %>
     <nav aria-label="Task pagination" class="mt-4">
       <ul class="pagination justify-content-center">
-        <!-- Previous Button -->
         <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
-          <a class="page-link" href="?page=<%= page - 1 %>&search=<%= search || '' %>" tabindex="-1">Before</a>
+          <a class="page-link" href="?page=<%= page - 1 %>&search=<%= search || '' %>&tab=tasks">Trước</a>
         </li>
-
-        <!-- Page Numbers -->
         <% for (let i = 1; i <= totalPages; i++) { %>
           <li class="page-item <%= page === i ? 'active' : '' %>">
-            <a class="page-link" href="?page=<%= i %>&search=<%= search || '' %>"><%= i %></a>
+            <a class="page-link" href="?page=<%= i %>&search=<%= search || '' %>&tab=tasks"><%= i %></a>
           </li>
         <% } %>
-
-        <!-- Next Button -->
         <li class="page-item <%= page === totalPages ? 'disabled' : '' %>">
-          <a class="page-link" href="?page=<%= page + 1 %>&search=<%= search || '' %>">After</a>
+          <a class="page-link" href="?page=<%= page + 1 %>&search=<%= search || '' %>&tab=tasks">Sau</a>
         </li>
       </ul>
     </nav>
+  <% } %>
+
+  <!-- ====================== MODAL THÊM TASK ====================== -->
+  <% if (canManage) { %>
+  <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <form action="/room/<%= room._id %>/tasks" method="POST">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-gradient-primary text-white">
+            <h5 class="modal-title" id="createTaskModalLabel">
+              <i class="fas fa-plus-circle me-2"></i>Tạo Task mới
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Tiêu đề <span class="text-danger">*</span></label>
+              <input type="text" name="title" class="form-control" maxlength="200"
+                     value="<%= (typeof formData !== 'undefined' && formData.title) || '' %>" 
+                     placeholder="Nhập tiêu đề task..." required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Mô tả</label>
+              <textarea name="description" class="form-control" rows="4" maxlength="2000" 
+                        placeholder="Nhập mô tả task..."><%= (typeof formData !== 'undefined' && formData.description) || '' %></textarea>
+              <small class="text-muted">Tối đa 2000 kí tự</small>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Hết hạn <span class="text-danger">*</span></label>
+                <input type="datetime-local" name="dueDate" class="form-control"
+                       value="<%= (typeof formData !== 'undefined' && formData.dueDate) || '' %>" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Trạng thái</label>
+                <select name="status" class="form-select">
+                  <option value="Pending" selected>Chờ làm</option>
+                  <option value="In progress">Đang làm</option>
+                  <option value="Completed">Hoàn thành</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Giao cho</label>
+              <select name="assignedTo" class="form-select">
+                <option value="">-- Chưa giao --</option>
+                <% allMembers.forEach(m => { %>
+                  <option value="<%= m._id %>" 
+                          <%= (typeof formData !== 'undefined' && formData.assignedTo === m._id.toString()) ? 'selected' : '' %>>
+                    <%= m.username %> (<%= m.role %>)
+                  </option>
+                <% }) %>
+              </select>
+              <small class="text-muted">Chọn thành viên được giao task này</small>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              <i class="fas fa-times me-1"></i>Hủy
+            </button>
+            <button type="submit" class="btn btn-gradient btn-primary">
+              <i class="fas fa-save me-1"></i>Tạo Task
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <% } %>
+  <!-- ====================== END MODAL THÊM ====================== -->
+
+  <!-- Tự động mở modal nếu có lỗi -->
+  <% if (typeof showCreateTaskModal !== 'undefined' && showCreateTaskModal) { %>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const modal = new bootstrap.Modal(document.getElementById('createTaskModal'));
+        modal.show();
+      });
+    </script>
   <% } %>
 </div>
 
@@ -142,6 +388,10 @@
   /* Custom styles for tasks section */
   .bg-gradient-primary {
     background: linear-gradient(135deg, #007bff, #00d4ff);
+  }
+
+  .bg-gradient-warning {
+    background: linear-gradient(135deg, #ffc107, #ff9800);
   }
 
   .card {
@@ -185,10 +435,22 @@
   .btn-gradient {
     background: linear-gradient(45deg, #007bff, #00d4ff);
     border: none;
+    color: white;
   }
 
   .btn-gradient:hover {
     background: linear-gradient(45deg, #0056b3, #0096cc);
+    color: white;
+  }
+
+  .btn-gradient.btn-warning {
+    background: linear-gradient(45deg, #ffc107, #ff9800);
+    color: white;
+  }
+
+  .btn-gradient.btn-warning:hover {
+    background: linear-gradient(45deg, #e0a800, #e68900);
+    color: white;
   }
 
   .btn-primary, .btn-outline-secondary, .btn-outline-danger {
@@ -207,12 +469,12 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
   }
 
-  .form-control {
+  .form-control, .form-select {
     border: 1px solid #ced4da;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
-  .form-control:focus {
+  .form-control:focus, .form-select:focus {
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
   }
@@ -241,7 +503,7 @@
       flex-direction: row;
       align-items: center;
     }
-    .form-control {
+    .form-control, .form-select {
       font-size: 0.9rem;
       padding: 0.5rem;
     }
