@@ -1,6 +1,11 @@
 import { MongoClient } from "mongodb";
 import chalk from "chalk";
 
+if (process.env.NODE_ENV !== "production") {
+  // import dotenv động
+  await import('dotenv/config');
+}
+
 const url = process.env.MONGO_URL;
 
 if (!url) {
@@ -8,13 +13,14 @@ if (!url) {
 }
 
 const client = new MongoClient(url);
-let db; 
+let db;
+
 export async function connectDB() {
-  if (db) return db; 
+  if (db) return db;
   try {
-    await client.connect(); 
+    await client.connect();
     console.log(chalk.blue("✅ Kết nối MongoDB Atlas thành công!"));
-    db = client.db(); 
+    db = client.db();
     return db;
   } catch (err) {
     console.error(chalk.red("❌ Lỗi kết nối MongoDB Atlas:", err));
