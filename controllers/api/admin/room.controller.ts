@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import Room from "../../../models/ts/Room.js";
 import User from "../../../models/ts/User.js";
 import logger from "../../../utils/logger.js";
-import { getCache, setCache } from "../../../helpers/cache.js";
+// import { getCache, setCache } from "../../../helpers/cache.js";
 
 interface AuthenticatedRequest extends Request {
   user: {
@@ -35,90 +35,90 @@ interface RoomBody {
   members?: MemberData[];
 }
 
-export const getRooms = async (req: Request<{}, {}, {}, GetRoomsQuery>, res: Response) => {
-  const { search, memberCount, startDate, endDate, page = 1 } = req.query;
-  const limit = 5;
-  const skip = (Number(page) - 1) * limit;
-  const cacheKey = `room:search"=${search}:memberCount=${memberCount}:startDate=${startDate}:endDate=${endDate}:page=${page}`;
-  try {
-    const cachedData = await getCache(cacheKey);
-    if(cachedData){
-      logger.info(`Cache hit ${cacheKey}`);
-      res.status(200).json({ success: true, data: cachedData, message: 'Fetched from cache' })
-    }
-    const query: Record<string, any> = {};
-    if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { code: { $regex: search, $options: "i" } },
-      ];
-    }
+// export const getRooms = async (req: Request<{}, {}, {}, GetRoomsQuery>, res: Response) => {
+//   const { search, memberCount, startDate, endDate, page = 1 } = req.query;
+//   const limit = 5;
+//   const skip = (Number(page) - 1) * limit;
+//   const cacheKey = `room:search"=${search}:memberCount=${memberCount}:startDate=${startDate}:endDate=${endDate}:page=${page}`;
+//   try {
+//     const cachedData = await getCache(cacheKey);
+//     if(cachedData){
+//       logger.info(`Cache hit ${cacheKey}`);
+//       res.status(200).json({ success: true, data: cachedData, message: 'Fetched from cache' })
+//     }
+//     const query: Record<string, any> = {};
+//     if (search) {
+//       query.$or = [
+//         { name: { $regex: search, $options: "i" } },
+//         { code: { $regex: search, $options: "i" } },
+//       ];
+//     }
 
-    if (memberCount) {
-      if (memberCount === "0-5") {
-        query.$expr = { 
-          $and: [
-            { $gte: [{ $size: "$members" }, 0] }, 
-            { $lte: [{ $size: "$members" }, 5] }
-          ] 
-        };
-      } else if (memberCount === "6-10") {
-        query.$expr = { 
-          $and: [
-            { $gte: [{ $size: "$members" }, 6] }, 
-            { $lte: [{ $size: "$members" }, 10] }
-          ] 
-        };
-      } else if (memberCount === ">10") {
-        query.$expr = { $gt: [{ $size: "$members" }, 10] };
-      }
-    }
+//     if (memberCount) {
+//       if (memberCount === "0-5") {
+//         query.$expr = { 
+//           $and: [
+//             { $gte: [{ $size: "$members" }, 0] }, 
+//             { $lte: [{ $size: "$members" }, 5] }
+//           ] 
+//         };
+//       } else if (memberCount === "6-10") {
+//         query.$expr = { 
+//           $and: [
+//             { $gte: [{ $size: "$members" }, 6] }, 
+//             { $lte: [{ $size: "$members" }, 10] }
+//           ] 
+//         };
+//       } else if (memberCount === ">10") {
+//         query.$expr = { $gt: [{ $size: "$members" }, 10] };
+//       }
+//     }
 
-    if (startDate || endDate) {
-      query.createdAt = {};
-      if (startDate) {
-        query.createdAt.$gte = new Date(startDate);
-      }
-      if (endDate) {
-        query.createdAt.$lte = new Date(new Date(endDate).setHours(23, 59, 59, 999));
-      }
-    }
+//     if (startDate || endDate) {
+//       query.createdAt = {};
+//       if (startDate) {
+//         query.createdAt.$gte = new Date(startDate);
+//       }
+//       if (endDate) {
+//         query.createdAt.$lte = new Date(new Date(endDate).setHours(23, 59, 59, 999));
+//       }
+//     }
 
-    const totalRooms = await Room.countDocuments(query);
-    const totalPages = Math.ceil(totalRooms / limit);
+//     const totalRooms = await Room.countDocuments(query);
+//     const totalPages = Math.ceil(totalRooms / limit);
 
-    const rooms = await Room.find(query)
-      .populate({
-        path: "members.user",
-        select: "username",
-      })
-      .populate("admin", "username")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+//     const rooms = await Room.find(query)
+//       .populate({
+//         path: "members.user",
+//         select: "username",
+//       })
+//       .populate("admin", "username")
+//       .sort({ createdAt: -1 })
+//       .skip(skip)
+//       .limit(limit);
 
-    rooms.forEach((room) => {
-      room.members = room.members.filter((member) => member.user !== null);
-    });
+//     rooms.forEach((room) => {
+//       room.members = room.members.filter((member) => member.user !== null);
+//     });
 
-    const responseData = {
-      rooms, 
-      panigation: {page: Number(page), totalRooms, totalPages, limit},
-      filters: {search, memberCount: Number(memberCount), startDate, endDate}
-    };
+//     const responseData = {
+//       rooms, 
+//       panigation: {page: Number(page), totalRooms, totalPages, limit},
+//       filters: {search, memberCount: Number(memberCount), startDate, endDate}
+//     };
 
-    await setCache(cacheKey, responseData, 60);
-    logger.info(`Cache miss: saved ${cacheKey}`);
-    res.status(200).json({success: true, data: responseData, message: 'Successfully fetched room list'});
-  } catch (err: any) {
-    logger.error("Error fetching rooms list", err);
-    return res.status(500).json({ 
-      success: false,
-      message: "Error fetching rooms list",
-      error: err.message,
-    });
-  }
-};
+//     await setCache(cacheKey, responseData, 60);
+//     logger.info(`Cache miss: saved ${cacheKey}`);
+//     res.status(200).json({success: true, data: responseData, message: 'Successfully fetched room list'});
+//   } catch (err: any) {
+//     logger.error("Error fetching rooms list", err);
+//     return res.status(500).json({ 
+//       success: false,
+//       message: "Error fetching rooms list",
+//       error: err.message,
+//     });
+//   }
+// };
 
 export const createRoom = async (req: AuthenticatedRequest, res: Response) => {
   try {

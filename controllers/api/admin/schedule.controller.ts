@@ -5,7 +5,7 @@ import Schedule from "../../../models/ts/Schedule.js";
 import Room from "../../../models/ts/Room.js";
 import User from "../../../models/ts/User.js";
 import logger from "../../../utils/logger.js";
-import { getCache, setCache } from "../../../helpers/cache.js";
+// import { getCache, setCache } from "../../../helpers/cache.js";
 
 interface AuthenticatedRequest extends Request {
   admin: {
@@ -34,87 +34,87 @@ interface ScheduleBody {
   endTime?: string | Date;
 }
 
-export const getSchedules = async (req: Request<{}, {}, {}, GetSchedulesQuery>, res: Response) => {
-  const { search, room, startDate, endDate, status, page = 1 } = req.query;
-  const limit = 10;
-  const skip = (Number(page) - 1) * limit;
-  const cacheKey = `schedule:search=${search}:room=${room}:startDate=${startDate}:endDate=${endDate}:status=${status}:page=${page}`;
-  try {
-    const query: Record<string, any> = {};
-    const cachedData = await getCache(cacheKey);
-    if(cachedData){
-      logger.info(`Cache hit: ${cacheKey}`);
-      return res.status(200).json({success: true, data: cachedData, message: 'Fetched from cache'});
-    }
-    if (search) {
-      query.title = { $regex: search, $options: "i" };
-    }
+// export const getSchedules = async (req: Request<{}, {}, {}, GetSchedulesQuery>, res: Response) => {
+//   const { search, room, startDate, endDate, status, page = 1 } = req.query;
+//   const limit = 10;
+//   const skip = (Number(page) - 1) * limit;
+//   const cacheKey = `schedule:search=${search}:room=${room}:startDate=${startDate}:endDate=${endDate}:status=${status}:page=${page}`;
+//   try {
+//     const query: Record<string, any> = {};
+//     const cachedData = await getCache(cacheKey);
+//     if(cachedData){
+//       logger.info(`Cache hit: ${cacheKey}`);
+//       return res.status(200).json({success: true, data: cachedData, message: 'Fetched from cache'});
+//     }
+//     if (search) {
+//       query.title = { $regex: search, $options: "i" };
+//     }
 
-    if (room) {
-      query.room = room;
-    }
+//     if (room) {
+//       query.room = room;
+//     }
 
-    if (startDate || endDate) {
-      query.startTime = {};
-      if (startDate) {
-        query.startTime.$gte = new Date(startDate);
-      }
-      if (endDate) {
-        const end = new Date(endDate);
-        end.setDate(end.getDate() + 1);
-        query.startTime.$lt = end;
-      }
-    }
+//     if (startDate || endDate) {
+//       query.startTime = {};
+//       if (startDate) {
+//         query.startTime.$gte = new Date(startDate);
+//       }
+//       if (endDate) {
+//         const end = new Date(endDate);
+//         end.setDate(end.getDate() + 1);
+//         query.startTime.$lt = end;
+//       }
+//     }
 
-    if (status) {
-      const now = new Date();
-      if (status === "upcoming") {
-        query.startTime = { ...query.startTime, $gt: now };
-      } else if (status === "ongoing") {
-        query.startTime = { ...query.startTime, $lte: now };
-        query.endTime = { $gt: now };
-      } else if (status === "completed") {
-        query.endTime = { $exists: true, $lt: now };
-      }
-    }
+//     if (status) {
+//       const now = new Date();
+//       if (status === "upcoming") {
+//         query.startTime = { ...query.startTime, $gt: now };
+//       } else if (status === "ongoing") {
+//         query.startTime = { ...query.startTime, $lte: now };
+//         query.endTime = { $gt: now };
+//       } else if (status === "completed") {
+//         query.endTime = { $exists: true, $lt: now };
+//       }
+//     }
 
-    const totalSchedules = await Schedule.countDocuments(query);
-    const totalPages = Math.ceil(totalSchedules / limit);
+//     const totalSchedules = await Schedule.countDocuments(query);
+//     const totalPages = Math.ceil(totalSchedules / limit);
 
-    const schedules = await Schedule.find(query)
-      .populate("room", "name code")
-      .populate("createdBy", "username")
-      .populate("participants", "username")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+//     const schedules = await Schedule.find(query)
+//       .populate("room", "name code")
+//       .populate("createdBy", "username")
+//       .populate("participants", "username")
+//       .sort({ createdAt: -1 })
+//       .skip(skip)
+//       .limit(limit);
 
-    const filteredSchedules = schedules.map(schedule => {
-      const scheduleObj = schedule.toObject();
-      if (scheduleObj.participants) {
-        scheduleObj.participants = scheduleObj.participants.filter((user: any) => user !== null);
-      } else {
-        scheduleObj.participants = [];
-      }
-      return scheduleObj;
-    });
-    const responseData = {
-      schedules: filteredSchedules,
-      pagination: {page: Number(page), startDate, endDate, status: String(status), totalPages, totalSchedules, limit},
-      filters: {search, room}
-    };
-    await setCache(cacheKey, responseData, 60);
-    logger.info(`Cache miss : save ${cacheKey}`);
-    res.status(200).json({ success: true, data: responseData, message: 'Successfully fetched schedule list'});
-  } catch (err: any) {
-    logger.error("Error fetching schedules list", err);
-    return res.status(500).json({
-      success: false,
-      message: "Error fetching schedules list",
-      error: err.message,
-    });
-  }
-};
+//     const filteredSchedules = schedules.map(schedule => {
+//       const scheduleObj = schedule.toObject();
+//       if (scheduleObj.participants) {
+//         scheduleObj.participants = scheduleObj.participants.filter((user: any) => user !== null);
+//       } else {
+//         scheduleObj.participants = [];
+//       }
+//       return scheduleObj;
+//     });
+//     const responseData = {
+//       schedules: filteredSchedules,
+//       pagination: {page: Number(page), startDate, endDate, status: String(status), totalPages, totalSchedules, limit},
+//       filters: {search, room}
+//     };
+//     await setCache(cacheKey, responseData, 60);
+//     logger.info(`Cache miss : save ${cacheKey}`);
+//     res.status(200).json({ success: true, data: responseData, message: 'Successfully fetched schedule list'});
+//   } catch (err: any) {
+//     logger.error("Error fetching schedules list", err);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Error fetching schedules list",
+//       error: err.message,
+//     });
+//   }
+// };
 
 export const getScheduleById = async (req: Request<{ id: string }>, res: Response) => {
   try {
