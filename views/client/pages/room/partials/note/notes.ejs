@@ -2,7 +2,7 @@
   <!-- Header with Title and Add Note Button -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="fw-bold text-primary">
-      <i class="fas fa-sticky-note me-2"></i>List Note
+      <i class="fas fa-sticky-note me-2"></i>Danh sách Note
     </h4>
     <% 
       const isAdmin = room.admin && user && room.admin._id.toString() === user._id.toString();
@@ -10,20 +10,28 @@
       const canManage = isAdmin || isHost;
     %>
     <% if (canManage) { %>
-      <button class="btn btn-gradient btn-primary shadow-sm">
-        <i class="fas fa-plus me-2"></i>Create Note
+      <button type="button" class="btn btn-gradient btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#createNoteModal">
+        <i class="fas fa-plus me-2"></i>Tạo Note
       </button>
     <% } %>
   </div>
+
+  <!-- Thông báo thành công -->
+  <% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success alert-dismissible fade show">
+      <i class="fas fa-check-circle me-2"></i><%= success %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  <% } %>
 
   <!-- Search Bar -->
   <div class="mb-4 d-flex justify-content-start">
     <form action="/room/<%= room._id %>/notes" method="GET" class="w-100" style="max-width: 400px;">
       <div class="input-group">
         <input type="text" name="search" class="form-control rounded-start-pill shadow-sm" 
-               placeholder="Search note by title" value="<%= search || '' %>">
+               placeholder="Tìm theo tiêu đề..." value="<%= search || '' %>">
         <button type="submit" class="btn btn-gradient btn-primary rounded-end-pill">
-          <i class="fas fa-search me-1"></i>Search
+          <i class="fas fa-search me-1"></i>Tìm
         </button>
       </div>
     </form>
@@ -42,44 +50,145 @@
                     <%= note.title %>
                   </h5>
                   <span class="badge rounded-pill <%= note.isPublic ? 'bg-info' : 'bg-secondary' %>">
-                    <%= note.isPublic ? 'Public' : 'Anonymous' %>
+                    <%= note.isPublic ? 'Công khai' : 'Riêng tư' %>
                   </span>
                 </div>
               </div>
               <div class="card-body p-4">
-                <p class="text-muted mb-3 text-truncate" title="<%= note.content %>">
-                  <%= note.content.length > 100 ? note.content.substring(0, 100) + '...' : note.content %>
+                <p class="text-muted mb-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                  <%= note.content %>
                 </p>
                 <div class="d-flex justify-content-between align-items-center flex-wrap">
                   <small class="text-muted">
-                    <i class="fas fa-user me-1"></i><%= note.createdBy?.username || 'Anonymous' %>
+                    <i class="fas fa-user me-1"></i><%= note.createdBy || 'Ẩn danh' %>
                     <br />
-                    <i class="fas fa-clock me-1"></i>
-                    <%= note.createdAt %>
+                    <i class="fas fa-clock me-1"></i><%= note.createdAt %>
                   </small>
-                  <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-primary rounded-pill">
-                      <i class="fas fa-eye me-1"></i>See
+                  <div class="d-flex gap-2 flex-wrap mt-2">
+                    <button type="button" class="btn btn-sm btn-primary rounded-pill" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#viewNoteModal<%= note._id %>">
+                      <i class="fas fa-eye me-1"></i>Xem
                     </button>
                     <% if (canManage) { %>
-                      <button class="btn btn-sm btn-outline-secondary rounded-pill">
-                        <i class="fas fa-edit me-1"></i>Edit
+                      <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill"
+                              data-bs-toggle="modal" 
+                              data-bs-target="#editNoteModal<%= note._id %>">
+                        <i class="fas fa-edit me-1"></i>Sửa
                       </button>
-                      <button class="btn btn-sm btn-outline-danger rounded-pill">
-                        <i class="fas fa-trash me-1"></i>Delete
-                      </button>
+                      <form action="/room/<%= room._id %>/notes/<%= note._id %>/delete" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"
+                                onclick="return confirm('Bạn có chắc chắn muốn xóa note này?')">
+                          <i class="fas fa-trash me-1"></i>Xóa
+                        </button>
+                      </form>
                     <% } %>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
+          <!-- ====================== MODAL XEM CHI TIẾT ====================== -->
+          <div class="modal fade" id="viewNoteModal<%= note._id %>" tabindex="-1" aria-labelledby="viewNoteModalLabel<%= note._id %>" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-gradient-primary text-white">
+                  <h5 class="modal-title" id="viewNoteModalLabel<%= note._id %>">
+                    <i class="fas fa-sticky-note me-2"></i><%= note.title %>
+                  </h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                  <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="badge rounded-pill <%= note.isPublic ? 'bg-info' : 'bg-secondary' %> px-3 py-2">
+                        <i class="fas fa-<%= note.isPublic ? 'globe' : 'lock' %> me-1"></i>
+                        <%= note.isPublic ? 'Công khai' : 'Riêng tư' %>
+                      </span>
+                    </div>
+                    <strong class="text-primary">Nội dung:</strong>
+                    <p class="mt-2" style="white-space: pre-wrap; line-height: 1.8;"><%= note.content %></p>
+                  </div>
+                  <hr>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <small class="text-muted">
+                        <i class="fas fa-user me-1"></i><strong>Người tạo:</strong> <%= note.createdBy %>
+                      </small>
+                    </div>
+                    <div>
+                      <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i><%= note.createdAt %>
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Đóng
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ====================== MODAL SỬA NOTE ====================== -->
+          <% if (canManage) { %>
+          <div class="modal fade" id="editNoteModal<%= note._id %>" tabindex="-1" aria-labelledby="editNoteModalLabel<%= note._id %>" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <form action="/room/<%= room._id %>/notes/<%= note._id %>" method="POST">
+                <div class="modal-content border-0 shadow-lg">
+                  <div class="modal-header bg-gradient-warning text-white">
+                    <h5 class="modal-title" id="editNoteModalLabel<%= note._id %>">
+                      <i class="fas fa-edit me-2"></i>Sửa Note
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                  </div>
+
+                  <div class="modal-body p-4">
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Tiêu đề <span class="text-danger">*</span></label>
+                      <input type="text" name="title" class="form-control" maxlength="200"
+                             value="<%= note.title %>" required>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Nội dung <span class="text-danger">*</span></label>
+                      <textarea name="content" class="form-control" rows="8" maxlength="5000" required><%= note.content %></textarea>
+                      <small class="text-muted">Tối đa 5000 kí tự</small>
+                    </div>
+
+                    <div class="mb-3">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="isPublic" value="true"
+                               id="editIsPublic<%= note._id %>" <%= note.isPublic ? 'checked' : '' %>>
+                        <label class="form-check-label" for="editIsPublic<%= note._id %>">
+                          <i class="fas fa-globe me-1"></i>Công khai (Tất cả thành viên có thể xem)
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                      <i class="fas fa-times me-1"></i>Hủy
+                    </button>
+                    <button type="submit" class="btn btn-gradient btn-warning">
+                      <i class="fas fa-save me-1"></i>Lưu thay đổi
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <% } %>
         <% } %>
       <% }) %>
     <% } else { %>
       <div class="col-12 text-center text-muted p-5">
         <i class="fas fa-sticky-note fa-3x mb-3 text-secondary"></i>
-        <p class="fw-semibold">No notes yet</p>
+        <p class="fw-semibold">Chưa có note nào</p>
       </div>
     <% } %>
   </div>
@@ -88,24 +197,92 @@
   <% if (totalPages > 1) { %>
     <nav aria-label="Note pagination" class="mt-4">
       <ul class="pagination justify-content-center">
-        <!-- Previous Button -->
         <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
-          <a class="page-link" href="?page=<%= page - 1 %>&search=<%= search || '' %>" tabindex="-1">Before</a>
+          <a class="page-link" href="?page=<%= page - 1 %>&search=<%= search || '' %>&tab=notes">Trước</a>
         </li>
-
-        <!-- Page Numbers -->
         <% for (let i = 1; i <= totalPages; i++) { %>
           <li class="page-item <%= page === i ? 'active' : '' %>">
-            <a class="page-link" href="?page=<%= i %>&search=<%= search || '' %>"><%= i %></a>
+            <a class="page-link" href="?page=<%= i %>&search=<%= search || '' %>&tab=notes"><%= i %></a>
           </li>
         <% } %>
-
-        <!-- Next Button -->
         <li class="page-item <%= page === totalPages ? 'disabled' : '' %>">
-          <a class="page-link" href="?page=<%= page + 1 %>&search=<%= search || '' %>">After</a>
+          <a class="page-link" href="?page=<%= page + 1 %>&search=<%= search || '' %>&tab=notes">Sau</a>
         </li>
       </ul>
     </nav>
+  <% } %>
+
+  <!-- ====================== MODAL THÊM NOTE ====================== -->
+  <% if (canManage) { %>
+  <div class="modal fade" id="createNoteModal" tabindex="-1" aria-labelledby="createNoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <form action="/room/<%= room._id %>/notes" method="POST">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-gradient-primary text-white">
+            <h5 class="modal-title" id="createNoteModalLabel">
+              <i class="fas fa-plus-circle me-2"></i>Tạo Note mới
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+
+          <div class="modal-body p-4">
+            <!-- Lỗi -->
+            <% if (typeof error !== 'undefined' && error) { %>
+              <div class="alert alert-danger alert-dismissible fade show">
+                <i class="fas fa-exclamation-triangle me-2"></i><%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            <% } %>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Tiêu đề <span class="text-danger">*</span></label>
+              <input type="text" name="title" class="form-control" maxlength="200"
+                     value="<%= (typeof formData !== 'undefined' && formData.title) || '' %>" 
+                     placeholder="Nhập tiêu đề note..." required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Nội dung <span class="text-danger">*</span></label>
+              <textarea name="content" class="form-control" rows="8" maxlength="5000" 
+                        placeholder="Nhập nội dung note..." required><%= (typeof formData !== 'undefined' && formData.content) || '' %></textarea>
+              <small class="text-muted">Tối đa 5000 kí tự</small>
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" name="isPublic" value="true" id="isPublic"
+                       <%= (typeof formData !== 'undefined' && formData.isPublic) ? 'checked' : '' %>>
+                <label class="form-check-label" for="isPublic">
+                  <i class="fas fa-globe me-1"></i>Công khai (Tất cả thành viên có thể xem)
+                </label>
+              </div>
+              <small class="text-muted">Nếu không chọn, chỉ Admin và Host có thể xem note này</small>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              <i class="fas fa-times me-1"></i>Hủy
+            </button>
+            <button type="submit" class="btn btn-gradient btn-primary">
+              <i class="fas fa-save me-1"></i>Tạo Note
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <% } %>
+  <!-- ====================== END MODAL THÊM ====================== -->
+
+  <!-- Tự động mở modal nếu có lỗi -->
+  <% if (typeof showCreateNoteModal !== 'undefined' && showCreateNoteModal) { %>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const modal = new bootstrap.Modal(document.getElementById('createNoteModal'));
+        modal.show();
+      });
+    </script>
   <% } %>
 </div>
 
@@ -113,6 +290,10 @@
   /* Custom styles for notes section */
   .bg-gradient-primary {
     background: linear-gradient(135deg, #007bff, #00d4ff);
+  }
+
+  .bg-gradient-warning {
+    background: linear-gradient(135deg, #ffc107, #ff9800);
   }
 
   .card {
@@ -147,10 +328,22 @@
   .btn-gradient {
     background: linear-gradient(45deg, #007bff, #00d4ff);
     border: none;
+    color: white;
   }
 
   .btn-gradient:hover {
     background: linear-gradient(45deg, #0056b3, #0096cc);
+    color: white;
+  }
+
+  .btn-gradient.btn-warning {
+    background: linear-gradient(45deg, #ffc107, #ff9800);
+    color: white;
+  }
+
+  .btn-gradient.btn-warning:hover {
+    background: linear-gradient(45deg, #e0a800, #e68900);
+    color: white;
   }
 
   .btn-primary, .btn-outline-secondary, .btn-outline-danger {
@@ -177,6 +370,11 @@
   .form-control:focus {
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+
+  .form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
   }
 
   .rounded-start-pill {
