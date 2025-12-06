@@ -1,0 +1,379 @@
+<div class="tab-pane fade <%= activeTab === 'schedules' ? 'show active' : '' %>" id="schedules" role="tabpanel">
+  <!-- Header with Title and Add Schedule Button -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold text-primary">
+      <i class="fas fa-calendar-alt me-2"></i>Danh sách lịch
+    </h4>
+
+    <% 
+      const isAdmin = room.admin && user && room.admin._id.toString() === user._id.toString();
+      const isHost = room.members && room.members.some(m => m.user._id.toString() === user._id.toString() && m.role === 'host');
+      const canManage = isAdmin || isHost;
+      const allMembers = [
+        { _id: room.admin._id, username: room.admin.username, role: 'admin' },
+        ...(room.members || []).map(m => ({ _id: m.user._id, username: m.user.username, role: m.role }))
+      ];
+    %>
+
+    <% if (canManage) { %>
+      <button type="button" class="btn btn-gradient btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#createScheduleModal">
+        <i class="fas fa-plus me-2"></i>Tạo lịch
+      </button>
+    <% } %>
+  </div>
+
+  <!-- Thông báo thành công -->
+  <% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success alert-dismissible fade show">
+      <i class="fas fa-check-circle me-2"></i><%= success %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  <% } %>
+
+  <!-- Search Bar -->
+  <div class="mb-4 d-flex justify-content-start">
+    <form action="/room/<%= room._id %>/schedules" method="GET" class="w-100" style="max-width: 400px;">
+      <div class="input-group">
+        <input type="text" name="search" class="form-control rounded-start-pill shadow-sm" 
+               placeholder="Tìm theo tiêu đề..." value="<%= search || '' %>">
+        <button type="submit" class="btn btn-gradient btn-primary rounded-end-pill">
+          <i class="fas fa-search me-1"></i>Tìm
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Danh sách lịch -->
+  <div class="row">
+    <% if (schedules && schedules.length > 0) { %>
+      <% schedules.forEach(schedule => { %>
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-lg transition-all duration-300 hover:shadow-xl">
+            <!-- Header -->
+            <div class="card-header bg-gradient-primary text-white p-3 rounded-top d-flex justify-content-between align-items-center">
+              <h5 class="card-title text-truncate fw-semibold mb-0">
+                <i class="fas fa-calendar-alt me-2"></i><%= schedule.title %>
+              </h5>
+              <div class="schedule-date text-center">
+                <div class="fw-bold fs-4"><%= new Date(schedule.startTime).getDate() %></div>
+                <div>Tháng <%= (new Date(schedule.startTime).getMonth() + 1) %>, <%= new Date(schedule.startTime).getFullYear() %></div>
+              </div>
+            </div>
+
+            <div class="card-body p-4">
+              <!-- Trạng thái -->
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <% if (schedule.status === 'Completed') { %>
+                    <span class="badge rounded-pill bg-success px-4 py-2 shadow-sm">
+                      <i class="fas fa-check-circle me-1"></i>Hoàn thành
+                    </span>
+                  <% } else if (schedule.status === 'In progress') { %>
+                    <span class="badge rounded-pill bg-warning text-dark px-3 py-2 shadow-sm">
+                      <i class="fas fa-play-circle me-1"></i>Đang diễn ra
+                    </span>
+                  <% } else { %>
+                    <span class="badge rounded-pill bg-info px-3 py-2 shadow-sm">
+                      <i class="fas fa-hourglass-start me-1"></i>Sắp tới
+                    </span>
+                  <% } %>
+                </div>
+              </div>
+
+              <!-- Thông tin -->
+              <p class="text-muted mb-2">
+                <i class="fas fa-user me-2"></i><strong>Người tạo:</strong> <%= schedule.createdBy || 'Ẩn danh' %>
+              </p>
+              <p class="text-muted mb-2">
+                <i class="fas fa-calendar me-2"></i><strong>Ngày tạo:</strong> <%= new Date(schedule.createdAt).toLocaleDateString('vi-VN') %>
+              </p>
+              <p class="text-muted mb-3">
+                <i class="fas fa-clock me-2 text-primary"></i>
+                <strong>Bắt đầu:</strong> <%= schedule.startTime %>
+              </p>
+              <% if (schedule.endTime) { %>
+                <p class="text-muted mb-3">
+                  <i class="fas fa-clock me-2 text-primary"></i>
+                  <strong>Kết thúc:</strong> <%= schedule.endTime %>
+                </p>
+              <% } %>
+
+              <!-- Nút hành động -->
+              <div class="d-flex gap-2 mt-2 flex-wrap">
+                <% if (canManage) { %>
+                  <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" 
+                          data-bs-toggle="modal" 
+                          data-bs-target="#editScheduleModal<%= schedule._id %>">
+                    <i class="fas fa-edit me-1"></i>Sửa
+                  </button>
+                  <form action="/room/<%= room._id %>/schedules/<%= schedule._id %>/delete" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill" 
+                            onclick="return confirm('Bạn có chắc chắn muốn xóa lịch này?')">
+                      <i class="fas fa-trash me-1"></i>Xóa
+                    </button>
+                  </form>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====================== MODAL SỬA LỊCH ====================== -->
+        <% if (canManage) { %>
+        <div class="modal fade" id="editScheduleModal<%= schedule._id %>" tabindex="-1" aria-labelledby="editScheduleModalLabel<%= schedule._id %>" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <form action="/room/<%= room._id %>/schedules/<%= schedule._id %>" method="POST">
+              <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-gradient-warning text-white">
+                  <h5 class="modal-title" id="editScheduleModalLabel<%= schedule._id %>">
+                    <i class="fas fa-edit me-2"></i> Sửa lịch
+                  </h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Tiêu đề <span class="text-danger">*</span></label>
+                    <input type="text" name="title" class="form-control" maxlength="200"
+                           value="<%= schedule.title %>" required>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Mô tả</label>
+                    <textarea name="description" class="form-control" rows="3" maxlength="1000"><%= schedule.description || '' %></textarea>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label fw-semibold">Bắt đầu <span class="text-danger">*</span></label>
+                      <input type="datetime-local" name="startTime" class="form-control"
+                             value="<%= schedule.startTime %>" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label fw-semibold">Kết thúc</label>
+                      <input type="datetime-local" name="endTime" class="form-control"
+                             value="<%= schedule.endTime || '' %>">
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Người tham gia</label>
+                    <div class="border rounded p-3" style="max-height:200px; overflow-y:auto;">
+                      <% allMembers.forEach(m => { %>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="participants" value="<%= m._id %>"
+                                 id="edit_part_<%= schedule._id %>_<%= m._id %>"
+                                 <%= schedule.participants && schedule.participants.includes(m._id.toString()) ? 'checked' : '' %>>
+                          <label class="form-check-label" for="edit_part_<%= schedule._id %>_<%= m._id %>">
+                            <%= m.username %>
+                            <span class="badge bg-<%= m.role==='admin'?'danger':m.role==='host'?'warning':'secondary' %> rounded-pill small">
+                              <%= m.role %>
+                            </span>
+                          </label>
+                        </div>
+                      <% }) %>
+                    </div>
+                    <small class="text-muted">Chỉ thành viên trong phòng được chọn.</small>
+                  </div>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Hủy
+                  </button>
+                  <button type="submit" class="btn btn-gradient btn-warning">
+                    <i class="fas fa-save me-1"></i> Lưu thay đổi
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <% } %>
+        <!-- ====================== END MODAL SỬA ====================== -->
+      <% }) %>
+    <% } else { %>
+      <div class="col-12 text-center text-muted py-5">
+        <i class="fas fa-calendar-times fa-3x mb-3 text-secondary"></i>
+        <p class="fw-semibold">Chưa có lịch nào</p>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Pagination -->
+  <% if (totalPages > 1) { %>
+    <nav aria-label="Schedule pagination" class="mt-4">
+      <ul class="pagination justify-content-center">
+        <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
+          <a class="page-link" href="?page=<%= page - 1 %>&search=<%= search || '' %>&tab=schedules">Trước</a>
+        </li>
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <li class="page-item <%= page === i ? 'active' : '' %>">
+            <a class="page-link" href="?page=<%= i %>&search=<%= search || '' %>&tab=schedules"><%= i %></a>
+          </li>
+        <% } %>
+        <li class="page-item <%= page === totalPages ? 'disabled' : '' %>">
+          <a class="page-link" href="?page=<%= page + 1 %>&search=<%= search || '' %>&tab=schedules">Sau</a>
+        </li>
+      </ul>
+    </nav>
+  <% } %>
+
+  <!-- ====================== MODAL THÊM LỊCH ====================== -->
+  <% if (canManage) { %>
+  <div class="modal fade" id="createScheduleModal" tabindex="-1" aria-labelledby="createScheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <form id="createScheduleForm" action="/room/<%= room._id %>/schedules" method="POST">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-gradient-primary text-white">
+            <h5 class="modal-title" id="createScheduleModalLabel">
+              <i class="fas fa-plus-circle me-2"></i> Tạo lịch mới
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+
+          <div class="modal-body p-4">
+            <!-- Lỗi -->
+            <% if (typeof error !== 'undefined' && error) { %>
+              <div class="alert alert-danger alert-dismissible fade show">
+                <i class="fas fa-exclamation-triangle me-2"></i><%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            <% } %>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Tiêu đề <span class="text-danger">*</span></label>
+              <input type="text" name="title" class="form-control" maxlength="200"
+                     value="<%= (typeof formData !== 'undefined' && formData.title) || '' %>" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Mô tả</label>
+              <textarea name="description" class="form-control" rows="3" maxlength="1000"><%= (typeof formData !== 'undefined' && formData.description) || '' %></textarea>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Bắt đầu <span class="text-danger">*</span></label>
+                <input type="datetime-local" name="startTime" class="form-control"
+                       value="<%= (typeof formData !== 'undefined' && formData.startTime) || '' %>" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Kết thúc</label>
+                <input type="datetime-local" name="endTime" class="form-control"
+                       value="<%= (typeof formData !== 'undefined' && formData.endTime) || '' %>">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Người tham gia</label>
+              <div class="border rounded p-3" style="max-height:200px; overflow-y:auto;">
+                <% allMembers.forEach(m => { %>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="participants" value="<%= m._id %>"
+                           id="part_<%= m._id %>"
+                           <%= (typeof formData !== 'undefined' && formData.participants && 
+                                (Array.isArray(formData.participants) ? formData.participants : [formData.participants])
+                                .includes(m._id.toString())) ? 'checked' : '' %>>
+                    <label class="form-check-label" for="part_<%= m._id %>">
+                      <%= m.username %>
+                      <span class="badge bg-<%= m.role==='admin'?'danger':m.role==='host'?'warning':'secondary' %> rounded-pill small">
+                        <%= m.role %>
+                      </span>
+                    </label>
+                  </div>
+                <% }) %>
+              </div>
+              <small class="text-muted">Chỉ thành viên trong phòng được chọn.</small>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              <i class="fas fa-times me-1"></i> Hủy
+            </button>
+            <button type="submit" class="btn btn-gradient btn-primary">
+              <i class="fas fa-save me-1"></i> Tạo lịch
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <% } %>
+  <!-- ====================== END MODAL ====================== -->
+
+  <!-- Tự động mở modal nếu có lỗi -->
+  <% if (typeof showCreateModal !== 'undefined' && showCreateModal) { %>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const modal = new bootstrap.Modal(document.getElementById('createScheduleModal'));
+        modal.show();
+      });
+    </script>
+  <% } %>
+</div>
+
+<!-- ====================== CSS ====================== -->
+<style>
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #007bff, #00d4ff) !important;
+  }
+
+  .bg-gradient-warning {
+    background: linear-gradient(135deg, #ffc107, #ff9800) !important;
+  }
+
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .badge {
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .btn-gradient {
+    background: linear-gradient(45deg, #007bff, #00d4ff);
+    border: none;
+    color: white;
+  }
+  .btn-gradient:hover {
+    background: linear-gradient(45deg, #0056b3, #0096cc);
+    color: white;
+  }
+
+  .btn-gradient.btn-warning {
+    background: linear-gradient(45deg, #ffc107, #ff9800);
+    color: white;
+  }
+  .btn-gradient.btn-warning:hover {
+    background: linear-gradient(45deg, #e0a800, #e68900);
+    color: white;
+  }
+
+  .form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+
+  .rounded-start-pill {
+    border-top-left-radius: 50rem !important;
+    border-bottom-left-radius: 50rem !important;
+  }
+  .rounded-end-pill {
+    border-top-right-radius: 50rem !important;
+    border-bottom-right-radius: 50rem !important;
+  }
+
+  @media (max-width: 576px) {
+    .card-body { padding: 1rem !important; }
+    .card-title { font-size: 1rem; }
+    .badge { font-size: 0.7rem; }
+    .schedule-date { font-size: 0.8rem; }
+  }
+</style>

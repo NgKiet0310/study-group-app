@@ -205,11 +205,3 @@ export const joinRoomByCode = async(req, res) => {
   }
 }
 
-export const showMeet = async (req, res) => {
-  const roomId = req.params.id;
-  const room = await Room.findById(roomId);
-  res.render("client/pages/room/room", {
-    room,
-    activeTab: 'meet'
-  });
-};
