@@ -1,5 +1,5 @@
 import express from "express";
-import { getMessages, getMessageById, deleteMessage } from "../../../controllers/api/admin/message.controller";
+import { getMessages, getMessageById, deleteMessage } from "../../../controllers/api/admin/message.controller.js";
 const router = express.Router();
 
 router.get('/messages', getMessages);

@@ -1,5 +1,5 @@
 import express from "express";
-import { getRooms, createRoom, updateRoom, updateRoomPartial, deleteRoom, getRoomById } from "../../../controllers/api/admin/room.controller";
+import { getRooms, createRoom, updateRoom, updateRoomPartial, deleteRoom, getRoomById } from "../../../controllers/api/admin/room.controller.js";
 const router = express.Router();
 
 router.get('/rooms',getRooms);
