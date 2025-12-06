@@ -6,7 +6,7 @@ import { connectDB } from './config/atlas.js';
 import { Server as SocketServer } from 'socket.io'; 
 import Message from './models/ts/Message.js';
 import "./config/redis.js"; 
-import { connectRedis } from './config/redis.js';
+// import { connectRedis } from './config/redis.js';
 
 dotenv.config();
 
@@ -152,7 +152,7 @@ io.on('connection', (socket) => {
 
 (async () => {
   try {
-    await connectRedis();
+    // await connectRedis();
     await connectDB();
     server.listen(PORT, () => {
       console.log(chalk.yellow(`🚀 Server running at http://localhost:${PORT}/home`));

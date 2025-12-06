@@ -7,8 +7,8 @@ import engine from 'ejs-mate';
 import methodOverride from 'method-override';
 import session from "express-session";
 import MongoStore from 'connect-mongo';
-import RedisStoreLib  from "connect-redis";
-import redisClient from './config/redis.js';
+// import RedisStoreLib  from "connect-redis";
+// import redisClient from './config/redis.js';
 import helmet from 'helmet';
 import { sessionOptions } from './config/session.js';
 

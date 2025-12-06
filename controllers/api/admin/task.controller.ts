@@ -5,7 +5,7 @@ import Task from "../../../models/ts/Task.js";
 import Room from "../../../models/ts/Room.js";
 import User from "../../../models/ts/User.js";
 import logger from "../../../utils/logger.js";
-import { getCache, setCache } from "../../../helpers/cache.js";
+// import { getCache, setCache } from "../../../helpers/cache.js";
 
 interface AuthenticatedRequest extends Request {
   user: {
@@ -35,86 +35,86 @@ interface TaskBody {
   dueDate?: string;
 }
 
-export const getTasks = async (req: Request<{}, {}, {}, GetTasksQuery>, res: Response) => {
-  const { search, room, status, assignedTo, dueDate, createdBy, page = 1 } = req.query;
-  const limit = 5;
-  const skip = (Number(page) - 1) * limit;
-  const cacheKey = `task:search=${search}:room=${room}:status=${status}:assignedTo=${assignedTo}:dueDate=${dueDate}:createdBy=${createdBy}:page=${page}`;
-  try {
-    const query: Record<string, any> = {};
-    const cachedData = await getCache(cacheKey);
-    if(cachedData){
-      logger.info(`Cache hit: ${cacheKey}`);
-      return res.status(200).json({ success: true, data: cachedData, message: 'Fetched from cache'});
-    }
-    if (search) {
-      query.title = { $regex: search, $options: "i" };
-    }
+// export const getTasks = async (req: Request<{}, {}, {}, GetTasksQuery>, res: Response) => {
+//   const { search, room, status, assignedTo, dueDate, createdBy, page = 1 } = req.query;
+//   const limit = 5;
+//   const skip = (Number(page) - 1) * limit;
+//   const cacheKey = `task:search=${search}:room=${room}:status=${status}:assignedTo=${assignedTo}:dueDate=${dueDate}:createdBy=${createdBy}:page=${page}`;
+//   try {
+//     const query: Record<string, any> = {};
+//     const cachedData = await getCache(cacheKey);
+//     if(cachedData){
+//       logger.info(`Cache hit: ${cacheKey}`);
+//       return res.status(200).json({ success: true, data: cachedData, message: 'Fetched from cache'});
+//     }
+//     if (search) {
+//       query.title = { $regex: search, $options: "i" };
+//     }
 
-    if (room) {
-      query.room = room;
-    }
+//     if (room) {
+//       query.room = room;
+//     }
 
-    if (status) {
-      query.status = status;
-    }
+//     if (status) {
+//       query.status = status;
+//     }
 
-    if (assignedTo) {
-      query.assignedTo = assignedTo;
-    }
+//     if (assignedTo) {
+//       query.assignedTo = assignedTo;
+//     }
 
-    if (createdBy) {
-      query.createdBy = createdBy;
-    }
+//     if (createdBy) {
+//       query.createdBy = createdBy;
+//     }
 
-    if (dueDate) {
-      const startOfDay = new Date(dueDate);
-      startOfDay.setHours(0, 0, 0, 0);
-      const endOfDay = new Date(dueDate);
-      endOfDay.setHours(23, 59, 59, 999);
-      query.dueDate = { $gte: startOfDay, $lte: endOfDay };
-    }
+//     if (dueDate) {
+//       const startOfDay = new Date(dueDate);
+//       startOfDay.setHours(0, 0, 0, 0);
+//       const endOfDay = new Date(dueDate);
+//       endOfDay.setHours(23, 59, 59, 999);
+//       query.dueDate = { $gte: startOfDay, $lte: endOfDay };
+//     }
 
-    const totalTasks = await Task.countDocuments(query);
-    const totalPages = Math.ceil(totalTasks / limit);
+//     const totalTasks = await Task.countDocuments(query);
+//     const totalPages = Math.ceil(totalTasks / limit);
 
-    const tasks = await Task.find(query)
-      .populate("room", "name")
-      .populate("createdBy", "username")
-      .populate("assignedTo", "username")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+//     const tasks = await Task.find(query)
+//       .populate("room", "name")
+//       .populate("createdBy", "username")
+//       .populate("assignedTo", "username")
+//       .sort({ createdAt: -1 })
+//       .skip(skip)
+//       .limit(limit);
 
-    const filteredTasks = tasks.map(task => {
-      const taskObj = task.toObject();
+//     const filteredTasks = tasks.map(task => {
+//       const taskObj = task.toObject();
       
-      if (taskObj.assignedTo) {
-        taskObj.assignedTo = taskObj.assignedTo.filter((user: any) => user !== null);
-      } else {
-        taskObj.assignedTo = [];
-      }
+//       if (taskObj.assignedTo) {
+//         taskObj.assignedTo = taskObj.assignedTo.filter((user: any) => user !== null);
+//       } else {
+//         taskObj.assignedTo = [];
+//       }
 
-      return taskObj;
-    });
+//       return taskObj;
+//     });
 
-    const responseData = {
-      tasks: filteredTasks,
-      pagination: {page: Number(page), status: String(status), assignedTo, dueDate, createdBy, totalTasks, totalPages, limit},
-      filters: {search, room }  
-    };
-    await setCache(cacheKey, responseData , 60);
-    logger.info(`Cache miss: saved ${cacheKey}`);
-    res.status(200).json({success: true, data: responseData, message: 'Successfully fetched task list'});
-  } catch (err: any) {
-    logger.error("Error fetching tasks list", err);
-    return res.status(500).json({
-      success: false,
-      message: "Error fetching tasks list",
-      error: err.message,
-    });
-  }
-};
+//     const responseData = {
+//       tasks: filteredTasks,
+//       pagination: {page: Number(page), status: String(status), assignedTo, dueDate, createdBy, totalTasks, totalPages, limit},
+//       filters: {search, room }  
+//     };
+//     await setCache(cacheKey, responseData , 60);
+//     logger.info(`Cache miss: saved ${cacheKey}`);
+//     res.status(200).json({success: true, data: responseData, message: 'Successfully fetched task list'});
+//   } catch (err: any) {
+//     logger.error("Error fetching tasks list", err);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Error fetching tasks list",
+//       error: err.message,
+//     });
+//   }
+// };
 
 export const createTask = async (req: AuthenticatedRequest, res: Response) => {
   try {
