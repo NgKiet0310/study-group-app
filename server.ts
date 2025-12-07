@@ -17,7 +17,7 @@ const server = http.createServer(app);
 
 const io = new SocketServer(server, {
   cors: {
-    origin: 'https://study-group-app-n3ui.onrender.com',
+    origin: process.env.CLIENT_URL || "https://study-group-app-n3ui.onrender.com",
     methods: ["GET", "POST"],
     credentials: true
   }
