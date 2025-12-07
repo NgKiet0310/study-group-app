@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon --watch . --ext ts --exec node --loader ts-node/esm server.ts",
     "build": "tsc && node scripts/copyAssets.js",
+    "start": "node dist/server.js",
     "dev:kill": "npx kill-port 3000 && npm run dev",
     "cli:create-user": "node utils/cli.js create-user",
     "test": "jest",
