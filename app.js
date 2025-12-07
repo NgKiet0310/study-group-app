@@ -67,6 +67,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static('uploads'));
+app.set('trust proxy', 1);
 
 // ===== Body Parser & Method Override =====
 app.use(express.json());
